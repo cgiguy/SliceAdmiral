@@ -1,4 +1,4 @@
-﻿-- Author      : Administrator
+--- Author       :cgiguy
 -- Create Date : 9/10/2008 6:44:47 PM
 SLICECMDR = { };
 SLICECMDR.AlertPending = 0;
@@ -243,10 +243,10 @@ function SliceCmdr_OnEvent(self, event, ...)
 		local timestamp, type, hideCaster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags = select(1, ...);
 		if (type == "SPELL_AURA_REFRESH" or type == "SPELL_AURA_APPLIED" or type == "SPELL_AURA_REMOVED" or type == "SPELL_AURA_APPLIED_DOSE" or type == "SPELL_PERIODIC_AURA_REMOVED" or type == "SPELL_PERIODIC_AURA_APPLIED" or type == "SPELL_PERIODIC_AURA_APPLIED_DOSE" or type == "SPELL_PERIODIC_AURA_REFRESH") then
 			local spellId, spellName, spellSchool = select(12, ...);
-			spellName = GetSpellInfo(spellId);			
-			--print ("spellId = " .. spellId .. " (" .. spellName .. ")");
+--			print ("spellId = " .. spellId .. " (" .. spellName .. ")");
+--			spellName = GetSpellInfo(spellId);			
 			if (destName == UnitName("player")) then
-				if (spellName == SC_SPELL_SND and SliceAdmiral_Save.ShowSnDBar) then
+				if (spellId == SC_SPELL_SND_ID and SliceAdmiral_Save.ShowSnDBar) then
 					if (type == "SPELL_AURA_REMOVED") then			
 						if (UnitAffectingCombat("player")) then
 							SliceCmdr_Sound("Expire");
@@ -266,7 +266,7 @@ function SliceCmdr_OnEvent(self, event, ...)
 				end
 				
 				-- RECUPERATE EVENT --
-				if (spellName == SC_SPELL_RECUP and SliceAdmiral_Save.ShowRecupBar == true) then
+				if (spellId == SC_SPELL_RECUP_ID and SliceAdmiral_Save.ShowRecupBar == true) then
 					if (type == "SPELL_AURA_REMOVED") then
 						if (UnitAffectingCombat("player")) then
 							SliceCmdr_Sound("Recup.Expire");
@@ -286,7 +286,7 @@ function SliceCmdr_OnEvent(self, event, ...)
 				end
 
                 -- envenom EVENT --
-				if (spellName == SC_SPELL_ENV and SliceAdmiral_Save.ShowEnvBar == true) then
+				if (spellId == SC_SPELL_ENV_ID and SliceAdmiral_Save.ShowEnvBar == true) then
 					if (type == "SPELL_AURA_REMOVED") then
                                                 if (UnitAffectingCombat("player")) then
 							--SliceCmdr_Sound("Env.Expire");
@@ -307,7 +307,7 @@ function SliceCmdr_OnEvent(self, event, ...)
 			else
 				if (destName == UnitName("target")) then
 					-- DEADLY POISON --
-					if (spellName == SC_SPELL_DP and SliceAdmiral_Save.DPBarShow == true) then
+					if (spellId == SC_SPELL_DP_ID and SliceAdmiral_Save.DPBarShow == true) then
 						local name1, rank1, icon1, count1, debuffType1, duration1, expirationTime1, isMine1, isStealable1 = UnitDebuff("target", SC_SPELL_DP);
 						if (isMine1 == "player") then
 							SLICECMDR.DPExpires = expirationTime1;
@@ -318,8 +318,8 @@ function SliceCmdr_OnEvent(self, event, ...)
 						end
 					end
 					-- RUPTURE --
-					if (spellName == SC_SPELL_RUP and SliceAdmiral_Save.RupBarShow == true) then
-						local name2, rank2, icon2, count2, debuffType2, duration2, expirationTime2, isMine2, isStealable2 = UnitDebuff("target", SC_SPELL_RUP);						
+					if (spellId == SC_SPELL_RUP_ID and SliceAdmiral_Save.RupBarShow == true) then
+						local name2, rank2, icon2, count2, debuffType2, duration2, expirationTime2, isMine2, isStealable2 = UnitDebuff("target", SC_SPELL_RUP);
 						if (isMine2 == "player") then
 							SLICECMDR.RupExpires = expirationTime2;
 							SLICECMDR.BARS['Rup']['Expires'] = expirationTime2;
@@ -333,8 +333,8 @@ function SliceCmdr_OnEvent(self, event, ...)
 						SliceCmdr_ChangeAnchor();
 					end
 					-- VENDETTA --
-					if (spellName == SC_SPELL_VEND and SliceAdmiral_Save.VendBarShow == true) then
-						local name2, rank2, icon2, count2, debuffType2, duration2, expirationTime2, isMine2, isStealable2 = UnitDebuff("target", SC_SPELL_VEND);						
+					if (spellId == SC_SPELL_VEND_ID and SliceAdmiral_Save.VendBarShow == true) then
+						local name2, rank2, icon2, count2, debuffType2, duration2, expirationTime2, isMine2, isStealable2 = UnitDebuff("target", SC_SPELL_VEND);
 						if (isMine2 == "player") then
 							SLICECMDR.VendExpires = expirationTime2;
 							SLICECMDR.BARS['Vend']['Expires'] = expirationTime2;
@@ -353,8 +353,8 @@ function SliceCmdr_OnEvent(self, event, ...)
 		-- DOT monitors
 		if (SliceAdmiral_Save.ShowDoTDmg == true and type == "SPELL_PERIODIC_DAMAGE" and destName == UnitName("target")and sourceName == UnitName("player")) then
 			local spellId, spellName, spellSchool = select(12, ...);
-			spellName = GetSpellInfo(spellId);			
-			if (spellName == SC_SPELL_RUP and SliceAdmiral_Save.RupBarShow == true) then
+--			spellName = GetSpellInfo(spellId);			
+			if (spellId == SC_SPELL_RUP_ID and SliceAdmiral_Save.RupBarShow == true) then
 				local amount, overkill, school, resisted, blocked, absorbed, critical, glancing, crushing = select(15, ...)
 				SLICECMDR.BARS['Rup']['obj'].DoTtext:SetAlpha(1);
                 if (SliceAdmiral_Save.DoTCrits and critical) then
@@ -367,7 +367,7 @@ function SliceCmdr_OnEvent(self, event, ...)
 								
 												
 			end
-			if (spellName == SC_SPELL_DP and SliceAdmiral_Save.DPBarShow == true) then
+			if (spellId == SC_SPELL_DP_ID and SliceAdmiral_Save.DPBarShow == true) then
 				local amount, overkill, school, resisted, blocked, absorbed, critical, glancing, crushing = select(15, ...)
 				SLICECMDR.BARS['DP']['obj'].DoTtext:SetAlpha(1);
                 if (SliceAdmiral_Save.DoTCrits and critical) then
@@ -1004,7 +1004,7 @@ end
 function SliceCmdr_util_SnDBuffTime()
 	local name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable = UnitAura("player", SC_SPELL_SND);
 	if (expirationTime) then
---	  print ("ETime: " .. expirationTime);
+--	  print ("SND ETime: " .. expirationTime);
 	  SLICECMDR.SliceExpires = expirationTime;
 	else
 	  return 0;
@@ -1017,6 +1017,13 @@ function SliceCmdr_util_SnDBuffTime()
 end
 
 function SliceCmdr_util_RecupTime()
+	local name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable = UnitAura("player", SC_SPELL_RECUP);
+--	  print ("RECUP ETime: " .. expirationTime);
+	if (expirationTime) then
+	   SLICECMDR.RecupExpires = expirationTime;
+        else
+           return 0;
+        end
 	if ((SLICECMDR.RecupExpires > 0) and (SLICECMDR.tNow < SLICECMDR.RecupExpires)) then
 		return SLICECMDR.RecupExpires - SLICECMDR.tNow;
 	else
