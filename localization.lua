@@ -20,14 +20,13 @@ SC_SPELL_ENV = GetSpellInfo(SC_SPELL_ENV_ID);
 SC_LANG_CP = "Combo Points";
 SC_LANG_SETTINGS = "Options";
 SC_LANG_SOUNDS = "Sounds";
-	
+
 SC_TIMERBARS = "Timer Bars";
 SC_ENERGYBAR = "Energy Bar";
 SC_COMBOANDSTATS = "Combo Points and Stats";
 SC_SOUNDEFFECTS = "Sound Effects";
 SC_SOUNDEFFECTS2 = "Sound Effects 2";
 
-
 if (GetLocale() == "deDE") then
-      SC_LANG_SETTINGS = "Einstellungen";
+  SC_LANG_SETTINGS = "Einstellungen";
 end
