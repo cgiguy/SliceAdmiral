@@ -1,4 +1,4 @@
-﻿-- Author      : cgiguy
+-- Author      : cgiguy
 -- Create Date : 9/12/2008 9:43:03 PM
 SliceAdmiral_Save = {
   ["ShowSnDBar"] = true,

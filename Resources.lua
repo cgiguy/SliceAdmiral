@@ -1,4 +1,4 @@
-﻿-- Author      : Administrator
+-- Author      : Administrator
 -- Create Date : 9/13/2008 10:16:36 AM
 SliceCmdr_BarTextures = {
   ['Aluminum'] = 'Interface\\AddOns\\SliceAdmiral\\Images\\Aluminium.tga',
