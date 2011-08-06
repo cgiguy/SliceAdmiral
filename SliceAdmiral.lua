@@ -165,9 +165,9 @@ function SliceCmdr_ChangeAnchor()
       LastAnchor = SLICECMDR.BARS['Stat']['obj'];
     else
       if (SliceAdmiral_Save.HideEnergy) then
- LastAnchor = SLICECMDR.BARS['CP']['obj'];
+	LastAnchor = SLICECMDR.BARS['CP']['obj'];
       else
- LastAnchor = VTimerEnergy;
+	LastAnchor = VTimerEnergy;
       end
     end
   else
@@ -175,9 +175,9 @@ function SliceCmdr_ChangeAnchor()
       LastAnchor = SLICECMDR.BARS['CP']['obj'];
     else
       if (SliceAdmiral_Save.HideEnergy) then
- LastAnchor = SLICECMDR.BARS['Stat']['obj'];
+	LastAnchor = SLICECMDR.BARS['Stat']['obj'];
       else
- LastAnchor = VTimerEnergy;
+	LastAnchor = VTimerEnergy;
       end
     end
   end
@@ -185,9 +185,9 @@ function SliceCmdr_ChangeAnchor()
     if (SLICECMDR.BARORDER[i]['Expires'] > 0) then
       SLICECMDR.BARORDER[i]['obj']:ClearAllPoints();
       if (SliceAdmiral_Save.Barsup) then
- SLICECMDR.BARORDER[i]['obj']:SetPoint("BOTTOMLEFT", LastAnchor, "TOPLEFT", 0, offSetSize); --bar on top
+	SLICECMDR.BARORDER[i]['obj']:SetPoint("BOTTOMLEFT", LastAnchor, "TOPLEFT", 0, offSetSize); --bar on top
       else
- SLICECMDR.BARORDER[i]['obj']:SetPoint("TOPLEFT", LastAnchor, "BOTTOMLEFT", 0, -1 * offSetSize);
+	SLICECMDR.BARORDER[i]['obj']:SetPoint("TOPLEFT", LastAnchor, "BOTTOMLEFT", 0, -1 * offSetSize);
       end
       LastAnchor = SLICECMDR.BARORDER[i]['obj'];
     end
@@ -204,7 +204,7 @@ function SliceCmdr_ChangeAnchor()
     LastAnchor = SLICECMDR.BARS['DP']['obj'];
   end
 
-  -- Envenom --   Envnom to finish this shiznit out.
+  -- Envenom --   Envenom to finish this shiznit out.
   if (SLICECMDR.EnvExpires ~= 0) then
     SLICECMDR.BARS['Env']['obj']:ClearAllPoints();
     if (SliceAdmiral_Save.Barsup) then
@@ -246,108 +246,116 @@ function SliceCmdr_OnEvent(self, event, ...)
       --   print ("spellId = " .. spellId .. " (" .. spellName .. ")");
       --   spellName = GetSpellInfo(spellId);
       if (destName == UnitName("player")) then
- if (spellId == SC_SPELL_SND_ID and SliceAdmiral_Save.ShowSnDBar) then
-   if (type == "SPELL_AURA_REMOVED") then
-     if (UnitAffectingCombat("player")) then
-       SliceCmdr_Sound("Expire");
-     end
-     SLICECMDR.SliceExpires = 0;
-     SLICECMDR.BARS['SnD']['Expires'] = 0;
-     SliceCmdr_ChangeAnchor();
-     SLICECMDR.BARS['SnD']['obj']:Hide();
-   else
-     local name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable = UnitAura("player", SC_SPELL_SND);
-     local timeLeftOnLast = SLICECMDR.SliceExpires - GetTime();
-     SLICECMDR.BARS['SnD']['obj']:Show();
-     SLICECMDR.SliceExpires = expirationTime;
-     SLICECMDR.BARS['SnD']['Expires'] = expirationTime;
-     SliceCmdr_ChangeAnchor();
-   end
- end
+	if (spellId == SC_SPELL_SND_ID and SliceAdmiral_Save.ShowSnDBar) then
+	  if (type == "SPELL_AURA_REMOVED") then
+	    if (UnitAffectingCombat("player")) then
+	      SliceCmdr_Sound("Expire");
+	    end
+	    SLICECMDR.SliceExpires = 0;
+	    SLICECMDR.BARS['SnD']['Expires'] = 0;
+	    SliceCmdr_ChangeAnchor();
+	    SLICECMDR.BARS['SnD']['obj']:Hide();
+	  else
+	    local name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable = UnitAura("player", SC_SPELL_SND);
+	    local timeLeftOnLast = SLICECMDR.SliceExpires - GetTime();
+	    SLICECMDR.BARS['SnD']['obj']:Show();
+	    SLICECMDR.SliceExpires = expirationTime;
+	    SLICECMDR.BARS['SnD']['Expires'] = expirationTime;
+	    SliceCmdr_ChangeAnchor();
+	  end
+	end
 
- -- RECUPERATE EVENT --
- if (spellId == SC_SPELL_RECUP_ID and SliceAdmiral_Save.ShowRecupBar == true) then
-   if (type == "SPELL_AURA_REMOVED") then
-     if (UnitAffectingCombat("player")) then
-       SliceCmdr_Sound("Recup.Expire");
-     end
-     SLICECMDR.RecupExpires = 0;
-     SLICECMDR.BARS['Recup']['Expires'] = 0;
-     SliceCmdr_ChangeAnchor();
-     SLICECMDR.BARS['Recup']['obj']:Hide();
-   else
-     local name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable = UnitAura("player", SC_SPELL_RECUP);
-     local timeLeftOnLast = SLICECMDR.RecupExpires - GetTime();
-     SLICECMDR.RecupExpires = expirationTime;
-     SLICECMDR.BARS['Recup']['Expires'] = expirationTime;
-     SLICECMDR.BARS['Recup']['obj']:Show();
-     SliceCmdr_ChangeAnchor();
-   end
- end
+	-- RECUPERATE EVENT --
+	if (spellId == SC_SPELL_RECUP_ID and SliceAdmiral_Save.ShowRecupBar == true) then
+	  if (type == "SPELL_AURA_REMOVED") then
+	    if (UnitAffectingCombat("player")) then
+	      SliceCmdr_Sound("Recup.Expire");
+	    end
+	    SLICECMDR.RecupExpires = 0;
+	    SLICECMDR.BARS['Recup']['Expires'] = 0;
+	    SliceCmdr_ChangeAnchor();
+	    SLICECMDR.BARS['Recup']['obj']:Hide();
+	  else
+	    local name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable = UnitAura("player", SC_SPELL_RECUP);
+	    local timeLeftOnLast = SLICECMDR.RecupExpires - GetTime();
+	    SLICECMDR.RecupExpires = expirationTime;
+	    SLICECMDR.BARS['Recup']['Expires'] = expirationTime;
+	    SLICECMDR.BARS['Recup']['obj']:Show();
+	    SliceCmdr_ChangeAnchor();
+	  end
+	end
 
- -- ENVENOM EVENT --
- if (spellId == SC_SPELL_ENV_ID and SliceAdmiral_Save.ShowEnvBar == true) then
-   if (type == "SPELL_AURA_REMOVED") then
-     if (UnitAffectingCombat("player")) then
-       --SliceCmdr_Sound("Env.Expire");
-     end
-     SLICECMDR.EnvExpires = 0;
-     SLICECMDR.BARS['Env']['Expires'] = 0;
-     SliceCmdr_ChangeAnchor();
-     SLICECMDR.BARS['Env']['obj']:Hide();
-   else
-     local name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable = UnitAura("player", SC_SPELL_ENV);
-     local timeLeftOnLast = SLICECMDR.EnvExpires - GetTime();
-     SLICECMDR.EnvExpires = expirationTime;
-     SLICECMDR.BARS['Env']['Expires'] = expirationTime;
-     SLICECMDR.BARS['Env']['obj']:Show();
-     SliceCmdr_ChangeAnchor();
-   end
- end
+	-- ENVENOM EVENT --
+	if (spellId == SC_SPELL_ENV_ID and SliceAdmiral_Save.ShowEnvBar == true) then
+	  if (type == "SPELL_AURA_REMOVED") then
+	    if (UnitAffectingCombat("player")) then
+	      --SliceCmdr_Sound("Env.Expire");
+	    end
+	    SLICECMDR.EnvExpires = 0;
+	    SLICECMDR.BARS['Env']['Expires'] = 0;
+	    SliceCmdr_ChangeAnchor();
+	    SLICECMDR.BARS['Env']['obj']:Hide();
+	  else
+	    local name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable = UnitAura("player", SC_SPELL_ENV);
+	    local timeLeftOnLast = SLICECMDR.EnvExpires - GetTime();
+	    SLICECMDR.EnvExpires = expirationTime;
+	    SLICECMDR.BARS['Env']['Expires'] = expirationTime;
+	    SLICECMDR.BARS['Env']['obj']:Show();
+	    SliceCmdr_ChangeAnchor();
+	  end
+	end
       else
- if (destName == UnitName("target")) then
-   -- DEADLY POISON EVENT --
-   if (spellId == SC_SPELL_DP_ID and SliceAdmiral_Save.DPBarShow == true) then
-     local name1, rank1, icon1, count1, debuffType1, duration1, expirationTime1, isMine1, isStealable1 = UnitDebuff("target", SC_SPELL_DP);
-     if (isMine1 == "player") then
-       SLICECMDR.DPExpires = expirationTime1;
-       SLICECMDR.BARS['DP']['Expires'] = expirationTime1;
-       SLICECMDR.BARS['DP']['obj'].text2:SetText("x" .. string.format("%i", count1));
-       SLICECMDR.BARS['DP']['obj']:Show();
-       SliceCmdr_ChangeAnchor();
-     end
-   end
-   -- RUPTURE EVENT --
-   if (spellId == SC_SPELL_RUP_ID and SliceAdmiral_Save.RupBarShow == true) then
-     local name2, rank2, icon2, count2, debuffType2, duration2, expirationTime2, isMine2, isStealable2 = UnitDebuff("target", SC_SPELL_RUP);
-     if (isMine2 == "player") then
-       SLICECMDR.RupExpires = expirationTime2;
-       SLICECMDR.BARS['Rup']['Expires'] = expirationTime2;
-       SLICECMDR.BARS['Rup']['obj']:Show();
-     end
-     if (type == "SPELL_AURA_REMOVED") then
-       if (UnitAffectingCombat("player")) then
-  SliceCmdr_Sound("RuptExpire");
-       end
-     end
-     SliceCmdr_ChangeAnchor();
-   end
-   -- VENDETTA EVENT --
-   if (spellId == SC_SPELL_VEND_ID and SliceAdmiral_Save.VendBarShow == true) then
-     local name2, rank2, icon2, count2, debuffType2, duration2, expirationTime2, isMine2, isStealable2 = UnitDebuff("target", SC_SPELL_VEND);
-     if (isMine2 == "player") then
-       SLICECMDR.VendExpires = expirationTime2;
-       SLICECMDR.BARS['Vend']['Expires'] = expirationTime2;
-       SLICECMDR.BARS['Vend']['obj']:Show();
-     end
-     if (type == "SPELL_AURA_REMOVED") then
-       if (UnitAffectingCombat("player")) then
-  SliceCmdr_Sound("VendExpire");
-       end
-     end
-     SliceCmdr_ChangeAnchor();
-   end
- end
+	if (destName == UnitName("target")) then
+	  -- DEADLY POISON EVENT --
+	  if (spellId == SC_SPELL_DP_ID and SliceAdmiral_Save.DPBarShow == true) then
+	    local name1, rank1, icon1, count1, debuffType1, duration1, expirationTime1, isMine1, isStealable1 = UnitDebuff("target", SC_SPELL_DP);
+	    if (isMine1 == "player") then
+	      SLICECMDR.DPExpires = expirationTime1;
+	      SLICECMDR.BARS['DP']['Expires'] = expirationTime1;
+	      SLICECMDR.BARS['DP']['obj'].text2:SetText("x" .. string.format("%i", count1));
+	      SLICECMDR.BARS['DP']['obj']:Show();
+	      SliceCmdr_ChangeAnchor();
+	    end
+	  end
+	  -- RUPTURE EVENT --
+	  if (spellId == SC_SPELL_RUP_ID and SliceAdmiral_Save.RupBarShow == true) then
+	    local name2, rank2, icon2, count2, debuffType2, duration2, expirationTime2, isMine2, isStealable2 = UnitDebuff("target", SC_SPELL_RUP);
+	    if (isMine2 == "player") then
+	      SLICECMDR.RupExpires = expirationTime2;
+	      SLICECMDR.BARS['Rup']['Expires'] = expirationTime2;
+	      SLICECMDR.BARS['Rup']['obj']:Show();
+	    end
+	    if (type == "SPELL_AURA_REMOVED") then
+	      if (UnitAffectingCombat("player")) then
+		SliceCmdr_Sound("RuptExpire");
+	      end
+	      SLICECMDR.RupExpires = 0;
+	      SLICECMDR.BARS['Rup']['Expires'] = 0;
+	      SliceCmdr_ChangeAnchor();
+	      SLICECMDR.BARS['Rup']['obj']:Hide();
+	    end
+	    SliceCmdr_ChangeAnchor();
+	  end
+	  -- VENDETTA EVENT --
+	  if (spellId == SC_SPELL_VEND_ID and SliceAdmiral_Save.VendBarShow == true) then
+	    local name2, rank2, icon2, count2, debuffType2, duration2, expirationTime2, isMine2, isStealable2 = UnitDebuff("target", SC_SPELL_VEND);
+	    if (isMine2 == "player") then
+	      SLICECMDR.VendExpires = expirationTime2;
+	      SLICECMDR.BARS['Vend']['Expires'] = expirationTime2;
+	      SLICECMDR.BARS['Vend']['obj']:Show();
+	    end
+	    if (type == "SPELL_AURA_REMOVED") then
+	      if (UnitAffectingCombat("player")) then
+		SliceCmdr_Sound("VendExpire");
+	      end
+	      SLICECMDR.VendExpires = 0;
+	      SLICECMDR.BARS['Vend']['Expires'] = 0;
+	      SliceCmdr_ChangeAnchor();
+	      SLICECMDR.BARS['Vend']['obj']:Hide();
+	    end
+	    SliceCmdr_ChangeAnchor();
+	  end
+	end
       end
     end -- "SPELL_AURA_REFRESH" or ...
     -- DOT monitors
@@ -355,28 +363,28 @@ function SliceCmdr_OnEvent(self, event, ...)
       local spellId, spellName, spellSchool = select(12, ...);
       -- spellName = GetSpellInfo(spellId);
       if (spellId == SC_SPELL_RUP_ID and SliceAdmiral_Save.RupBarShow == true) then
- local amount, overkill, school, resisted, blocked, absorbed, critical, glancing, crushing = select(15, ...)
- SLICECMDR.BARS['Rup']['obj'].DoTtext:SetAlpha(1);
- if (SliceAdmiral_Save.DoTCrits and critical) then
-   SLICECMDR.BARS['Rup']['obj'].DoTtext:SetText(string.format("*%.0f*", amount));
-   UIFrameFadeOut(SLICECMDR.BARS['Rup']['obj'].DoTtext, 3, 1, 0);
- else
-   SLICECMDR.BARS['Rup']['obj'].DoTtext:SetText(amount);
-   UIFrameFadeOut(SLICECMDR.BARS['Rup']['obj'].DoTtext, 2, 1, 0);
- end
+	local amount, overkill, school, resisted, blocked, absorbed, critical, glancing, crushing = select(15, ...)
+	SLICECMDR.BARS['Rup']['obj'].DoTtext:SetAlpha(1);
+	if (SliceAdmiral_Save.DoTCrits and critical) then
+	  SLICECMDR.BARS['Rup']['obj'].DoTtext:SetText(string.format("*%.0f*", amount));
+	  UIFrameFadeOut(SLICECMDR.BARS['Rup']['obj'].DoTtext, 3, 1, 0);
+	else
+	  SLICECMDR.BARS['Rup']['obj'].DoTtext:SetText(amount);
+	  UIFrameFadeOut(SLICECMDR.BARS['Rup']['obj'].DoTtext, 2, 1, 0);
+	end
 
 
       end
       if (spellId == SC_SPELL_DP_ID and SliceAdmiral_Save.DPBarShow == true) then
- local amount, overkill, school, resisted, blocked, absorbed, critical, glancing, crushing = select(15, ...)
- SLICECMDR.BARS['DP']['obj'].DoTtext:SetAlpha(1);
- if (SliceAdmiral_Save.DoTCrits and critical) then
-   SLICECMDR.BARS['DP']['obj'].DoTtext:SetText(string.format("*%.0f*", amount));
-   UIFrameFadeOut(SLICECMDR.BARS['DP']['obj'].DoTtext, 3, 1, 0);
- else
-   SLICECMDR.BARS['DP']['obj'].DoTtext:SetText(amount);
-   UIFrameFadeOut(SLICECMDR.BARS['DP']['obj'].DoTtext, 2, 1, 0);
- end
+	local amount, overkill, school, resisted, blocked, absorbed, critical, glancing, crushing = select(15, ...)
+	SLICECMDR.BARS['DP']['obj'].DoTtext:SetAlpha(1);
+	if (SliceAdmiral_Save.DoTCrits and critical) then
+	  SLICECMDR.BARS['DP']['obj'].DoTtext:SetText(string.format("*%.0f*", amount));
+	  UIFrameFadeOut(SLICECMDR.BARS['DP']['obj'].DoTtext, 3, 1, 0);
+	else
+	  SLICECMDR.BARS['DP']['obj'].DoTtext:SetText(amount);
+	  UIFrameFadeOut(SLICECMDR.BARS['DP']['obj'].DoTtext, 2, 1, 0);
+	end
       end
     end
   end -- event == "COMBAT_LOG_EVENT_UNFILTERED"
@@ -408,13 +416,13 @@ function SliceCmdr_TestTarget()
       SLICECMDR.BARS['DP']['obj']:Hide();
     else
       if (isMine == "player") then
- SLICECMDR.DPExpires = expirationTime;
- SLICECMDR.BARS['DP']['Expires'] = expirationTime;
- SLICECMDR.BARS['DP']['obj']:Show();
+	SLICECMDR.DPExpires = expirationTime;
+	SLICECMDR.BARS['DP']['Expires'] = expirationTime;
+	SLICECMDR.BARS['DP']['obj']:Show();
       else
- SLICECMDR.DPExpires = 0;
- SLICECMDR.BARS['DP']['Expires'] = 0;
- SLICECMDR.BARS['DP']['obj']:Hide();
+	SLICECMDR.DPExpires = 0;
+	SLICECMDR.BARS['DP']['Expires'] = 0;
+	SLICECMDR.BARS['DP']['obj']:Hide();
       end
     end
   end
@@ -428,15 +436,15 @@ function SliceCmdr_TestTarget()
       SliceCmdr_ChangeAnchor();--change les ancres
     else
       if (isMine == "player") then
- SLICECMDR.RupExpires = expirationTime;
- SLICECMDR.BARS['Rup']['Expires'] = expirationTime;
- SLICECMDR.BARS['Rup']['obj']:Show();
- SliceCmdr_ChangeAnchor();--change les ancres
+	SLICECMDR.RupExpires = expirationTime;
+	SLICECMDR.BARS['Rup']['Expires'] = expirationTime;
+	SLICECMDR.BARS['Rup']['obj']:Show();
+	SliceCmdr_ChangeAnchor();--change les ancres
       else
- SLICECMDR.RupExpires = 0;
- SLICECMDR.BARS['Rup']['Expires'] = 0;
- SLICECMDR.BARS['Rup']['obj']:Hide();
- SliceCmdr_ChangeAnchor();--change les ancres
+	SLICECMDR.RupExpires = 0;
+	SLICECMDR.BARS['Rup']['Expires'] = 0;
+	SLICECMDR.BARS['Rup']['obj']:Hide();
+	SliceCmdr_ChangeAnchor();--change les ancres
       end
     end
   end
@@ -449,15 +457,15 @@ function SliceCmdr_TestTarget()
       SliceCmdr_ChangeAnchor();
     else
       if (isMine == "player") then
- SLICECMDR.VendExpires = expirationTime;
- SLICECMDR.BARS['Vend']['Expires'] = expirationTime;
- SLICECMDR.BARS['Vend']['obj']:Show();
- SliceCmdr_ChangeAnchor();
+	SLICECMDR.VendExpires = expirationTime;
+	SLICECMDR.BARS['Vend']['Expires'] = expirationTime;
+	SLICECMDR.BARS['Vend']['obj']:Show();
+	SliceCmdr_ChangeAnchor();
       else
- SLICECMDR.VendExpires = 0;
- SLICECMDR.BARS['Vend']['Expires'] = 0;
- SLICECMDR.BARS['Vend']['obj']:Hide();
- SliceCmdr_ChangeAnchor();
+	SLICECMDR.VendExpires = 0;
+	SLICECMDR.BARS['Vend']['Expires'] = 0;
+	SLICECMDR.BARS['Vend']['obj']:Hide();
+	SliceCmdr_ChangeAnchor();
       end
     end
   end
@@ -470,23 +478,23 @@ function SliceCmdr_SetComboPts()
   if (SliceAdmiral_Save.CPBarShow == true) then
     if points == curCombo then
       if curCombo == 0 and not incombat and visible then
- --UIFrameFadeOut(SLICECMDR.BARS['CP']['obj'], framefadeout);
- visible = false;
+	--UIFrameFadeOut(SLICECMDR.BARS['CP']['obj'], framefadeout);
+	visible = false;
       elseif curCombo > 0 and not visible then
- --UIFrameFadeIn(SLICECMDR.BARS['CP']['obj'], framefadein);
- visible = true;
+	--UIFrameFadeIn(SLICECMDR.BARS['CP']['obj'], framefadein);
+	visible = true;
       end
       return
     end
 
     if (points > curCombo) then
       for i = curCombo + 1, points do
- SLICECMDR.BARS['CP']['obj'].combos[i]:Show();
+	SLICECMDR.BARS['CP']['obj'].combos[i]:Show();
       end
       SliceCmdr_Combo:SetText(points);
     else
       for i = points + 1, curCombo do
- SLICECMDR.BARS['CP']['obj'].combos[i]:Hide();
+	SLICECMDR.BARS['CP']['obj'].combos[i]:Hide();
       end
       SliceCmdr_Combo:SetText("");
     end
@@ -546,11 +554,11 @@ function SliceCmdr_NewFrame()
   f:Hide();
 
   f:SetBackdrop({
-    bgFile="Interface\\AddOns\\SliceAdmiral\\Images\\winco_stripe_128.tga",
-    edgeFile="",
-    tile=true, tileSize=1, edgeSize=0,
-    insets={left=-1, right=-1, top=-1, bottom=-3}
-       });
+		  bgFile="Interface\\AddOns\\SliceAdmiral\\Images\\winco_stripe_128.tga",
+		  edgeFile="",
+		  tile=true, tileSize=1, edgeSize=0,
+		  insets={left=-1, right=-1, top=-1, bottom=-3}
+	      });
   f:SetBackdropBorderColor(1,1,1,1);
   f:SetBackdropColor(0,0,0,0.5);
 
@@ -642,9 +650,9 @@ function SliceCmdr_CPFrame()
     combo:SetPoint("BOTTOMRIGHT", f, "BOTTOMLEFT", cx + cpwidth, 0)
 
     combo:SetBackdrop({bgFile = "Interface/Tooltips/UI-Tooltip-Background",
-         edgeFile = "Interface/Tooltips/UI-Tooltip-Border", --"Interface/Tooltips/UI-Tooltip-Border"
-         tile = true, tileSize = 8, edgeSize = 8,
-         insets = { left = 2, right = 2, top = 2, bottom = 2 }});
+		       edgeFile = "Interface/Tooltips/UI-Tooltip-Border", --"Interface/Tooltips/UI-Tooltip-Border"
+		       tile = true, tileSize = 8, edgeSize = 8,
+		       insets = { left = 2, right = 2, top = 2, bottom = 2 }});
     combo:SetBackdropColor( 1, 0.86, 0.1);
 
     combo.bg = combo:CreateTexture(nil, "BACKGROUND")
@@ -873,11 +881,11 @@ function RogueMod_flashBuffedStats()
     if (statCheck[i] == true) then
       SLICECMDR.BARS['Stat']['obj'].stats[i].fs:SetTextColor(140/255, 15/255, 0);
       if (not UIFrameIsFading(SLICECMDR.BARS['Stat']['obj'].stats[i])) then --flash if not already flashing
- if  (SLICECMDR.BARS['Stat']['obj'].stats[i]:GetAlpha() > 0.5) then
-   UIFrameFadeOut(SLICECMDR.BARS['Stat']['obj'].stats[i], 1, 1, 0.1)
- else  --UIFrameFlash likes to throw execeptions deep in the bliz ui?
-   UIFrameFadeOut(SLICECMDR.BARS['Stat']['obj'].stats[i], 1, 0.1, 1)
- end
+	if  (SLICECMDR.BARS['Stat']['obj'].stats[i]:GetAlpha() > 0.5) then
+	  UIFrameFadeOut(SLICECMDR.BARS['Stat']['obj'].stats[i], 1, 1, 0.1)
+	else  --UIFrameFlash likes to throw execeptions deep in the bliz ui?
+	  UIFrameFadeOut(SLICECMDR.BARS['Stat']['obj'].stats[i], 1, 0.1, 1)
+	end
       end
     else
       SLICECMDR.BARS['Stat']['obj'].stats[i].fs:SetTextColor(1, .82, 0); --default text color
@@ -935,11 +943,11 @@ function SliceCmdr_OnLoad()
 
     VTimerEnergy:SetMinMaxValues(0,UnitManaMax("player"));
     VTimerEnergy:SetBackdrop({
-          bgFile="Interface\\AddOns\\SliceAdmiral\\Images\\winco_stripe_128.tga",
-          edgeFile="",
-          tile=true, tileSize=1, edgeSize=0,
-          insets={left=-1, right=-1, top=-1, bottom=0}
-      });
+			       bgFile="Interface\\AddOns\\SliceAdmiral\\Images\\winco_stripe_128.tga",
+			       edgeFile="",
+			       tile=true, tileSize=1, edgeSize=0,
+			       insets={left=-1, right=-1, top=-1, bottom=0}
+			   });
     --"Interface\\TargetingFrame\\UI-StatusBar"
     VTimerEnergy:SetBackdropBorderColor(1,1,1,1);
     VTimerEnergy:SetBackdropColor(0,0,0,0.2);
@@ -1055,6 +1063,13 @@ function SliceCmdr_util_DPTime()
 end
 
 function SliceCmdr_util_RupTime()
+  local name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable = UnitDebuff("target", SC_SPELL_RUP);
+  if (expirationTime) then
+    --   print ("RUP ETime: " .. expirationTime);
+    SLICECMDR.RupExpires = expirationTime;
+  else
+    return 0;
+  end
   if ((SLICECMDR.RupExpires > 0) and (SLICECMDR.tNow < SLICECMDR.RupExpires)) then
     return SLICECMDR.RupExpires - SLICECMDR.tNow;
   else
@@ -1092,22 +1107,22 @@ function SliceCmdr_RupBar()
   if (x > 0) then
     if (x <= 3) then
       if (SLICECMDR.RuptAlertPending == 3) then
- SliceCmdr_Sound(xSound);
- SLICECMDR.RuptAlertPending = 2;
+	SliceCmdr_Sound(xSound);
+	SLICECMDR.RuptAlertPending = 2;
       else
- if (x <= 2) then
-   if (SLICECMDR.RuptAlertPending == 2) then
-     SliceCmdr_Sound(xSound);
-     SLICECMDR.RuptAlertPending = 1;
-   else
-     if (x <= 1) then
-       if (SLICECMDR.RuptAlertPending == 1) then
-  SliceCmdr_Sound(xSound);
-  SLICECMDR.RuptAlertPending = 0;
-       end
-     end
-   end
- end
+	if (x <= 2) then
+	  if (SLICECMDR.RuptAlertPending == 2) then
+	    SliceCmdr_Sound(xSound);
+	    SLICECMDR.RuptAlertPending = 1;
+	  else
+	    if (x <= 1) then
+	      if (SLICECMDR.RuptAlertPending == 1) then
+		SliceCmdr_Sound(xSound);
+		SLICECMDR.RuptAlertPending = 0;
+	      end
+	    end
+	  end
+	end
       end
     else
       SLICECMDR.RuptAlertPending = 3;
@@ -1140,22 +1155,22 @@ function SliceCmdr_VendBar()
   if (x > 0) then
     if (x <= 3) then
       if (SLICECMDR.VendAlertPending == 3) then
- SliceCmdr_Sound(xSound);
- SLICECMDR.VendAlertPending = 2;
+	SliceCmdr_Sound(xSound);
+	SLICECMDR.VendAlertPending = 2;
       else
- if (x <= 2) then
-   if (SLICECMDR.VendAlertPending == 2) then
-     SliceCmdr_Sound(xSound);
-     SLICECMDR.VendAlertPending = 1;
-   else
-     if (x <= 1) then
-       if (SLICECMDR.VendAlertPending == 1) then
-  SliceCmdr_Sound(xSound);
-  SLICECMDR.VendAlertPending = 0;
-       end
-     end
-   end
- end
+	if (x <= 2) then
+	  if (SLICECMDR.VendAlertPending == 2) then
+	    SliceCmdr_Sound(xSound);
+	    SLICECMDR.VendAlertPending = 1;
+	  else
+	    if (x <= 1) then
+	      if (SLICECMDR.VendAlertPending == 1) then
+		SliceCmdr_Sound(xSound);
+		SLICECMDR.VendAlertPending = 0;
+	      end
+	    end
+	  end
+	end
       end
     else
       SLICECMDR.VendAlertPending = 3;
@@ -1192,22 +1207,22 @@ function SliceCmdr_RecupBar()
 
     if (x <= 3) then
       if (recup.AlertPending == 3) then
- SliceCmdr_Sound('Recup.Alert');
- recup.AlertPending = 2;
+	SliceCmdr_Sound('Recup.Alert');
+	recup.AlertPending = 2;
       else
- if (x <= 2) then
-   if (recup.AlertPending == 2) then
-     SliceCmdr_Sound('Recup.Alert');
-     recup.AlertPending = 1;
-   else
-     if (x <= 1) then
-       if (recup.AlertPending == 1) then
-  SliceCmdr_Sound('Recup.Alert');
-  recup.AlertPending = 0;
-       end
-     end
-   end
- end
+	if (x <= 2) then
+	  if (recup.AlertPending == 2) then
+	    SliceCmdr_Sound('Recup.Alert');
+	    recup.AlertPending = 1;
+	  else
+	    if (x <= 1) then
+	      if (recup.AlertPending == 1) then
+		SliceCmdr_Sound('Recup.Alert');
+		recup.AlertPending = 0;
+	      end
+	    end
+	  end
+	end
       end
     else
       recup.AlertPending = 3;
@@ -1242,9 +1257,9 @@ function SliceCmdr_SNDCooldown()
     if (SLICECMDR.BARS['SnD']['obj']) then
       SLICECMDR.BARS['SnD']['obj']:SetValue(x);
       if (x > 0) then
- SLICECMDR.BARS['SnD']['obj'].text:SetText(string.format("%0.1f", x));
+	SLICECMDR.BARS['SnD']['obj'].text:SetText(string.format("%0.1f", x));
       else
- SLICECMDR.BARS['SnD']['obj'].text:SetText("");
+	SLICECMDR.BARS['SnD']['obj'].text:SetText("");
       end
     end
   end
@@ -1253,22 +1268,22 @@ function SliceCmdr_SNDCooldown()
   if (x > 0) then
     if (x <= 3) then
       if (SLICECMDR.AlertPending == 3) then
- SliceCmdr_Sound(xSound);
- SLICECMDR.AlertPending = 2;
+	SliceCmdr_Sound(xSound);
+	SLICECMDR.AlertPending = 2;
       else
- if (x <= 2) then
-   if (SLICECMDR.AlertPending == 2) then
-     SliceCmdr_Sound(xSound);
-     SLICECMDR.AlertPending = 1;
-   else
-     if (x <= 1) then
-       if (SLICECMDR.AlertPending == 1) then
-  SliceCmdr_Sound(xSound);
-  SLICECMDR.AlertPending = 0;
-       end
-     end
-   end
- end
+	if (x <= 2) then
+	  if (SLICECMDR.AlertPending == 2) then
+	    SliceCmdr_Sound(xSound);
+	    SLICECMDR.AlertPending = 1;
+	  else
+	    if (x <= 1) then
+	      if (SLICECMDR.AlertPending == 1) then
+		SliceCmdr_Sound(xSound);
+		SLICECMDR.AlertPending = 0;
+	      end
+	    end
+	  end
+	end
       end
     else
       SLICECMDR.AlertPending = 3;
@@ -1303,22 +1318,22 @@ function RogueMod_SoundCheck()
   if (x > 0) then
     if (x <= 3) then
       if (SLICECMDR.AlertPending == 3) then
- SliceCmdr_Sound(xSound);
- SLICECMDR.AlertPending = 2;
+	SliceCmdr_Sound(xSound);
+	SLICECMDR.AlertPending = 2;
       else
- if (x <= 2) then
-   if (SLICECMDR.AlertPending == 2) then
-     SliceCmdr_Sound(xSound);
-     SLICECMDR.AlertPending = 1;
-   else
-     if (x <= 1) then
-       if (SLICECMDR.AlertPending == 1) then
-  SliceCmdr_Sound(xSound);
-  SLICECMDR.AlertPending = 0;
-       end
-     end
-   end
- end
+	if (x <= 2) then
+	  if (SLICECMDR.AlertPending == 2) then
+	    SliceCmdr_Sound(xSound);
+	    SLICECMDR.AlertPending = 1;
+	  else
+	    if (x <= 1) then
+	      if (SLICECMDR.AlertPending == 1) then
+		SliceCmdr_Sound(xSound);
+		SLICECMDR.AlertPending = 0;
+	      end
+	    end
+	  end
+	end
       end
     else
       SLICECMDR.AlertPending = 3;
@@ -1349,12 +1364,25 @@ function SliceCmdr_OnUpdate()
   end
 
   SLICECMDR.LastEnergy = UnitMana('player');
-  SliceCmdr_SNDCooldown();
-  SliceCmdr_RecupBar();
-  SliceCmdr_DPBar();
-  SliceCmdr_RupBar();
-  SliceCmdr_VendBar();
-  RogueMod_EnvenomBar();
+
+  if (SliceAdmiral_Save.ShowSnDBar) then
+    SliceCmdr_SNDCooldown();
+  end
+  if (SliceAdmiral_Save.RupBarShow == true) then
+    SliceCmdr_RupBar();
+  end
+  if (SliceAdmiral_Save.ShowEnvBar == true) then
+    RogueMod_EnvenomBar();
+  end
+  if (SliceAdmiral_Save.VendBarShow == true) then
+    SliceCmdr_VendBar();
+  end
+  if (SliceAdmiral_Save.ShowRecupBar == true) then
+    SliceCmdr_RecupBar();
+  end
+  if (SliceAdmiral_Save.DPBarShow == true) then
+    SliceCmdr_DPBar();
+  end
   RogueMod_SortBarsByTime();
   --RogueMod_SoundCheck();
   if (showStatBar == 1) then
