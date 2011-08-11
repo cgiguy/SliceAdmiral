@@ -126,13 +126,21 @@ end
 
 function SliceCmdr_SoundTest(name)
   if (SliceCmdr_Sounds[name]) then
-    PlaySoundFile( SliceCmdr_Sounds[name] );
+    if (SliceAdmiral_Save.MasterVolume) then
+      PlaySoundFile( SliceCmdr_Sounds[name], "Master" );
+    else
+      PlaySoundFile( SliceCmdr_Sounds[name] );
+    end
   end
 end
 
 function SliceCmdr_Sound(saved)
   if (SliceAdmiral_Save[saved]) then
-    PlaySoundFile( SliceCmdr_Sounds[ SliceAdmiral_Save[saved] ] );
+    if (SliceAdmiral_Save.MasterVolume) then
+      PlaySoundFile( SliceCmdr_Sounds[ SliceAdmiral_Save[saved] ], "Master" );
+    else
+      PlaySoundFile( SliceCmdr_Sounds[ SliceAdmiral_Save[saved] ] );
+    end
   else
     print(string.format("%s%s", "Soundsave not found: ", saved));
   end
@@ -1065,12 +1073,13 @@ end
 function SliceCmdr_util_RupTime()
   local name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable = UnitDebuff("target", SC_SPELL_RUP);
   if (expirationTime) then
-    --   print ("RUP ETime: " .. expirationTime);
+    -- print ("RUP ETime: " .. expirationTime);
     SLICECMDR.RupExpires = expirationTime;
   else
     return 0;
   end
   if ((SLICECMDR.RupExpires > 0) and (SLICECMDR.tNow < SLICECMDR.RupExpires)) then
+    -- print ("Rup expires: " .. SLICECMDR.RupExpires - SLICECMDR.tNow);
     return SLICECMDR.RupExpires - SLICECMDR.tNow;
   else
     return 0;
@@ -1244,7 +1253,6 @@ function RogueMod_EnvenomBar()
 end
 
 function SliceCmdr_SNDCooldown()
-  SLICECMDR.tNow = GetTime();
   if (SliceAdmiral_Save.PadLatency) then
     local down, up, lag = GetNetStats();
     SLICECMDR.tNow = SLICECMDR.tNow + (lag*2/1000);
@@ -1342,6 +1350,8 @@ function RogueMod_SoundCheck()
 end
 
 function SliceCmdr_OnUpdate()
+  SLICECMDR.tNow = GetTime();
+
   VTimerEnergy:SetValue(UnitMana("player"));
   VTimerEnergy:SetMinMaxValues(0,UnitManaMax("player"));
 

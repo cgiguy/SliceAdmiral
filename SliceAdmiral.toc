@@ -1,7 +1,7 @@
 ## Title: SliceAdmiral
 ## Interface: 40200
 ## Author: Linguine Stormscale US/Iorrh Bronzebeard US
-## Version: 1.0.7
+## Version: 1.0.8
 ## Notes: Info-center for maximizing Rogue DPS. 
 ## DefaultState: Enabled
 ## LoadOnDemand: 0

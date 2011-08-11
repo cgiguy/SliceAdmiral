@@ -2,6 +2,7 @@
 -- Create Date : 9/12/2008 9:43:03 PM
 SliceAdmiral_Save = {
   ["ShowSnDBar"] = true,
+  ["MasterVolume"] = false,
   ["Scale"] = 130,
   ["SortBars"] = true,
   ["RupBarShow"] = true,
@@ -451,6 +452,9 @@ function SliceCmdr_Config_LoadVars()
   SliceCmdr_Config_ShowCPBar:SetChecked( SliceAdmiral_Save.CPBarShow );
 
   SliceCmdr_Config_ShowSnDBar:SetChecked( SliceAdmiral_Save.ShowSnDBar );
+  if (SliceAdmiral_Save.MasterVolume) then
+    SliceCmdr_Config_MasterVolume:SetChecked( SliceAdmiral_Save.MasterVolume );
+  end
   SliceCmdr_Config_ShowRecupBar:SetChecked( SliceAdmiral_Save.ShowRecupBar );
   SliceCmdr_Config_Barsup:SetChecked( SliceAdmiral_Save.Barsup );
   SliceCmdr_Config_SortBars:SetChecked( SliceAdmiral_Save.SortBars );
@@ -660,6 +664,11 @@ function SliceCmdr_Config_Okay()
   else
     SliceAdmiral_Save.ShowSnDBar= false;
   end
+  if (SliceCmdr_Config_MasterVolume:GetChecked()) then
+    SliceAdmiral_Save.MasterVolume = true;
+  else
+    SliceAdmiral_Save.MasterVolume = false;
+  end
   if (SliceCmdr_Config_ShowRecupBar:GetChecked()) then
     SliceAdmiral_Save.ShowRecupBar= true;
   else
@@ -792,6 +801,7 @@ function SliceCmdr_Config_Default()
   SliceAdmiral_Save.Barsup = true;
   SliceAdmiral_Save.SortBars = true;
   SliceAdmiral_Save.ShowStatBar = true;
+  SliceAdmiral_Save.MasterVolume = false;
   SliceCmdr_Config_LoadVars();
 end
 

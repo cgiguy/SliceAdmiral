@@ -558,6 +558,14 @@
 						</Anchor>
 					</Anchors>
 				</FontString>
+				<FontString name="SliceCmdr_Config_MasterVolumeStr" inherits="GameFontNormalSmall" text="Use Master Volume" justifyH="LEFT">
+				  <Size x="142" y="20"/>
+				  <Anchors>
+				    <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT">
+				      <Offset x="45" y="-392"/>
+				    </Anchor>
+				  </Anchors>
+				</FontString>
 			</Layer>
 		</Layers>
 		<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
@@ -571,6 +579,16 @@
 				<AbsValue val="32"/>
 			</EdgeSize>
 		</Backdrop>
+		<Frames>
+		  <CheckButton name="SliceCmdr_Config_MasterVolume" inherits="UICheckButtonTemplate">
+		    <Size x="25" y="25"/>
+		    <Anchors>
+		      <Anchor point="TOPLEFT">
+			<Offset x="15" y="-390"/>
+		      </Anchor>
+		    </Anchors>
+		  </CheckButton>
+		</Frames>
 	</Frame>
 	<Frame name="SliceCmdr_Config" hidden="true" parent="UIParent" toplevel="true">
 		<Size>
