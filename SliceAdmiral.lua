@@ -1,6 +1,6 @@
 -- Author       :cgiguy
 -- Create Date : 9/10/2008 6:44:47 PM
-SLICECMDR = { };
+SLICECMDR = {};
 SLICECMDR.AlertPending = 0;
 SLICECMDR.RuptAlertPending = 0;
 SLICECMDR.VendAlertPending = 0;
@@ -8,7 +8,7 @@ SLICECMDR.curCombo = 0;
 SLICECMDR.LastTime = 0;
 SLICECMDR.BarFont = 0;
 SLICECMDR.LastEnergy = 0;
-SLICECMDR.RupExpires = 0;
+SLICECMDR.RupExpires = 0;	-- Expiration timers based on GetTime() time
 SLICECMDR.VendExpires = 0;
 SLICECMDR.DPExpires = 0;
 SLICECMDR.EnvExpires = 0;
@@ -35,28 +35,34 @@ SLICECMDR.BARS = { --TEH BARS
   },
   ['Recup'] = {
     ['obj'] = 0,
-    ['Expires'] = 0,
-    ['AlertPending'] = 0
+    ['Expires'] = 0,		-- Actual time left to expire in seconds
+    ['AlertPending'] = 0,
+--    ['Title'] = "Recup"
   },
   ['SnD'] = {
     ['obj'] = 0,
-    ['Expires'] = 0
+    ['Expires'] = 0,
+--    ['Title'] = "SnD"
   },
   ['DP'] = {
     ['obj'] = 0,
-    ['Expires'] = 0
+    ['Expires'] = 0,
+--    ['Title'] = "DP"
   },
   ['Rup'] = {
     ['obj'] = 0,
-    ['Expires'] = 0
+    ['Expires'] = 0,
+--    ['Title'] = "Rup"
   },
   ['Vend'] = {
     ['obj'] = 0,
-    ['Expires'] = 0
+    ['Expires'] = 0,
+--    ['Title'] = "Vend"
   },
   ['Env'] = {
     ['obj'] = 0,
-    ['Expires'] = 0
+    ['Expires'] = 0,
+--    ['Title'] = "Env"
   },
   ['Stat'] = {
     ['obj'] = 0,
@@ -190,6 +196,7 @@ function SliceCmdr_ChangeAnchor()
     end
   end
   for i = 1, 4 do
+    --print(i .. ":" .. SLICECMDR.BARORDER[i]['Title'] .. " = " .. SLICECMDR.BARORDER[i]['Expires']);
     if (SLICECMDR.BARORDER[i]['Expires'] > 0) then
       SLICECMDR.BARORDER[i]['obj']:ClearAllPoints();
       if (SliceAdmiral_Save.Barsup) then
@@ -224,9 +231,27 @@ function SliceCmdr_ChangeAnchor()
   end
 end
 
+--[[
+function TimeCompare(a,b)
+  return a['Expires'] < b['Expires'];
+end
+
+function SortBarsByTime()
+  if (SliceAdmiral_Save.SortBars == false) then
+    return;
+  end
+  table.sort(SLICECMDR.BARORDER,TimeCompare);
+--  for i = 1, 4 do
+--    print(i .. ":" .. SLICECMDR.BARORDER[i]['Title'] .. " = " .. SLICECMDR.BARORDER[i]['Expires'])
+--  end
+end
+]]
+
+
 function RogueMod_SortBarsByTime()
-  --[[simple shuffle of the lower bars to higher if they are refreshed. It doesnt garantee perfect order on 1 run,
-  but its run often enough to not matter.]]
+  --[[Simple shuffle of the lower bars to higher if they are refreshed. It doesnt guarantee perfect order on 1 run,
+  but its run often enough to not matter.  It's done in this wierd way because we want to determine if any piece of the
+  order has changed.  That way, we don't call ChangeAnchor() a bazillion times.. which would be *very* bad.]]
 
   if (SliceAdmiral_Save.SortBars == false) then
     return;
@@ -244,6 +269,12 @@ function RogueMod_SortBarsByTime()
     SLICECMDR.BARORDER[3] = tmp;
     SliceCmdr_ChangeAnchor();
   end
+  if (SLICECMDR.BARORDER[3]['Expires'] > SLICECMDR.BARORDER[4]['Expires']) then
+    local tmp = SLICECMDR.BARORDER[3];
+    SLICECMDR.BARORDER[3] = SLICECMDR.BARORDER[4];
+    SLICECMDR.BARORDER[4] = tmp;
+    SliceCmdr_ChangeAnchor();
+  end
 end
 
 function SliceCmdr_OnEvent(self, event, ...)
@@ -251,9 +282,17 @@ function SliceCmdr_OnEvent(self, event, ...)
     local timestamp, type, hideCaster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags = select(1, ...);
     if (type == "SPELL_AURA_REFRESH" or type == "SPELL_AURA_APPLIED" or type == "SPELL_AURA_REMOVED" or type == "SPELL_AURA_APPLIED_DOSE" or type == "SPELL_PERIODIC_AURA_REMOVED" or type == "SPELL_PERIODIC_AURA_APPLIED" or type == "SPELL_PERIODIC_AURA_APPLIED_DOSE" or type == "SPELL_PERIODIC_AURA_REFRESH") then
       local spellId, spellName, spellSchool = select(12, ...);
+      local isMySpell;
       --   print ("spellId = " .. spellId .. " (" .. spellName .. ")");
       --   spellName = GetSpellInfo(spellId);
+      --   print("SourceName: " .. sourceName);
+      if (sourceName == UnitName("player")) then
+        isMySpell = true;
+      else
+	isMySpell = false;
+      end
       if (destName == UnitName("player")) then
+        -- print("Spell on player: " .. spellName);
 	if (spellId == SC_SPELL_SND_ID and SliceAdmiral_Save.ShowSnDBar) then
 	  if (type == "SPELL_AURA_REMOVED") then
 	    if (UnitAffectingCombat("player")) then
@@ -264,11 +303,11 @@ function SliceCmdr_OnEvent(self, event, ...)
 	    SliceCmdr_ChangeAnchor();
 	    SLICECMDR.BARS['SnD']['obj']:Hide();
 	  else
-	    local name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable = UnitAura("player", SC_SPELL_SND);
+	    local name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable, shouldConsolidate, nspellId = UnitAura("player", SC_SPELL_SND);
 	    local timeLeftOnLast = SLICECMDR.SliceExpires - GetTime();
 	    SLICECMDR.BARS['SnD']['obj']:Show();
 	    SLICECMDR.SliceExpires = expirationTime;
-	    SLICECMDR.BARS['SnD']['Expires'] = expirationTime;
+	    SLICECMDR.BARS['SnD']['Expires'] = CalcExpireTime(expirationTime);
 	    SliceCmdr_ChangeAnchor();
 	  end
 	end
@@ -284,10 +323,10 @@ function SliceCmdr_OnEvent(self, event, ...)
 	    SliceCmdr_ChangeAnchor();
 	    SLICECMDR.BARS['Recup']['obj']:Hide();
 	  else
-	    local name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable = UnitAura("player", SC_SPELL_RECUP);
+	    local name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable, shouldConsolidate, nSpellId = UnitAura("player", SC_SPELL_RECUP);
 	    local timeLeftOnLast = SLICECMDR.RecupExpires - GetTime();
 	    SLICECMDR.RecupExpires = expirationTime;
-	    SLICECMDR.BARS['Recup']['Expires'] = expirationTime;
+	    SLICECMDR.BARS['Recup']['Expires'] = CalcExpireTime(expirationTime);
 	    SLICECMDR.BARS['Recup']['obj']:Show();
 	    SliceCmdr_ChangeAnchor();
 	  end
@@ -304,10 +343,10 @@ function SliceCmdr_OnEvent(self, event, ...)
 	    SliceCmdr_ChangeAnchor();
 	    SLICECMDR.BARS['Env']['obj']:Hide();
 	  else
-	    local name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable = UnitAura("player", SC_SPELL_ENV);
+	    local name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable, shouldConsolidate, nSpellId = UnitAura("player", SC_SPELL_ENV);
 	    local timeLeftOnLast = SLICECMDR.EnvExpires - GetTime();
 	    SLICECMDR.EnvExpires = expirationTime;
-	    SLICECMDR.BARS['Env']['Expires'] = expirationTime;
+	    SLICECMDR.BARS['Env']['Expires'] = CalcExpireTime(expirationTime);
 	    SLICECMDR.BARS['Env']['obj']:Show();
 	    SliceCmdr_ChangeAnchor();
 	  end
@@ -315,51 +354,53 @@ function SliceCmdr_OnEvent(self, event, ...)
       else
 	if (destName == UnitName("target")) then
 	  -- DEADLY POISON EVENT --
-	  if (spellId == SC_SPELL_DP_ID and SliceAdmiral_Save.DPBarShow == true) then
-	    local name1, rank1, icon1, count1, debuffType1, duration1, expirationTime1, isMine1, isStealable1 = UnitDebuff("target", SC_SPELL_DP);
-	    if (isMine1 == "player") then
+	  --print("Spell on target: " .. spellName .. "(" .. type .. ")");
+	  if (isMySpell == true and spellId == SC_SPELL_DP_ID and SliceAdmiral_Save.DPBarShow == true) then
+	    if (type == "SPELL_AURA_REMOVED") then
+	      SLICECMDR.DPExpires = 0;
+	      SLICECMDR.BARS['DP']['Expires'] = 0;
+	      SLICECMDR.BARS['DP']['obj']:Hide();
+	    else
+	      local name1, rank1, icon1, count1, debuffType1, duration1, expirationTime1, isMine1, isStealable1, shouldConsolidate1, nspellId = UnitDebuff("target", SC_SPELL_DP);
 	      SLICECMDR.DPExpires = expirationTime1;
-	      SLICECMDR.BARS['DP']['Expires'] = expirationTime1;
+	      SLICECMDR.BARS['DP']['Expires'] = CalcExpireTime(expirationTime1);
 	      SLICECMDR.BARS['DP']['obj'].text2:SetText("x" .. string.format("%i", count1));
 	      SLICECMDR.BARS['DP']['obj']:Show();
-	      SliceCmdr_ChangeAnchor();
 	    end
+	    SliceCmdr_ChangeAnchor();
 	  end
 	  -- RUPTURE EVENT --
-	  if (spellId == SC_SPELL_RUP_ID and SliceAdmiral_Save.RupBarShow == true) then
-	    local name2, rank2, icon2, count2, debuffType2, duration2, expirationTime2, isMine2, isStealable2 = UnitDebuff("target", SC_SPELL_RUP);
-	    if (isMine2 == "player") then
-	      SLICECMDR.RupExpires = expirationTime2;
-	      SLICECMDR.BARS['Rup']['Expires'] = expirationTime2;
-	      SLICECMDR.BARS['Rup']['obj']:Show();
-	    end
+	  if (isMySpell == true and spellId == SC_SPELL_RUP_ID and SliceAdmiral_Save.RupBarShow == true) then
+	    -- print("Rupture event: " .. type);
 	    if (type == "SPELL_AURA_REMOVED") then
 	      if (UnitAffectingCombat("player")) then
 		SliceCmdr_Sound("RuptExpire");
 	      end
 	      SLICECMDR.RupExpires = 0;
 	      SLICECMDR.BARS['Rup']['Expires'] = 0;
-	      SliceCmdr_ChangeAnchor();
 	      SLICECMDR.BARS['Rup']['obj']:Hide();
+	    else
+	      local name2, rank2, icon2, count2, debuffType2, duration2, expirationTime2, isMine2, isStealable2, shouldConsolidate2, nSpellId2 = UnitDebuff("target", SC_SPELL_RUP);
+	      SLICECMDR.RupExpires = expirationTime2;
+	      SLICECMDR.BARS['Rup']['Expires'] = CalcExpireTime(expirationTime2);
+	      SLICECMDR.BARS['Rup']['obj']:Show();
 	    end
 	    SliceCmdr_ChangeAnchor();
 	  end
 	  -- VENDETTA EVENT --
-	  if (spellId == SC_SPELL_VEND_ID and SliceAdmiral_Save.VendBarShow == true) then
-	    local name2, rank2, icon2, count2, debuffType2, duration2, expirationTime2, isMine2, isStealable2 = UnitDebuff("target", SC_SPELL_VEND);
-	    if (isMine2 == "player") then
-	      SLICECMDR.VendExpires = expirationTime2;
-	      SLICECMDR.BARS['Vend']['Expires'] = expirationTime2;
-	      SLICECMDR.BARS['Vend']['obj']:Show();
-	    end
+	  if (isMySpell == true and spellId == SC_SPELL_VEND_ID and SliceAdmiral_Save.VendBarShow == true) then
 	    if (type == "SPELL_AURA_REMOVED") then
 	      if (UnitAffectingCombat("player")) then
 		SliceCmdr_Sound("VendExpire");
 	      end
 	      SLICECMDR.VendExpires = 0;
 	      SLICECMDR.BARS['Vend']['Expires'] = 0;
-	      SliceCmdr_ChangeAnchor();
 	      SLICECMDR.BARS['Vend']['obj']:Hide();
+	    else
+	      local name2, rank2, icon2, count2, debuffType2, duration2, expirationTime2, isMine2, isStealable2, shouldConsolidate, nSpellId = UnitDebuff("target", SC_SPELL_VEND);
+	      SLICECMDR.VendExpires = expirationTime2;
+	      SLICECMDR.BARS['Vend']['Expires'] = CalcExpireTime(expirationTime2);
+	      SLICECMDR.BARS['Vend']['obj']:Show();
 	    end
 	    SliceCmdr_ChangeAnchor();
 	  end
@@ -416,7 +457,7 @@ function SliceCmdr_OnEvent(self, event, ...)
 end
 
 function SliceCmdr_TestTarget()
-  local name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable = UnitDebuff("target", SC_SPELL_DP);
+  local name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable, shouldConsolidate, nspellId = UnitDebuff("target", SC_SPELL_DP);
   if (SliceAdmiral_Save.DPBarShow == true) then
     if not name then
       SLICECMDR.DPExpires = 0;
@@ -425,7 +466,8 @@ function SliceCmdr_TestTarget()
     else
       if (isMine == "player") then
 	SLICECMDR.DPExpires = expirationTime;
-	SLICECMDR.BARS['DP']['Expires'] = expirationTime;
+	SLICECMDR.BARS['DP']['Expires'] = CalcExpireTime(expirationTime);
+	SLICECMDR.BARS['DP']['obj'].text2:SetText("x" .. string.format("%i", count));
 	SLICECMDR.BARS['DP']['obj']:Show();
       else
 	SLICECMDR.DPExpires = 0;
@@ -436,7 +478,7 @@ function SliceCmdr_TestTarget()
   end
 
   if (SliceAdmiral_Save.RupBarShow == true) then
-    name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable = UnitDebuff("target", SC_SPELL_RUP);
+    name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable, shouldConsolidate, nSpellId = UnitDebuff("target", SC_SPELL_RUP);
     if not name then
       SLICECMDR.RupExpires = 0;
       SLICECMDR.BARS['Rup']['Expires'] = 0;
@@ -445,7 +487,7 @@ function SliceCmdr_TestTarget()
     else
       if (isMine == "player") then
 	SLICECMDR.RupExpires = expirationTime;
-	SLICECMDR.BARS['Rup']['Expires'] = expirationTime;
+	SLICECMDR.BARS['Rup']['Expires'] = CalcExpireTime(expirationTime);
 	SLICECMDR.BARS['Rup']['obj']:Show();
 	SliceCmdr_ChangeAnchor();--change les ancres
       else
@@ -457,7 +499,7 @@ function SliceCmdr_TestTarget()
     end
   end
   if (SliceAdmiral_Save.VendBarShow == true) then
-    name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable = UnitDebuff("target", SC_SPELL_VEND);
+    name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable, shouldConsolidate, nSpellId = UnitDebuff("target", SC_SPELL_VEND);
     if not name then
       SLICECMDR.VendExpires = 0;
       SLICECMDR.BARS['Vend']['Expires'] = 0;
@@ -466,7 +508,7 @@ function SliceCmdr_TestTarget()
     else
       if (isMine == "player") then
 	SLICECMDR.VendExpires = expirationTime;
-	SLICECMDR.BARS['Vend']['Expires'] = expirationTime;
+	SLICECMDR.BARS['Vend']['Expires'] = CalcExpireTime(expirationTime);
 	SLICECMDR.BARS['Vend']['obj']:Show();
 	SliceCmdr_ChangeAnchor();
       else
@@ -1009,42 +1051,42 @@ function SliceCmdr_OnLoad()
     SliceCmdr_SetComboPts();
     SliceCmdr_TestTarget();
 
-    print("SliceAdmiral 1.0 loaded!! Options are under the SliceAdmiral tab in the Addons Interface menu")
+    print("SliceAdmiral 1.0.9 loaded!! Options are under the SliceAdmiral tab in the Addons Interface menu")
   else
     SliceCmdr_Unload();
-
     return;
   end
 end
 
+function CalcExpireTime(expireTime)
+  if ((expireTime > 0) and (SLICECMDR.tNow < expireTime)) then
+    -- print ("Expires: " .. expireTime - SLICECMDR.tNow);
+    return expireTime - SLICECMDR.tNow;
+  else
+    return 0;
+  end
+end
+
 function SliceCmdr_util_SnDBuffTime()
-  local name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable = UnitAura("player", SC_SPELL_SND);
+  local name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable, shouldConsolidate, nSpellId = UnitAura("player", SC_SPELL_SND);
   if (expirationTime) then
     --   print ("SND ETime: " .. expirationTime);
     SLICECMDR.SliceExpires = expirationTime;
   else
     return 0;
   end
-  if (SLICECMDR.tNow < SLICECMDR.SliceExpires) then
-    return SLICECMDR.SliceExpires - SLICECMDR.tNow;
-  else
-    return 0;
-  end
+  return CalcExpireTime(expirationTime);
 end
 
 function SliceCmdr_util_RecupTime()
-  local name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable = UnitAura("player", SC_SPELL_RECUP);
+  local name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable, shouldConsolidate, nSpellId = UnitAura("player", SC_SPELL_RECUP);
   --   print ("RECUP ETime: " .. expirationTime);
   if (expirationTime) then
     SLICECMDR.RecupExpires = expirationTime;
   else
     return 0;
   end
-  if ((SLICECMDR.RecupExpires > 0) and (SLICECMDR.tNow < SLICECMDR.RecupExpires)) then
-    return SLICECMDR.RecupExpires - SLICECMDR.tNow;
-  else
-    return 0;
-  end
+  return CalcExpireTime(expirationTime);
 end
 
 function RogueMod_util_EnvenomTime()
@@ -1056,42 +1098,29 @@ function RogueMod_util_EnvenomTime()
 end
 
 function SliceCmdr_util_DPTime()
-  local name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable = UnitDebuff("target", SC_SPELL_DP);
+  local name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable, shouldConsolidate, nSpellId = UnitDebuff("target", SC_SPELL_DP);
   if (expirationTime) then
     --   print ("DP ETime: " .. expirationTime);
     SLICECMDR.DPExpires = expirationTime;
   else
     return 0;
   end
-  if (SLICECMDR.tNow < SLICECMDR.DPExpires) then
-    return SLICECMDR.DPExpires - SLICECMDR.tNow;
-  else
-    return 0;
-  end
+  return CalcExpireTime(expirationTime);
 end
 
 function SliceCmdr_util_RupTime()
-  local name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable = UnitDebuff("target", SC_SPELL_RUP);
+  local name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable, shouldConsolidate, nSpellId = UnitDebuff("target", SC_SPELL_RUP);
   if (expirationTime) then
     -- print ("RUP ETime: " .. expirationTime);
     SLICECMDR.RupExpires = expirationTime;
   else
     return 0;
   end
-  if ((SLICECMDR.RupExpires > 0) and (SLICECMDR.tNow < SLICECMDR.RupExpires)) then
-    -- print ("Rup expires: " .. SLICECMDR.RupExpires - SLICECMDR.tNow);
-    return SLICECMDR.RupExpires - SLICECMDR.tNow;
-  else
-    return 0;
-  end
+  return CalcExpireTime(SLICECMDR.RupExpires);
 end
 
 function SliceCmdr_util_VendTime()
-  if ((SLICECMDR.VendExpires > 0) and (SLICECMDR.tNow < SLICECMDR.VendExpires)) then
-    return SLICECMDR.VendExpires - SLICECMDR.tNow;
-  else
-    return 0;
-  end
+  return CalcExpireTime(SLICECMDR.VendExpires);
 end
 
 function SliceCmdr_RupBar()
@@ -1300,6 +1329,7 @@ function SliceCmdr_SNDCooldown()
 
 end
 
+--[[
 function RogueMod_SoundCheck()
   SLICECMDR.tNow = GetTime();
   if (SliceAdmiral_Save.PadLatency) then
@@ -1348,6 +1378,7 @@ function RogueMod_SoundCheck()
     end
   end
 end
+]]
 
 function SliceCmdr_OnUpdate()
   SLICECMDR.tNow = GetTime();
@@ -1394,6 +1425,7 @@ function SliceCmdr_OnUpdate()
     SliceCmdr_DPBar();
   end
   RogueMod_SortBarsByTime();
+  --SortBarsByTime();
   --RogueMod_SoundCheck();
   if (showStatBar == 1) then
     RogueMod_UpdateStats();

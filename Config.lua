@@ -155,6 +155,7 @@ function SliceCmdr_Config_OnLoad(panel)
 
   SliceCmdr_Config:SetBackdrop(nil);
   SliceCmdr_Config2:SetBackdrop(nil);
+--  SA_MB:SetBackdrop(nil);
 
   panel:RegisterEvent("ADDON_LOADED");
 
@@ -216,14 +217,9 @@ function SliceCmdr_Config_OnLoad(panel)
   panel.default = function (self) SliceCmdr_Config_Default(); end;
   InterfaceOptions_AddCategory(panel);
 
+
   ---  SLICE AND DICE CONFIG ---
   panel = SliceCmdr_Config2;
-
-  --[[SliceCmdr_Config_FailMenu = CreateFrame("Frame", "SliceCmdr_Config_Fail", panel, "UIDropDownMenuTemplate");
-  SliceCmdr_Config_FailMenu:SetPoint("TOPLEFT", SliceCmdr_Config_FailStr, "TOPLEFT", 0, -20);
-  UIDropDownMenu_SetWidth(SliceCmdr_Config_FailMenu, 142);
-  UIDropDownMenu_SetButtonWidth(SliceCmdr_Config_FailMenu, 20);
-  UIDropDownMenu_Initialize(SliceCmdr_Config_FailMenu, SliceCmdr_Config_Fail_Initialise);]]
 
   SliceCmdr_Config_ExpireMenu = CreateFrame("Frame", "SliceCmdr_Config_Expire", panel, "UIDropDownMenuTemplate");
   SliceCmdr_Config_ExpireMenu:SetPoint("TOPLEFT", ExpireSnD_Str, "TOPLEFT", 0, -20);
@@ -231,55 +227,12 @@ function SliceCmdr_Config_OnLoad(panel)
   UIDropDownMenu_SetButtonWidth(SliceCmdr_Config_ExpireMenu, 20);
   UIDropDownMenu_Initialize(SliceCmdr_Config_ExpireMenu, SliceCmdr_Config_Expire_Initialise);
 
-  --[[SliceCmdr_Config_Tick1Menu = CreateFrame("Frame", "SliceCmdr_Config_Tick1", panel, "UIDropDownMenuTemplate");
-  SliceCmdr_Config_Tick1Menu:SetPoint("TOPLEFT", SliceCmdr_Config_Tick1Str, "TOPLEFT", 0, -20);
-  UIDropDownMenu_SetWidth(SliceCmdr_Config_Tick1Menu, 142);
-  UIDropDownMenu_SetButtonWidth(SliceCmdr_Config_Tick1Menu, 20);
-  UIDropDownMenu_Initialize(SliceCmdr_Config_Tick1Menu, SliceCmdr_Config_Tick_Initialise);
-
-  SliceCmdr_Config_Tick2Menu = CreateFrame("Frame", "SliceCmdr_Config_Tick2", panel, "UIDropDownMenuTemplate");
-  SliceCmdr_Config_Tick2Menu:SetPoint("TOPLEFT", ExpireSnD_Str, "TOPLEFT", 0, -20);
-  UIDropDownMenu_SetWidth(SliceCmdr_Config_Tick2Menu, 142);
-  UIDropDownMenu_SetButtonWidth(SliceCmdr_Config_Tick2Menu, 20);
-  UIDropDownMenu_Initialize(SliceCmdr_Config_Tick2Menu, SliceCmdr_Config_Tick_Initialise);]]
-
   SliceCmdr_Config_Tick3Menu = CreateFrame("Frame", "SliceCmdr_Config_Tick3", panel, "UIDropDownMenuTemplate");
   SliceCmdr_Config_Tick3Menu:SetPoint("TOPLEFT", SliceCmdr_Config_Tick3Str, "TOPLEFT", 0, -20);
   UIDropDownMenu_SetWidth(SliceCmdr_Config_Tick3Menu, 142);
   UIDropDownMenu_SetButtonWidth(SliceCmdr_Config_Tick3Menu, 20);
   UIDropDownMenu_Initialize(SliceCmdr_Config_Tick3Menu, SliceCmdr_Config_Tick_Initialise);
 
-  --[[SliceCmdr_Config_Applied1Menu = CreateFrame("Frame", "SliceCmdr_Config_Applied1", panel, "UIDropDownMenuTemplate");
-  SliceCmdr_Config_Applied1Menu:SetPoint("TOPLEFT", SliceCmdr_Config_Applied1Str, "TOPLEFT", 0, -20);
-  UIDropDownMenu_SetWidth(SliceCmdr_Config_Applied1Menu, 142);
-  UIDropDownMenu_SetButtonWidth(SliceCmdr_Config_Applied1Menu, 20);
-  UIDropDownMenu_Initialize(SliceCmdr_Config_Applied1Menu, SliceCmdr_Config_Apply_Initialise);
-
-  SliceCmdr_Config_Applied2Menu = CreateFrame("Frame", "SliceCmdr_Config_Applied2", panel, "UIDropDownMenuTemplate");
-  SliceCmdr_Config_Applied2Menu:SetPoint("TOPLEFT", SliceCmdr_Config_Applied2Str, "TOPLEFT", 0, -20);
-  UIDropDownMenu_SetWidth(SliceCmdr_Config_Applied2Menu, 142);
-  UIDropDownMenu_SetButtonWidth(SliceCmdr_Config_Applied2Menu, 20);
-  UIDropDownMenu_Initialize(SliceCmdr_Config_Applied2Menu, SliceCmdr_Config_Apply_Initialise);
-
-  SliceCmdr_Config_Applied3Menu = CreateFrame("Frame", "SliceCmdr_Config_Applied3", panel, "UIDropDownMenuTemplate");
-  SliceCmdr_Config_Applied3Menu:SetPoint("TOPLEFT", SliceCmdr_Config_Applied3Str, "TOPLEFT", 0, -20);
-  UIDropDownMenu_SetWidth(SliceCmdr_Config_Applied3Menu, 142);
-  UIDropDownMenu_SetButtonWidth(SliceCmdr_Config_Applied3Menu, 20);
-  UIDropDownMenu_Initialize(SliceCmdr_Config_Applied3Menu, SliceCmdr_Config_Apply_Initialise);
-
-  SliceCmdr_Config_AppliedMenu = CreateFrame("Frame", "SliceCmdr_Config_Applied", panel, "UIDropDownMenuTemplate");
-  SliceCmdr_Config_AppliedMenu:SetPoint("TOPLEFT", SliceCmdr_Config_AppliedStr, "TOPLEFT", 0, -20);
-  UIDropDownMenu_SetWidth(SliceCmdr_Config_AppliedMenu, 142);
-  UIDropDownMenu_SetButtonWidth(SliceCmdr_Config_AppliedMenu, 20);
-  UIDropDownMenu_Initialize(SliceCmdr_Config_AppliedMenu, SliceCmdr_Config_Apply_Initialise);]]
-
-  -----------------------Recup sounds start
-
-  --[[SliceCmdr_Config_Recup_FailMenu = CreateFrame("Frame", "SliceCmdr_Config_Recup_Fail", panel, "UIDropDownMenuTemplate");
-  SliceCmdr_Config_Recup_FailMenu:SetPoint("TOPLEFT", SliceCmdr_Config_Recup_FailureStr, "TOPLEFT", 0, -20);
-  UIDropDownMenu_SetWidth(SliceCmdr_Config_Recup_FailMenu, 142);
-  UIDropDownMenu_SetButtonWidth(SliceCmdr_Config_Recup_FailMenu, 20);
-  UIDropDownMenu_Initialize(SliceCmdr_Config_Recup_FailMenu, SliceCmdr_Config_Fail_Initialise);]]
 
   SliceCmdr_Config_Recup_ExpireMenu = CreateFrame("Frame", "SliceCmdr_Config_Recup_Expire", panel, "UIDropDownMenuTemplate");
   SliceCmdr_Config_Recup_ExpireMenu:SetPoint("TOPLEFT", SliceCmdr_Config_Recup_ExpireStr, "TOPLEFT", 0, -20);
@@ -327,57 +280,18 @@ function SliceCmdr_Config_OnLoad(panel)
   SliceCmdr_Config2.default = function (self) SliceCmdr_Config_Default(); end;
   InterfaceOptions_AddCategory(SliceCmdr_Config2);
 
-  --- HUNGER FOR BLOOD ---
-  --SliceCmdr_Config3:SetBackdrop(nil);
-  --panel = SliceCmdr_Config3;
-
-  --[[SliceCmdr_Config_Recup_Refresh1Menu = CreateFrame("Frame", "SliceCmdr_Config_Recup_Refresh1", panel, "UIDropDownMenuTemplate");
-  SliceCmdr_Config_Recup_Refresh1Menu:SetPoint("TOPLEFT", SliceCmdr_Config_Recup_Refresh1Str, "TOPLEFT", 0, -20);
-  UIDropDownMenu_SetWidth(SliceCmdr_Config_Recup_Refresh1Menu, 142);
-  UIDropDownMenu_SetButtonWidth(SliceCmdr_Config_Recup_Refresh1Menu, 20);
-  UIDropDownMenu_Initialize(SliceCmdr_Config_Recup_Refresh1Menu, SliceCmdr_Config_Apply_Initialise);
-
-  SliceCmdr_Config_Recup_Refresh2Menu = CreateFrame("Frame", "SliceCmdr_Config_Recup_Refresh2", panel, "UIDropDownMenuTemplate");
-  SliceCmdr_Config_Recup_Refresh2Menu:SetPoint("TOPLEFT", SliceCmdr_Config_Recup_Refresh2Str, "TOPLEFT", 0, -20);
-  UIDropDownMenu_SetWidth(SliceCmdr_Config_Recup_Refresh2Menu, 142);
-  UIDropDownMenu_SetButtonWidth(SliceCmdr_Config_Recup_Refresh2Menu, 20);
-  UIDropDownMenu_Initialize(SliceCmdr_Config_Recup_Refresh2Menu, SliceCmdr_Config_Apply_Initialise);
-
-  SliceCmdr_Config_Recup_Refresh3Menu = CreateFrame("Frame", "SliceCmdr_Config_Recup_Refresh3", panel, "UIDropDownMenuTemplate");
-  SliceCmdr_Config_Recup_Refresh3Menu:SetPoint("TOPLEFT", SliceCmdr_Config_Recup_Refresh3Str, "TOPLEFT", 0, -20);
-  UIDropDownMenu_SetWidth(SliceCmdr_Config_Recup_Refresh3Menu, 142);
-  UIDropDownMenu_SetButtonWidth(SliceCmdr_Config_Recup_Refresh3Menu, 20);
-  UIDropDownMenu_Initialize(SliceCmdr_Config_Recup_Refresh3Menu, SliceCmdr_Config_Apply_Initialise);
-
-  SliceCmdr_Config_Recup_AppliedMenu = CreateFrame("Frame", "SliceCmdr_Config_Recup_Refresh", panel, "UIDropDownMenuTemplate");
-  SliceCmdr_Config_Recup_AppliedMenu:SetPoint("TOPLEFT", SliceCmdr_Config_Recup_AppliedStr, "TOPLEFT", 0, -20);
-  UIDropDownMenu_SetWidth(SliceCmdr_Config_Recup_AppliedMenu, 142);
-  UIDropDownMenu_SetButtonWidth(SliceCmdr_Config_Recup_AppliedMenu, 20);
-  UIDropDownMenu_Initialize(SliceCmdr_Config_Recup_AppliedMenu, SliceCmdr_Config_Apply_Initialise);]]
-
-
-  --SliceCmdr_Config3.parent = "SliceAdmiral";
-  --SliceCmdr_Config3.name = SC_SOUNDEFFECTS2;
-  --SliceCmdr_Config3.okay = function (self) SliceCmdr_Config_Okay(); end;
-  --SliceCmdr_Config3.cancel = function (self)  SliceCmdr_Config_Cancel();  end;
-  --SliceCmdr_Config3.default = function (self) SliceCmdr_Config_Default(); end;
-  --InterfaceOptions_AddCategory(SliceCmdr_Config3);
+--  SA_MB.parent = "SliceAdmiral";
+--  SA_MB.name = "Mark Test";
+--  SA_MB.okay =    function (self) SliceCmdr_Config_Okay(); end;
+--  SA_MB.cancel =  function (self) SliceCmdr_Config_Cancel();  end;
+--  SA_MB.default = function (self) SliceCmdr_Config_Default(); end;
+--  InterfaceOptions_AddCategory(SA_MB);
 
   --Text at top of frames
   SliceCmdr_Config3_Caption:SetText( SC_SPELL_RECUP .. " " .. SC_LANG_SOUNDS);
   SliceCmdr_Config2_Caption:SetText( SC_SPELL_SND .. " " .. SC_LANG_SOUNDS);
+--  SA_MB:SetText("Header Text");
 
-  --[[--- DEADLY POISON FRAME ---
-  panel = SliceCmdr_Config_DPFrame
-  panel:SetBackdrop(nil);
-  panel.parent = "SliceAdmiral";
-  panel.name = SC_SPELL_DP;
-  panel.okay = function (self) SliceCmdr_Config_Okay(); end;
-  panel.cancel = function (self)  SliceCmdr_Config_Cancel();  end;
-  panel.default = function (self) SliceCmdr_Config_Default(); end;
-  --InterfaceOptions_AddCategory(panel);--]]
-
-  --print("Config onload ended")
   SliceCmdr_Config_LoadVars();
 end
 
