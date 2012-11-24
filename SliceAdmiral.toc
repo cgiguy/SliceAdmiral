@@ -1,0 +1,14 @@
+## Title: SliceAdmiral
+## Interface: 50001
+## Author: Iorrh - Bronzebeard US
+## Version: 1.0.11
+## Notes: Info-center for maximizing Rogue DPS. 
+## DefaultState: Enabled
+## LoadOnDemand: 0
+## SavedVariables: SliceAdmiral_Save
+Config.lua
+localization.lua
+SliceAdmiral.lua
+Resources.lua
+Config.xml
+SliceAdmiral.xml

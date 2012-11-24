@@ -1,0 +1,75 @@
+<Ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.blizzard.com/wow/ui/">
+	<Script file="SliceAdmiral.lua" />
+	<Frame name="SA" parent="UIParent" toplevel="true" movable="true" enableMouse="true">
+		<Size x="140" y="30" />
+		<Anchors>
+			<Anchor point="TOPLEFT">
+				<Offset x="164" y="-181" />
+			</Anchor>
+		</Anchors>
+		<Frames>
+			<StatusBar name="VTimerEnergy" minValue="0" maxValue="100" defaultValue="100">
+				<Size x="200" y="20" />
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="SA" relativePoint="TOPLEFT">
+						<Offset x="6" y="-16" />
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer>
+						<FontString name="VTimerEnergyTxt" inherits="GameFontWhite" text="100" justifyH="RIGHT">
+							<Size x="49" y="20" />
+							<Anchors>
+								<Anchor point="TOPRIGHT">
+									<Offset x="-5" y="0" />
+								</Anchor>
+							</Anchors>
+						</FontString>
+						<FontString name="SA_Combo" inherits="GameFontWhite" justifyH="LEFT">
+							<Size x="20" y="20" />
+							<Anchors>
+								<Anchor point="TOPLEFT" relativeTo="VTimerEnergy" relativePoint="BOTTOMLEFT">
+									<Offset x="2" y="20" />
+								</Anchor>
+							</Anchors>
+						</FontString>
+					</Layer>
+					<Layer level="OVERLAY">
+						<Texture name="SA_Spark1" file="Interface\CastingBar\UI-CastingBar-Spark" alphaMode="ADD">
+							<Size x="3" y="20" />
+							<Anchors>
+								<Anchor point="TOPLEFT" relativeTo="VTimerEnergy" relativePoint="TOPLEFT">
+									<Offset x="50" y="0" />
+								</Anchor>
+							</Anchors>
+						</Texture>
+						<Texture name="SA_Spark2" file="Interface\CastingBar\UI-CastingBar-Spark" alphaMode="ADD">
+							<Size x="3" y="20" />
+							<Anchors>
+								<Anchor point="TOPLEFT" relativeTo="VTimerEnergy" relativePoint="TOPLEFT">
+									<Offset x="80" y="0" />
+								</Anchor>
+							</Anchors>
+						</Texture>
+					</Layer>
+				</Layers>
+				<BarColor r="1" g="0.843137264" b="0" />
+			</StatusBar>
+		</Frames>
+		<Scripts>
+			<OnLoad>SA_OnLoad();</OnLoad>
+			<OnEvent>SA_OnEvent(self, event, ...);</OnEvent>
+			<OnMouseDown>SA_MoveStart(self, button);</OnMouseDown>
+			<OnMouseUp>SA_MoveStop(self, button);</OnMouseUp>
+			<OnUpdate>SA_OnUpdate();</OnUpdate>
+		</Scripts>
+	</Frame>
+	<Frame name="MyDropDownMenu" inherits="UIDropDownMenuTemplate" id="1">
+       <Scripts>
+           <OnLoad>
+               UIDropDownMenu_Initialize(self, MyDropDownMenu_OnLoad, "MENU");
+           </OnLoad>
+       </Scripts>
+   </Frame>
+
+</Ui>
