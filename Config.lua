@@ -1,53 +1,56 @@
 -- Author      : cgiguy
 -- Create Date : 9/12/2008 9:43:03 PM
 SliceAdmiral_Save = {
-  ["ShowSnDBar"] = true,
-  ["MasterVolume"] = false,
-  ["Scale"] = 130,
-  ["SortBars"] = true,
-  ["RupBarShow"] = true,
-  ["VendBarShow"] = true,
-  ["Recup.Tick"] = "Tambourine",
-  ["ShowDoTDmg"] = true,
-  ["ShowEnvBar"] = true,
-  ["Apply1"] = "None",
-  ["Expire"] = "Waaaah",
-  ["Recup.Expire"] = "Price is WRONG",
-  ["Fail"] = "Waaaah",
-  ["IsLocked"] = false,
-  ["Energy1"] = 25,
-  ["ShowRecupBar"] = true,
   ["Applied"] = "None",
-  ["EnergySound2"] = "None",
-  ["Recup.Refresh1"] = "Tambourine",
-  ["BarMargin"] = "3",
-  ["Recup.Refresh3"] = "Tambourine",
-  ["HilightBuffed"] = false,
-  ["EnergyTrans"] = 50,
-  ["DPBarShow"] = true,
-  ["Barsup"] = true,
-  ["Recup.Fail"] = "Price is WRONG",
+  ["Apply1"] = "None",
   ["Apply2"] = "None",
-  ["Recup.Alert"] = "Tambourine",
-  ["Tick3"] = "Tambourine",
-  ["Tick2"] = "Tambourine",
-  ["Energy2"] = 40,
-  ["ShowStatBar"] = true,
+  ["BarMargin"] = "3",
+  ["Barsup"] = true,
   ["BarTexture"] = "Smooth",
-  ["DoTCrits"] = true,
-  ["EnergySound1"] = "None",
-  ["HideCombo"] = false,
-  ["PadLatency"] = true,
-  ["Tick1"] = "Tambourine",
-  ["HideEnergy"] = true,
-  ["Recup.Refresh2"] = "Tambourine",
-  ["Width"] = 130,
   ["CPBarShow"] = true,
+  ["DoTCrits"] = true,
+  ["DPBarShow"] = true,
+  ["Energy1"] = 25,
+  ["Energy2"] = 40,
+  ["EnergySound1"] = "None",
+  ["EnergySound2"] = "None",
+  ["EnergyTrans"] = 50,
+  ["Expire"] = "Waaaah",
+  ["Fade"] = 100,
+  ["Fail"] = "Waaaah",
+  ["HideCombo"] = false,
+  ["HideEnergy"] = true,
+  ["HilightBuffed"] = false,
+  ["IsLocked"] = false,
+  ["MasterVolume"] = false,
+  ["PadLatency"] = true,
+  ["Recup.Alert"] = "Tambourine",
+  ["Recup.Expire"] = "Price is WRONG",
+  ["Recup.Fail"] = "Price is WRONG",
+  ["Recup.Refresh1"] = "Tambourine",
+  ["Recup.Refresh2"] = "Tambourine",
+  ["Recup.Refresh3"] = "Tambourine",
+  ["Recup.Tick"] = "Tambourine",
+  ["RevealBarShow"] = true,
+  ["RevealExpire"] = "BassDrum",
+  ["RevealAlert"] = "Shaker",
+  ["RupBarShow"] = true,
   ["RuptAlert"] = "Shaker",
   ["RuptExpire"] = "BassDrum",
+  ["Scale"] = 130,
+  ["ShowDoTDmg"] = true,
+  ["ShowEnvBar"] = true,
+  ["ShowRecupBar"] = true,
+  ["ShowSnDBar"] = true,
+  ["ShowStatBar"] = true,
+  ["SortBars"] = true,
+  ["Tick1"] = "Tambourine",
+  ["Tick2"] = "Tambourine",
+  ["Tick3"] = "Tambourine",
   ["VendAlert"] = "Ping",
+  ["VendBarShow"] = true,
   ["VendExpire"] = "Drum Rattle",
-  ["Fade"] = 100,
+  ["Width"] = 130,
 };
 
 function SA_Config_OnEvent(self, event, ...)
@@ -65,6 +68,7 @@ function SA_Config_Menu_OnClick(self) -- See note 1
   UIDropDownMenu_SetSelectedValue(self.owner, self.value);
   UIDropDownMenu_SetText(self.owner, self.value);
   SA_SoundTest(self.value);
+  
 end
 
 function SA_Config_Menu_OnClickTexture(self) -- See note 1
@@ -140,6 +144,9 @@ SA_Config_Recup_Refresh1Menu = nil;]]
 
 SA_Config_Rupt_AlertMenu = nil;
 SA_Config_Rupt_ExpireMenu = nil;
+
+SA_Config_Reveal_AlertMenu = nil;
+SA_Config_Reveal_ExpireMenu = nil;
 
 SA_Config_Vend_AlertMenu = nil;
 SA_Config_Vend_ExpireMenu = nil;
@@ -260,6 +267,18 @@ function SA_Config_OnLoad(panel)
   UIDropDownMenu_SetWidth(SA_Config_Rupt_AlertMenu, 142);
   UIDropDownMenu_SetButtonWidth(SA_Config_Rupt_AlertMenu, 20);
   UIDropDownMenu_Initialize(SA_Config_Rupt_AlertMenu, SA_Config_Tick_Initialise);
+  
+  SA_Config_Reveal_ExpireMenu = CreateFrame("Frame", "SA_Config_Reveal_ExpireMenu", panel, "UIDropDownMenuTemplate");
+  SA_Config_Reveal_ExpireMenu:SetPoint("TOPLEFT", SA_Config_Reveal_ExpireStr, "TOPLEFT", 0, -20);
+  UIDropDownMenu_SetWidth(SA_Config_Reveal_ExpireMenu, 142);
+  UIDropDownMenu_SetButtonWidth(SA_Config_Reveal_ExpireMenu, 20);
+  UIDropDownMenu_Initialize(SA_Config_Reveal_ExpireMenu, SA_Config_Expire_Initialise);
+
+  SA_Config_Reveal_AlertMenu = CreateFrame("Frame", "SA_Config_Reveal_AlertMenu", panel, "UIDropDownMenuTemplate");
+  SA_Config_Reveal_AlertMenu:SetPoint("TOPLEFT", SA_Config_Reveal_AlertStr, "TOPLEFT", 0, -20);
+  UIDropDownMenu_SetWidth(SA_Config_Reveal_AlertMenu, 142);
+  UIDropDownMenu_SetButtonWidth(SA_Config_Reveal_AlertMenu, 20);
+  UIDropDownMenu_Initialize(SA_Config_Reveal_AlertMenu, SA_Config_Tick_Initialise);
 
   SA_Config_Vend_ExpireMenu = CreateFrame("Frame", "SA_Config_Vend_ExpireMenu", panel, "UIDropDownMenuTemplate");
   SA_Config_Vend_ExpireMenu:SetPoint("TOPLEFT", SA_Config_Vend_ExpireStr, "TOPLEFT", 0, -20);
@@ -314,24 +333,29 @@ function SA_Config_LoadVars()
 
 
   -- hunger for blood --
-  UIDropDownMenu_SetSelectedValue(SA_Config_Recup_AlertMenu, SliceAdmiral_Save['Recup.Alert'] );
-  UIDropDownMenu_SetText(SA_Config_Recup_AlertMenu, SliceAdmiral_Save['Recup.Alert'] );
-  UIDropDownMenu_SetSelectedValue(SA_Config_Recup_ExpireMenu, SliceAdmiral_Save['Recup.Expire'] );
-  UIDropDownMenu_SetText(SA_Config_Recup_ExpireMenu, SliceAdmiral_Save['Recup.Expire'] );
-  --UIDropDownMenu_SetSelectedValue(SA_Config_Recup_FailMenu, SliceAdmiral_Save['Recup.Fail'] );
-  --UIDropDownMenu_SetSelectedValue(SA_Config_Recup_AppliedMenu, SliceAdmiral_Save['Recup.Applied'] );
-  --UIDropDownMenu_SetSelectedValue(SA_Config_Recup_Refresh3Menu, SliceAdmiral_Save['Recup.Refresh3'] );
-  --UIDropDownMenu_SetSelectedValue(SA_Config_Recup_Refresh2Menu, SliceAdmiral_Save['Recup.Refresh2'] );
-  --UIDropDownMenu_SetSelectedValue(SA_Config_Recup_Refresh1Menu, SliceAdmiral_Save['Recup.Refresh1'] );
-  UIDropDownMenu_SetSelectedValue(SA_Config_Rupt_ExpireMenu, SliceAdmiral_Save['RuptExpire']);
-  UIDropDownMenu_SetText(SA_Config_Rupt_ExpireMenu, SliceAdmiral_Save['RuptExpire']);
-  UIDropDownMenu_SetSelectedValue(SA_Config_Rupt_AlertMenu, SliceAdmiral_Save['RuptAlert']);
-  UIDropDownMenu_SetText(SA_Config_Rupt_AlertMenu, SliceAdmiral_Save['RuptAlert']);
-
-  UIDropDownMenu_SetSelectedValue(SA_Config_Vend_ExpireMenu, SliceAdmiral_Save['VendExpire']);
-  UIDropDownMenu_SetText(SA_Config_Vend_ExpireMenu, SliceAdmiral_Save['VendExpire']);
-  UIDropDownMenu_SetSelectedValue(SA_Config_Vend_AlertMenu, SliceAdmiral_Save['VendAlert']);
-  UIDropDownMenu_SetText(SA_Config_Vend_AlertMenu, SliceAdmiral_Save['VendAlert']);
+  UIDropDownMenu_SetSelectedValue(SA_Config_Recup_AlertMenu, SliceAdmiral_Save["Recup.Alert"] );
+  UIDropDownMenu_SetText(SA_Config_Recup_AlertMenu, SliceAdmiral_Save["Recup.Alert"] );
+  UIDropDownMenu_SetSelectedValue(SA_Config_Recup_ExpireMenu, SliceAdmiral_Save["Recup.Expire"] );
+  UIDropDownMenu_SetText(SA_Config_Recup_ExpireMenu, SliceAdmiral_Save["Recup.Expire"] );
+  --UIDropDownMenu_SetSelectedValue(SA_Config_Recup_FailMenu, SliceAdmiral_Save["Recup.Fail"] );
+  --UIDropDownMenu_SetSelectedValue(SA_Config_Recup_AppliedMenu, SliceAdmiral_Save["Recup.Applied"] );
+  --UIDropDownMenu_SetSelectedValue(SA_Config_Recup_Refresh3Menu, SliceAdmiral_Save["Recup.Refresh3"] );
+  --UIDropDownMenu_SetSelectedValue(SA_Config_Recup_Refresh2Menu, SliceAdmiral_Save["Recup.Refresh2"] );
+  --UIDropDownMenu_SetSelectedValue(SA_Config_Recup_Refresh1Menu, SliceAdmiral_Save["Recup.Refresh1"] );
+  UIDropDownMenu_SetSelectedValue(SA_Config_Rupt_ExpireMenu, SliceAdmiral_Save["RuptExpire"]);
+  UIDropDownMenu_SetText(SA_Config_Rupt_ExpireMenu, SliceAdmiral_Save["RuptExpire"]);
+  UIDropDownMenu_SetSelectedValue(SA_Config_Rupt_AlertMenu, SliceAdmiral_Save["RuptAlert"]);
+  UIDropDownMenu_SetText(SA_Config_Rupt_AlertMenu, SliceAdmiral_Save["RuptAlert"]);
+  
+  UIDropDownMenu_SetSelectedValue(SA_Config_Reveal_ExpireMenu, SliceAdmiral_Save["RevealExpire"]);
+  UIDropDownMenu_SetText(SA_Config_Reveal_ExpireMenu, SliceAdmiral_Save["RevealExpire"]);
+  UIDropDownMenu_SetSelectedValue(SA_Config_Reveal_AlertMenu, SliceAdmiral_Save["RevealAlert"]);
+  UIDropDownMenu_SetText(SA_Config_Reveal_AlertMenu, SliceAdmiral_Save["RevealAlert"]);
+  
+  UIDropDownMenu_SetSelectedValue(SA_Config_Vend_ExpireMenu, SliceAdmiral_Save["VendExpire"]);
+  UIDropDownMenu_SetText(SA_Config_Vend_ExpireMenu, SliceAdmiral_Save["VendExpire"]);
+  UIDropDownMenu_SetSelectedValue(SA_Config_Vend_AlertMenu, SliceAdmiral_Save["VendAlert"]);
+  UIDropDownMenu_SetText(SA_Config_Vend_AlertMenu, SliceAdmiral_Save["VendAlert"]);
 
 
   --  DEFAULT_CHAT_FRAME:AddMessage("Original menu texture value: " .. UIDropDownMenu_GetSelectedValue(SA_Config_BarTextureMenu));
@@ -361,6 +385,7 @@ function SA_Config_LoadVars()
   SA_Config_BarMargin:SetText(SliceAdmiral_Save.BarMargin);
 
   SA_Config_ShowRupBar:SetChecked( SliceAdmiral_Save.RupBarShow );
+  SA_Config_ShowRevealBar:SetChecked( SliceAdmiral_Save.RevealBarShow );
   SA_Config_ShowVendBar:SetChecked( SliceAdmiral_Save.VendBarShow );
   SA_Config_ShowDPBar:SetChecked( SliceAdmiral_Save.DPBarShow );
   SA_Config_ShowCPBar:SetChecked( SliceAdmiral_Save.CPBarShow );
@@ -408,61 +433,21 @@ function SA_SetScale(NewScale)
   if (NewScale >= 50) then
     SA:SetScale ( NewScale / 100 );
     VTimerEnergy:SetScale ( NewScale / 100 );
-    if(SA_Data.BARS['Recup']['obj']) then
-      SA_Data.BARS['Recup']['obj']:SetScale ( NewScale / 100 );
-    end
-    if (SA_Data.BARS['Rup']['obj']) then
-      SA_Data.BARS['Rup']['obj']:SetScale ( NewScale / 100 );
-    end
-    if (SA_Data.BARS['Vend']['obj']) then
-      SA_Data.BARS['Vend']['obj']:SetScale ( NewScale / 100 );
-    end
-    if (SA_Data.BARS['CP']['obj']) then
-      SA_Data.BARS['CP']['obj']:SetScale ( NewScale / 100 );
-    end
-    if (SA_Data.BARS['DP']['obj']) then
-      SA_Data.BARS['DP']['obj']:SetScale ( NewScale / 100 );
-    end
-    if (SA_Data.BARS['SnD']['obj']) then
-      SA_Data.BARS['SnD']['obj']:SetScale ( NewScale / 100 );
-    end
-    if (SA_Data.BARS['Stat']['obj']) then
-      SA_Data.BARS['Stat']['obj']:SetScale ( NewScale / 100 );
-    end
-    if (SA_Data.BARS['Env']['obj']) then
-      SA_Data.BARS['Env']['obj']:SetScale ( NewScale / 100 );
-    end
+	
+	for k,v in pairs(SA_Data.BARS) do
+		SA_Data.BARS[k]["obj"]:SetScale(NewScale/100);
+	end
+
   end
 end
 
 function SA_SetWidth(w)
   if (w >= 25) then
     VTimerEnergy:SetWidth( w);
-    if (SA_Data.BARS['Recup']['obj']) then
-      SA_Data.BARS['Recup']['obj']:SetWidth( w );
-    end
-    if (SA_Data.BARS['CP']['obj']) then
-      SA_Data.BARS['CP']['obj']:SetWidth( w );
-    end
-    if (SA_Data.BARS['Rup']['obj']) then
-      SA_Data.BARS['Rup']['obj']:SetWidth( w );
-    end
-    if (SA_Data.BARS['Vend']['obj']) then
-      SA_Data.BARS['Vend']['obj']:SetWidth( w );
-    end
-    if (SA_Data.BARS['DP']['obj']) then
-      SA_Data.BARS['DP']['obj']:SetWidth( w );
-    end
-    if (SA_Data.BARS['SnD']['obj']) then
-      SA_Data.BARS['SnD']['obj']:SetWidth( w );
-    end
-    if (SA_Data.BARS['Stat']['obj']) then
-      SA_Data.BARS['Stat']['obj']:SetWidth( w );
-    end
-    if (SA_Data.BARS['Env']['obj']) then
-      SA_Data.BARS['Env']['obj']:SetWidth( w );
-    end
-
+	for k,v in pairs(SA_Data.BARS) do
+		SA_Data.BARS[k]["obj"]:SetWidth(w);
+	end
+		
     SA_Spark1:SetPoint("TOPLEFT", VTimerEnergy, "TOPLEFT", (SliceAdmiral_Save.Energy1 / UnitManaMax("player") * w), 0);
     SA_Spark2:SetPoint("TOPLEFT", VTimerEnergy, "TOPLEFT", (SliceAdmiral_Save.Energy2 / UnitManaMax("player") * w), 0);
     SA_UpdateCPWidths();
@@ -474,13 +459,13 @@ function SA_Config_VarsChanged()
   SA_SetScale(SliceAdmiral_Save.Scale);
   SA_SetWidth(SliceAdmiral_Save.Width);
 
-  if (SliceAdmiral_Save.HideEnergy == true) then
+  if SliceAdmiral_Save.HideEnergy then
     VTimerEnergy:Hide();
   else
     VTimerEnergy:Show();
   end
 
-  if (SliceAdmiral_Save.HideCombo == true) then
+  if SliceAdmiral_Save.HideCombo then
     SA_Combo:Hide();
     SA:UnregisterEvent("UNIT_COMBO_POINTS");
     SA:UnregisterEvent("PLAYER_TARGET_CHANGED");
@@ -490,15 +475,15 @@ function SA_Config_VarsChanged()
     SA:RegisterEvent("PLAYER_TARGET_CHANGED");
   end
 
-  if (SliceAdmiral_Save.CPBarShow == true) then
-    SA_Data.BARS['CP']['obj']:Show();
+  if SliceAdmiral_Save.CPBarShow then
+    SA_Data.BARS["CP"]["obj"]:Show();
   else
-    SA_Data.BARS['CP']['obj']:Hide();
+    SA_Data.BARS["CP"]["obj"]:Hide();
   end
-  if (SliceAdmiral_Save.ShowStatBar == true) then
-    SA_Data.BARS['Stat']['obj']:Show();
+  if SliceAdmiral_Save.ShowStatBar then
+    SA_Data.BARS["Stat"]["obj"]:Show();
   else
-    SA_Data.BARS['Stat']['obj']:Hide();
+    SA_Data.BARS["Stat"]["obj"]:Hide();
   end
 
   SA_Config_RetextureBars();
@@ -508,15 +493,15 @@ function SA_Config_RetextureBars()
   local texture = SA_BarTexture();
 
   VTimerEnergy:SetStatusBarTexture(texture);
-  SA_Data.BARS['Rup']['obj']:SetStatusBarTexture(texture);
-  SA_Data.BARS['Vend']['obj']:SetStatusBarTexture(texture);
-  SA_Data.BARS['DP']['obj']:SetStatusBarTexture(texture);
-  SA_Data.BARS['SnD']['obj']:SetStatusBarTexture(texture);
-  SA_Data.BARS['Recup']['obj']:SetStatusBarTexture(texture);
-  SA_Data.BARS['Env']['obj']:SetStatusBarTexture(texture);
+  
+  for k,v in pairs(SA_Data.BARS) do
+	if not (k == "CP" or k == "Stat") then
+		SA_Data.BARS[k]["obj"]:SetStatusBarTexture(texture);
+	end
+  end
 
   for i = 1, 5 do
-    SA_Data.BARS['CP']['obj'].combos[i].bg:SetTexture(texture);
+    SA_Data.BARS["CP"]["obj"].combos[i].bg:SetTexture(texture);
   end
 
 end
@@ -543,20 +528,16 @@ function SA_Config_Okay()
   else
     SliceAdmiral_Save.HideEnergy = false;
   end
-
-
   if (SA_Config_PadLatency:GetChecked()) then
     SliceAdmiral_Save.PadLatency= true;
   else
     SliceAdmiral_Save.PadLatency= false;
   end
-
   if (SA_Config_ShowDPBar:GetChecked()) then
     SliceAdmiral_Save.DPBarShow= true;
   else
     SliceAdmiral_Save.DPBarShow= false;
   end
-
   if (SA_Config_ShowCPBar:GetChecked()) then
     SliceAdmiral_Save.CPBarShow= true;
   else
@@ -567,12 +548,16 @@ function SA_Config_Okay()
   else
     SliceAdmiral_Save.RupBarShow= false;
   end
+  if (SA_Config_ShowRevealBar:GetChecked()) then
+    SliceAdmiral_Save.RevealBarShow= true;
+  else
+    SliceAdmiral_Save.RevealBarShow= false;
+  end
   if (SA_Config_ShowVendBar:GetChecked()) then
     SliceAdmiral_Save.VendBarShow= true;
   else
     SliceAdmiral_Save.VendBarShow= false;
   end
-  --
   if (SA_Config_ShowSnDBar:GetChecked()) then
     SliceAdmiral_Save.ShowSnDBar= true;
   else
@@ -654,20 +639,22 @@ function SA_Config_Okay()
   SliceAdmiral_Save.EnergySound2 = UIDropDownMenu_GetSelectedValue( SA_Config_Energy2Menu );
 
   -- page two --
-  SliceAdmiral_Save['Recup.Alert'] = UIDropDownMenu_GetSelectedValue( SA_Config_Recup_AlertMenu );
-  SliceAdmiral_Save['Recup.Expire'] = UIDropDownMenu_GetSelectedValue(SA_Config_Recup_ExpireMenu );
-  SliceAdmiral_Save['Recup.Fail'] = UIDropDownMenu_GetSelectedValue(SA_Config_Recup_ExpireMenu );
-  --[[SliceAdmiral_Save['Recup.Applied'] = UIDropDownMenu_GetSelectedValue(SA_Config_Recup_AppliedMenu );
-  SliceAdmiral_Save['Recup.Refresh3'] = UIDropDownMenu_GetSelectedValue(SA_Config_Recup_Refresh3Menu );
-  SliceAdmiral_Save['Recup.Refresh2'] = UIDropDownMenu_GetSelectedValue(SA_Config_Recup_Refresh2Menu );
-  SliceAdmiral_Save['Recup.Refresh1'] = UIDropDownMenu_GetSelectedValue(SA_Config_Recup_Refresh1Menu );]]
+  SliceAdmiral_Save["Recup.Alert"] = UIDropDownMenu_GetSelectedValue( SA_Config_Recup_AlertMenu );
+  SliceAdmiral_Save["Recup.Expire"] = UIDropDownMenu_GetSelectedValue(SA_Config_Recup_ExpireMenu );
+  SliceAdmiral_Save["Recup.Fail"] = UIDropDownMenu_GetSelectedValue(SA_Config_Recup_ExpireMenu );
+  --[[SliceAdmiral_Save["Recup.Applied"] = UIDropDownMenu_GetSelectedValue(SA_Config_Recup_AppliedMenu );
+  SliceAdmiral_Save["Recup.Refresh3"] = UIDropDownMenu_GetSelectedValue(SA_Config_Recup_Refresh3Menu );
+  SliceAdmiral_Save["Recup.Refresh2"] = UIDropDownMenu_GetSelectedValue(SA_Config_Recup_Refresh2Menu );
+  SliceAdmiral_Save["Recup.Refresh1"] = UIDropDownMenu_GetSelectedValue(SA_Config_Recup_Refresh1Menu );]]
 
-  SliceAdmiral_Save['RuptAlert'] = UIDropDownMenu_GetSelectedValue( SA_Config_Rupt_AlertMenu );
-  SliceAdmiral_Save['RuptExpire'] = UIDropDownMenu_GetSelectedValue( SA_Config_Rupt_ExpireMenu );
-  --SliceAdmiral_Save['RuptFail'] =   --TODO add rupture failure!
+  SliceAdmiral_Save["RuptAlert"] = UIDropDownMenu_GetSelectedValue( SA_Config_Rupt_AlertMenu );
+  SliceAdmiral_Save["RuptExpire"] = UIDropDownMenu_GetSelectedValue( SA_Config_Rupt_ExpireMenu );
+  --SliceAdmiral_Save["RuptFail"] =   --TODO add rupture failure!
+  SliceAdmiral_Save["RevealAlert"] = UIDropDownMenu_GetSelectedValue( SA_Config_Reveal_AlertMenu );
+  SliceAdmiral_Save["RevealExpire"] = UIDropDownMenu_GetSelectedValue( SA_Config_Reveal_ExpireMenu );
 
-  SliceAdmiral_Save['VendAlert'] = UIDropDownMenu_GetSelectedValue( SA_Config_Vend_AlertMenu );
-  SliceAdmiral_Save['VendExpire'] = UIDropDownMenu_GetSelectedValue( SA_Config_Vend_ExpireMenu );
+  SliceAdmiral_Save["VendAlert"] = UIDropDownMenu_GetSelectedValue( SA_Config_Vend_AlertMenu );
+  SliceAdmiral_Save["VendExpire"] = UIDropDownMenu_GetSelectedValue( SA_Config_Vend_ExpireMenu );
 
   SA_Config_VarsChanged();
 end
@@ -681,31 +668,32 @@ function SA_Config_Default()
   SliceAdmiral_Save.HideEnergy = true;
   SliceAdmiral_Save.Energy1 = 25;
   SliceAdmiral_Save.Energy2 = 40;
-  SliceAdmiral_Save.Fail = 'Waaaah';
-  SliceAdmiral_Save.Expire = 'BassDrum';
-  SliceAdmiral_Save.Tick3 = 'Tambourine';
-  SliceAdmiral_Save.Tick2 = 'Tambourine';
-  SliceAdmiral_Save.Tick1 = 'Tambourine';
-  SliceAdmiral_Save.Applied = 'None';
-  SliceAdmiral_Save.Apply3 = 'None';
-  SliceAdmiral_Save.Apply2 = 'None';
-  SliceAdmiral_Save.Apply1 = 'None';
-  SliceAdmiral_Save.EnergySound1 = 'None';
-  SliceAdmiral_Save.EnergySound2 = 'None';
-  SliceAdmiral_Save['Recup.Fail'] = 'Waaaah';
-  SliceAdmiral_Save['Recup.Expire'] = 'Waaaah';
-  SliceAdmiral_Save['Recup.Applied'] = 'None';
-  SliceAdmiral_Save['Recup.Refresh3'] = 'None';
-  SliceAdmiral_Save['Recup.Refresh2'] = 'None';
-  SliceAdmiral_Save['Recup.Refresh1'] = 'None';
-  SliceAdmiral_Save['Recup.Alert'] = 'None';
-  SliceAdmiral_Save['Width'] = 110;
-  SliceAdmiral_Save['Scale'] = 140;
-  SliceAdmiral_Save['PadLatency'] = true;
-  SliceAdmiral_Save['EnergyTrans'] = 50;
+  SliceAdmiral_Save.Fail = "Waaaah";
+  SliceAdmiral_Save.Expire = "BassDrum";
+  SliceAdmiral_Save.Tick3 = "Tambourine";
+  SliceAdmiral_Save.Tick2 = "Tambourine";
+  SliceAdmiral_Save.Tick1 = "Tambourine";
+  SliceAdmiral_Save.Applied = "None";
+  SliceAdmiral_Save.Apply3 = "None";
+  SliceAdmiral_Save.Apply2 = "None";
+  SliceAdmiral_Save.Apply1 = "None";
+  SliceAdmiral_Save.EnergySound1 = "None";
+  SliceAdmiral_Save.EnergySound2 = "None";
+  SliceAdmiral_Save["Recup.Fail"] = "Waaaah";
+  SliceAdmiral_Save["Recup.Expire"] = "Waaaah";
+  SliceAdmiral_Save["Recup.Applied"] = "None";
+  SliceAdmiral_Save["Recup.Refresh3"] = "None";
+  SliceAdmiral_Save["Recup.Refresh2"] = "None";
+  SliceAdmiral_Save["Recup.Refresh1"] = "None";
+  SliceAdmiral_Save["Recup.Alert"] = "None";
+  SliceAdmiral_Save["Width"] = 110;
+  SliceAdmiral_Save["Scale"] = 140;
+  SliceAdmiral_Save["PadLatency"] = true;
+  SliceAdmiral_Save["EnergyTrans"] = 50;
   SliceAdmiral_Save.BarMargin = 3;
   SliceAdmiral_Save.DPBarShow = true;
   SliceAdmiral_Save.RupBarShow = true;
+  SliceAdmiral_Save.RevealBarShow = true;
   SliceAdmiral_Save.VendBarShow = true;
   SliceAdmiral_Save.ShowEnvBar = true;
   SliceAdmiral_Save.HilightBuffed = false;
@@ -735,7 +723,7 @@ function SA_Config_TransFullV_OnTextChanged(self)
 end
 
 function SA_Config_Energy2_OnValueChanged(self)
-  if (SA_Config_Energy2V) then
+  if SA_Config_Energy2V then
     SA_Config_Energy2V:SetText(self:GetValue());
   end
 end
