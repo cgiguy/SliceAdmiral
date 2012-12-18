@@ -106,6 +106,14 @@
 	    </Anchor>
 	  </Anchors>
 	</FontString>
+	<FontString name="RevStrikeBuff" inherits="GameFontWhite" text="Revealing Strike" justifyH="LEFT">
+	  <Size x="120" y="22"/>
+	  <Anchors>
+	    <Anchor point="TOPLEFT">
+	      <Offset x="41" y="-221"/>
+	    </Anchor>
+	  </Anchors>
+	</FontString>
 	<FontString name="BarOptions" inherits="" font="GameFontNormalLarge" text="Bar Options" justifyH="LEFT">
 	  <Size x="226" y="20"/>
 	  <Anchors>
@@ -206,6 +214,14 @@
 	<Anchors>
 	  <Anchor point="TOPLEFT">
 	    <Offset x="15" y="-191"/>
+	  </Anchor>
+	</Anchors>
+      </CheckButton>
+      <CheckButton name="SA_Config_ShowRevStrikeBar" inherits="UICheckButtonTemplate">
+	<Size x="25" y="25"/>
+	<Anchors>
+	  <Anchor point="TOPLEFT">
+	    <Offset x="15" y="-221"/>
 	  </Anchor>
 	</Anchors>
       </CheckButton>
@@ -486,45 +502,37 @@
     </Anchors>
     <Layers>
       <Layer>
-<!--
-	<FontString name="SA_Label1" inherits="GameFontNormalLarge" text="Top Left" justifyH="LEFT">
+
+	<FontString name="SA_RevStrikeSounds_Caption" inherits="GameFontNormalLarge" text="Revealing Strike Sounds" justifyH="LEFT">
 	  <Size x="366" y="32"/>
 	  <Anchors>
 	    <Anchor point="TOPLEFT">
-	      <Offset x="0" y="0"/>
+	      <Offset x="15" y="-280"/>
 	    </Anchor>
 	  </Anchors>
 	</FontString>
-	<FontString name="SA_Label2" inherits="GameFontNormalLarge" text="CENTER" justifyH="CENTER">
-	  <Size x="366" y="32"/>
+	<FontString name="SA_Config_RevStrike_AlertStr" inherits="GameFontNormalSmall" text="Alert" justifyH="LEFT">
+	  <Size x="142" y="20"/>
 	  <Anchors>
-	    <Anchor point="TOPLEFT">
-	      <Offset x="0" y="0"/>
+	    <Anchor point="TOPLEFT" relativeTo="SA_Config2" relativePoint="TOPLEFT">
+	      <Offset x="7" y="-303"/>
 	    </Anchor>
 	  </Anchors>
 	</FontString>
-	<FontString name="SA_Label3" inherits="GameFontNormalLarge" text="Top Right" justifyH="RIGHT">
-	  <Size x="366" y="32"/>
+	<FontString name="SA_Config_RevStrike_ExpireStr" inherits="GameFontNormalSmall" text="Expire" justifyH="LEFT">
+	  <Size x="142" y="20"/>
 	  <Anchors>
-	    <Anchor point="TOPLEFT">
-	      <Offset x="0" y="0"/>
+	    <Anchor point="TOPLEFT" relativeTo="SA_Config2" relativePoint="TOPLEFT">
+	      <Offset x="7" y="-346"/>
 	    </Anchor>
 	  </Anchors>
 	</FontString>
-	<FontString name="SA_Label4" inherits="GameFontNormalLarge" text="Bottom Right" justifyH="RIGHT">
-	  <Size x="366" y="32"/>
-	  <Anchors>
-	    <Anchor point="TOPLEFT">
-	      <Offset><RelDimension x="1.0" y="0.0"/></Offset>
-	    </Anchor>
-	  </Anchors>
-	</FontString>
--->
+
 	<FontString name="SA_RuptSounds_Caption" inherits="GameFontNormalLarge" text="Rupture Sounds" justifyH="LEFT">
 	  <Size x="366" y="32"/>
 	  <Anchors>
 	    <Anchor point="TOPLEFT">
-	      <Offset x="7" y="-224"/>
+	      <Offset x="15" y="-146"/>
 	    </Anchor>
 	  </Anchors>
 	</FontString>
@@ -532,7 +540,7 @@
 	  <Size x="142" y="20"/>
 	  <Anchors>
 	    <Anchor point="TOPLEFT" relativeTo="SA_Config2" relativePoint="TOPLEFT">
-	      <Offset x="7" y="-260"/>
+	      <Offset x="7" y="-169"/>
 	    </Anchor>
 	  </Anchors>
 	</FontString>
@@ -540,23 +548,23 @@
 	  <Size x="142" y="20"/>
 	  <Anchors>
 	    <Anchor point="TOPLEFT" relativeTo="SA_Config2" relativePoint="TOPLEFT">
-	      <Offset x="7" y="-310"/>
+	      <Offset x="7" y="-212"/>
 	    </Anchor>
 	  </Anchors>
 	</FontString>
-	<FontString name="ExpireSnD_Str" inherits="GameFontNormalSmall" text="Expired" justifyH="LEFT">
+	<FontString name="ExpireSnD_Str" inherits="GameFontNormalSmall" text="Expire" justifyH="LEFT">
 	  <Size x="142" y="20"/>
 	  <Anchors>
 	    <Anchor point="TOPLEFT">
-	      <Offset x="7" y="-93"/>
+	      <Offset x="7" y="-78"/>
 	    </Anchor>
 	  </Anchors>
 	</FontString>
-	<FontString name="SA_Config_Tick1Str" inherits="GameFontNormalSmall" text="-" justifyH="LEFT">
+	<FontString name="SA_Config_Tick1Str" inherits="GameFontNormalSmall" text="---SND---" justifyH="LEFT">
 	  <Size x="142" y="20"/>
 	  <Anchors>
 	    <Anchor point="TOPLEFT">
-	      <Offset x="7" y="-137"/>
+	      <Offset x="7" y="-121"/>
 	    </Anchor>
 	  </Anchors>
 	</FontString>
@@ -564,7 +572,7 @@
 	  <Size x="142" y="20"/>
 	  <Anchors>
 	    <Anchor point="TOPLEFT" relativeTo="SA_Config2" relativePoint="TOPLEFT">
-	      <Offset x="7" y="-50"/>
+	      <Offset x="7" y="-35"/>
 	    </Anchor>
 	  </Anchors>
 	</FontString>
@@ -572,23 +580,23 @@
 	  <Size x="366" y="32"/>
 	  <Anchors>
 	    <Anchor point="TOPLEFT" relativeTo="$parent">
-	      <Offset x="7" y="-12"/>
+	      <Offset x="15" y="-12"/>
 	    </Anchor>
 	  </Anchors>
 	</FontString>
-	<FontString name="SA_Config_Recup_ExpireStr" inherits="GameFontNormalSmall" text="Expired" justifyH="LEFT">
+	<FontString name="SA_Config_Recup_ExpireStr" inherits="GameFontNormalSmall" text="Expire" justifyH="LEFT">
 	  <Size x="142" y="20" />
 	  <Anchors>
 	    <Anchor point="TOPLEFT">
-	      <Offset x="211" y="-93" />
+	      <Offset x="211" y="-78" />
 	    </Anchor>
 	  </Anchors>
 	</FontString>
-	<FontString name="SA_Config_Recup_FailureStr" inherits="GameFontNormalSmall" text="-" justifyH="LEFT">					
+	<FontString name="SA_Config_Recup_FailureStr" inherits="GameFontNormalSmall" text="---RECUP---" justifyH="LEFT">					
 	  <Size x="142" y="20" />										
 	  <Anchors>
 	    <Anchor point="TOPLEFT">
-	      <Offset x="211" y="-138" />
+	      <Offset x="211" y="-121" />
 	    </Anchor>
 	  </Anchors>
 	</FontString>                
@@ -596,15 +604,15 @@
 	  <Size x="142" y="20" />
 	  <Anchors>
 	    <Anchor point="TOPLEFT">
-	      <Offset x="211" y="-51" />						
+	      <Offset x="211" y="-35" />
 	    </Anchor>
 	  </Anchors>
 	</FontString>
-	<FontString name="SA_Config3_Caption" inherits="GameFontNormalLarge" text="Recuperate Settings" justifyH="LEFT">
+	<FontString name="SA_Config3_Caption" inherits="GameFontNormalLarge" text="Recuperate Sounds" justifyH="LEFT">
 	  <Size x="366" y="32"/>
 	  <Anchors>
 	    <Anchor point="TOPLEFT" relativeTo="$parent">
-	      <Offset x="208" y="-12"/>
+	      <Offset x="218" y="-12"/>
 	    </Anchor>
 	  </Anchors>	
 	</FontString>                
@@ -612,7 +620,7 @@
 	  <Size x="366" y="32"/>
 	  <Anchors>
 	    <Anchor point="TOPLEFT">
-	      <Offset x="211" y="-224"/>
+	      <Offset x="218" y="-146"/>
 	    </Anchor>
 	  </Anchors>
 	</FontString>
@@ -620,7 +628,7 @@
 	  <Size x="142" y="20"/>
 	  <Anchors>
 	    <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT">
-	      <Offset x="211" y="-260"/>
+	      <Offset x="211" y="-169"/>
 	    </Anchor>
 	  </Anchors>
 	</FontString>
@@ -628,7 +636,7 @@
 	  <Size x="142" y="20"/>
 	  <Anchors>
 	    <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT">
-	      <Offset x="211" y="-310"/>
+	      <Offset x="211" y="-212"/>
 	    </Anchor>
 	  </Anchors>
 	</FontString>
@@ -636,7 +644,7 @@
 	  <Size x="142" y="20"/>
 	  <Anchors>
 	    <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT">
-	      <Offset x="45" y="-392"/>
+	      <Offset x="40" y="-416"/>
 	    </Anchor>
 	  </Anchors>
 	</FontString>
@@ -658,7 +666,7 @@
 	<Size x="25" y="25"/>
 	<Anchors>
 	  <Anchor point="TOPLEFT">
-	    <Offset x="15" y="-390"/>
+	    <Offset x="7" y="-414"/>
 	  </Anchor>
 	</Anchors>
       </CheckButton>

@@ -3,7 +3,7 @@
 --   This damn thing needs a full rewrite so bad I can hardly stand it
 --   I wish I had the time.
 
-SA_Version = "1.0.11"
+SA_Version = "1.0.12"
 
 SA_Data = {};
 SA_Data.AlertPending = 0;
@@ -20,10 +20,12 @@ SA_Data.EnvExpires = 0;
 SA_Data.SliceExpires = 0;
 SA_Data.RecupExpires = 0;
 SA_Data.LastSliceExpire = 0;
+SA_Data.RevStrikeExpires = 0;
+SA_Data.RevStrikeAlertPending = 0;
 SA_Data.tNow = 0;
 SA_Data.sortPeriod = 0.5;      -- Only sort bars every sortPeriod seconds
 SA_Data.lastSort = 0;	       -- Last time bars were sorted
-SA_Data.maxSortableBars = 4    -- How many sortable non-DP/Envenom timer type bars do we have?
+SA_Data.maxSortableBars = 5    -- How many sortable non-DP/Envenom timer type bars do we have?
 
 local showStatBar = 1    -- show stat bar   AP, crit, etc
 local barsup = 1         -- bars group up or down
@@ -61,6 +63,11 @@ SA_Data.BARS = { --TEH BARS
     ['obj'] = 0,
     ['Expires'] = 0,
     ['Title'] = "Rup"
+  },
+  ['RevStrike'] = {
+    ['obj'] = 0,
+    ['Expires'] = 0,
+    ['Title'] = "RevStrike"
   },
   ['Vend'] = {
     ['obj'] = 0,
@@ -203,7 +210,7 @@ function SA_ChangeAnchor()
       end
     end
   end
-  for i = 1, 4 do
+  for i = 1, SA_Data.maxSortableBars do
     --print(i .. ":" .. SA_Data.BARORDER[i]['Title'] .. " = " .. SA_Data.BARORDER[i]['Expires']);
     if (SA_Data.BARORDER[i]['Expires'] > 0) then
       SA_Data.BARORDER[i]['obj']:ClearAllPoints();
@@ -249,7 +256,7 @@ function TableSortBarsByTime()
     return;
   end
   table.sort(SA_Data.BARORDER,TimeCompare);
-  for i = 1, 4 do
+  for i = 1, SA_Data.maxSortableBars do
     print(i .. ":" .. SA_Data.BARORDER[i]['Title'] .. " = " .. SA_Data.BARORDER[i]['Expires'])
   end
 end
@@ -339,9 +346,9 @@ function SA_OnEvent(self, event, ...)
     if (type == "SPELL_AURA_REFRESH" or type == "SPELL_AURA_APPLIED" or type == "SPELL_AURA_REMOVED" or type == "SPELL_AURA_APPLIED_DOSE" or type == "SPELL_PERIODIC_AURA_REMOVED" or type == "SPELL_PERIODIC_AURA_APPLIED" or type == "SPELL_PERIODIC_AURA_APPLIED_DOSE" or type == "SPELL_PERIODIC_AURA_REFRESH") then
       local spellId, spellName, spellSchool = select(12, ...);
       local isMySpell;
-      --   print ("spellId = " .. spellId .. " (" .. spellName .. ")");
-      --   spellName = GetSpellInfo(spellId);
-      --   print("SourceName: " .. sourceName);
+         --print ("spellId = " .. spellId .. " (" .. spellName .. ")");
+         --spellName = GetSpellInfo(spellId);
+         --print("SourceName: " .. sourceName);
       if (sourceName == UnitName("player")) then
         isMySpell = true;
       else
@@ -440,6 +447,24 @@ function SA_OnEvent(self, event, ...)
 	      SA_Data.RupExpires = expirationTime2;
 	      SA_Data.BARS['Rup']['Expires'] = CalcExpireTime(expirationTime2);
 	      SA_Data.BARS['Rup']['obj']:Show();
+	    end
+	    SA_ChangeAnchor();
+	  end
+	  -- REVEALING STRIKE EVENT --
+	  if (isMySpell == true and spellId == SC_SPELL_REVSTRIKE_ID and SliceAdmiral_Save.RevStrikeBarShow == true) then
+	    -- print("RevStrike event: " .. type);
+	    if (type == "SPELL_AURA_REMOVED") then
+	      if (UnitAffectingCombat("player")) then
+		SA_Sound("RevStrikeExpire");
+	      end
+	      SA_Data.RevStrikeExpires = 0;
+	      SA_Data.BARS['RevStrike']['Expires'] = 0;
+	      SA_Data.BARS['RevStrike']['obj']:Hide();
+	    else
+	      local name2, rank2, icon2, count2, debuffType2, duration2, expirationTime2, isMine2, isStealable2, shouldConsolidate2, nSpellId2 = UnitDebuff("target", SC_SPELL_REVSTRIKE);
+	      SA_Data.RevStrikeExpires = expirationTime2;
+	      SA_Data.BARS['RevStrike']['Expires'] = CalcExpireTime(expirationTime2);
+	      SA_Data.BARS['RevStrike']['obj']:Show();
 	    end
 	    SA_ChangeAnchor();
 	  end
@@ -550,6 +575,27 @@ function SA_TestTarget()
 	SA_Data.RupExpires = 0;
 	SA_Data.BARS['Rup']['Expires'] = 0;
 	SA_Data.BARS['Rup']['obj']:Hide();
+	SA_ChangeAnchor();--change les ancres
+      end
+    end
+  end
+  if (SliceAdmiral_Save.RevStrikeBarShow == true) then
+    name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable, shouldConsolidate, nSpellId = UnitDebuff("target", SC_SPELL_REVSTRIKE);
+    if not name then
+      SA_Data.RevStrikeExpires = 0;
+      SA_Data.BARS['RevStrike']['Expires'] = 0;
+      SA_Data.BARS['RevStrike']['obj']:Hide();
+      SA_ChangeAnchor();--change les ancres
+    else
+      if (isMine == "player") then
+	SA_Data.RevStrikeExpires = expirationTime;
+	SA_Data.BARS['RevStrike']['Expires'] = CalcExpireTime(expirationTime);
+	SA_Data.BARS['RevStrike']['obj']:Show();
+	SA_ChangeAnchor();--change les ancres
+      else
+	SA_Data.RevStrikeExpires = 0;
+	SA_Data.BARS['RevStrike']['Expires'] = 0;
+	SA_Data.BARS['RevStrike']['obj']:Hide();
 	SA_ChangeAnchor();--change les ancres
       end
     end
@@ -1078,6 +1124,11 @@ function SA_OnLoad()
     SA_Data.BARS['Rup']['obj'].text2:SetFontObject(SA_Data.BarFont4);
     SA_Data.BARS['Rup']['obj'].icon:SetTexture("Interface\\Icons\\Ability_Rogue_Rupture");
 
+    SA_Data.BARS['RevStrike']['obj'] = SA_NewFrame();
+    SA_Data.BARS['RevStrike']['obj']:SetStatusBarColor(130/255, 15/255, 150/255);
+    SA_Data.BARS['RevStrike']['obj'].text2:SetFontObject(SA_Data.BarFont4);
+    SA_Data.BARS['RevStrike']['obj'].icon:SetTexture("Interface\\Icons\\inv_sword_97");
+
     SA_Data.BARS['Vend']['obj'] = SA_NewFrame();
     SA_Data.BARS['Vend']['obj']:SetStatusBarColor(130/255, 130/255, 0);
     SA_Data.BARS['Vend']['obj'].text2:SetFontObject(SA_Data.BarFont4);
@@ -1102,7 +1153,7 @@ function SA_OnLoad()
     SA_Data.BARORDER[2] = SA_Data.BARS['SnD'];
     SA_Data.BARORDER[3] = SA_Data.BARS['Rup'];
     SA_Data.BARORDER[4] = SA_Data.BARS['Vend'];
-
+    SA_Data.BARORDER[5] = SA_Data.BARS['RevStrike'];
     SA_OnUpdate();
     SA_SetComboPts();
     SA_TestTarget();
@@ -1184,6 +1235,18 @@ function SA_util_RupTime()
   return CalcExpireTime(SA_Data.RupExpires);
 end
 
+function SA_util_RevStrikeTime()
+  local name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable, shouldConsolidate, nSpellId = UnitDebuff("target", SC_SPELL_REVSTRIKE);
+  if (expirationTime) then
+    -- print ("REVSTRIKE ETime: " .. expirationTime);
+    SA_Data.RevStrikeExpires = expirationTime;
+  else
+    SA_Data.RevStrikeExpires = 0;
+    return 0;
+  end
+  return CalcExpireTime(SA_Data.RevStrikeExpires);
+end
+
 -- Vendetta can't be refreshed by anything
 function SA_util_VendTime()
   return CalcExpireTime(SA_Data.VendExpires);
@@ -1235,6 +1298,52 @@ function SA_RupBar()
 
 end
 
+function SA_RevStrikeBar()
+  local x = SA_util_RevStrikeTime();
+  SA_Data.BARS['RevStrike']['Expires'] = x;
+
+  if (x > 0) then
+    if (SA_Data.BARS['RevStrike']) then
+      SA_Data.BARS['RevStrike']['obj']:SetValue(x);
+      SA_Data.BARS['RevStrike']['obj'].text:SetText(string.format("%0.1f", x));
+    end
+  else
+    SA_Data.BARS['RevStrike']['obj'].text2:SetText(isMine2);
+    SA_Data.BARS['RevStrike']['obj']:Hide();
+    SA_Data.RevStrikeExpires = 0;
+    SA_Data.BARS['RevStrike']['Expires'] = 0;
+  end
+
+  xSound = "RevStrikeAlert";
+  if (x > 0) then
+    if (x <= 3) then
+      if (SA_Data.RevStrikeAlertPending == 3) then
+	SA_Sound(xSound);
+	SA_Data.RevStrikeAlertPending = 2;
+      else
+	if (x <= 2) then
+	  if (SA_Data.RevStrikeAlertPending == 2) then
+	    SA_Sound(xSound);
+	    SA_Data.RevStrikeAlertPending = 1;
+	  else
+	    if (x <= 1) then
+	      if (SA_Data.RevStrikeAlertPending == 1) then
+		SA_Sound(xSound);
+		SA_Data.RevStrikeAlertPending = 0;
+	      end
+	    end
+	  end
+	end
+      end
+    else
+      SA_Data.RevStrikeAlertPending = 3;
+    end
+
+  end
+
+
+end
+
 function SA_VendBar()
   local x = SA_util_VendTime();
   SA_Data.BARS['Vend']['Expires'] = x;
@@ -1278,7 +1387,7 @@ function SA_VendBar()
   end
 end
 
-function SA_DataPBar()
+function SA_DataDPBar()
   local x = SA_util_DPTime();
 
   if (x > 0) then
@@ -1473,6 +1582,9 @@ function SA_OnUpdate()
   if (SliceAdmiral_Save.RupBarShow == true) then
     SA_RupBar();
   end
+  if (SliceAdmiral_Save.RevStrikeBarShow == true) then
+    SA_RevStrikeBar();
+  end
   if (SliceAdmiral_Save.ShowEnvBar == true) then
     SA_EnvenomBar();
   end
@@ -1483,7 +1595,7 @@ function SA_OnUpdate()
     SA_RecupBar();
   end
   if (SliceAdmiral_Save.DPBarShow == true) then
-    SA_DataPBar();
+    SA_DataDPBar();
   end
 
 -- We need to do this sort here because something could have been

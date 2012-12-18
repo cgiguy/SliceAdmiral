@@ -6,6 +6,7 @@ SliceAdmiral_Save = {
   ["Scale"] = 130,
   ["SortBars"] = true,
   ["RupBarShow"] = true,
+  ["RevStrikeBarShow"] = true,
   ["VendBarShow"] = true,
   ["Recup.Tick"] = "Tambourine",
   ["ShowDoTDmg"] = true,
@@ -45,6 +46,8 @@ SliceAdmiral_Save = {
   ["CPBarShow"] = true,
   ["RuptAlert"] = "Shaker",
   ["RuptExpire"] = "BassDrum",
+  ["RevStrikeAlert"] = "Shaker",
+  ["RevStrikeExpire"] = "Tambourine",
   ["VendAlert"] = "Ping",
   ["VendExpire"] = "Drum Rattle",
   ["Fade"] = 100,
@@ -140,6 +143,9 @@ SA_Config_Recup_Refresh1Menu = nil;]]
 
 SA_Config_Rupt_AlertMenu = nil;
 SA_Config_Rupt_ExpireMenu = nil;
+
+SA_Config_RevStrike_AlertMenu = nil;
+SA_Config_RevStrike_ExpireMenu = nil;
 
 SA_Config_Vend_AlertMenu = nil;
 SA_Config_Vend_ExpireMenu = nil;
@@ -261,6 +267,18 @@ function SA_Config_OnLoad(panel)
   UIDropDownMenu_SetButtonWidth(SA_Config_Rupt_AlertMenu, 20);
   UIDropDownMenu_Initialize(SA_Config_Rupt_AlertMenu, SA_Config_Tick_Initialise);
 
+  SA_Config_RevStrike_ExpireMenu = CreateFrame("Frame", "SA_Config_RevStrike_ExpireMenu", panel, "UIDropDownMenuTemplate");
+  SA_Config_RevStrike_ExpireMenu:SetPoint("TOPLEFT", SA_Config_RevStrike_ExpireStr, "TOPLEFT", 0, -20);
+  UIDropDownMenu_SetWidth(SA_Config_RevStrike_ExpireMenu, 142);
+  UIDropDownMenu_SetButtonWidth(SA_Config_RevStrike_ExpireMenu, 20);
+  UIDropDownMenu_Initialize(SA_Config_RevStrike_ExpireMenu, SA_Config_Expire_Initialise);
+
+  SA_Config_RevStrike_AlertMenu = CreateFrame("Frame", "SA_Config_RevStrike_AlertMenu", panel, "UIDropDownMenuTemplate");
+  SA_Config_RevStrike_AlertMenu:SetPoint("TOPLEFT", SA_Config_RevStrike_AlertStr, "TOPLEFT", 0, -20);
+  UIDropDownMenu_SetWidth(SA_Config_RevStrike_AlertMenu, 142);
+  UIDropDownMenu_SetButtonWidth(SA_Config_RevStrike_AlertMenu, 20);
+  UIDropDownMenu_Initialize(SA_Config_RevStrike_AlertMenu, SA_Config_Tick_Initialise);
+
   SA_Config_Vend_ExpireMenu = CreateFrame("Frame", "SA_Config_Vend_ExpireMenu", panel, "UIDropDownMenuTemplate");
   SA_Config_Vend_ExpireMenu:SetPoint("TOPLEFT", SA_Config_Vend_ExpireStr, "TOPLEFT", 0, -20);
   UIDropDownMenu_SetWidth(SA_Config_Vend_ExpireMenu, 142);
@@ -328,6 +346,11 @@ function SA_Config_LoadVars()
   UIDropDownMenu_SetSelectedValue(SA_Config_Rupt_AlertMenu, SliceAdmiral_Save['RuptAlert']);
   UIDropDownMenu_SetText(SA_Config_Rupt_AlertMenu, SliceAdmiral_Save['RuptAlert']);
 
+  UIDropDownMenu_SetSelectedValue(SA_Config_RevStrike_ExpireMenu, SliceAdmiral_Save['RevStrikeExpire']);
+  UIDropDownMenu_SetText(SA_Config_RevStrike_ExpireMenu, SliceAdmiral_Save['RevStrikeExpire']);
+  UIDropDownMenu_SetSelectedValue(SA_Config_RevStrike_AlertMenu, SliceAdmiral_Save['RevStrikeAlert']);
+  UIDropDownMenu_SetText(SA_Config_RevStrike_AlertMenu, SliceAdmiral_Save['RevStrikeAlert']);
+
   UIDropDownMenu_SetSelectedValue(SA_Config_Vend_ExpireMenu, SliceAdmiral_Save['VendExpire']);
   UIDropDownMenu_SetText(SA_Config_Vend_ExpireMenu, SliceAdmiral_Save['VendExpire']);
   UIDropDownMenu_SetSelectedValue(SA_Config_Vend_AlertMenu, SliceAdmiral_Save['VendAlert']);
@@ -361,6 +384,7 @@ function SA_Config_LoadVars()
   SA_Config_BarMargin:SetText(SliceAdmiral_Save.BarMargin);
 
   SA_Config_ShowRupBar:SetChecked( SliceAdmiral_Save.RupBarShow );
+  SA_Config_ShowRevStrikeBar:SetChecked( SliceAdmiral_Save.RevStrikeBarShow );
   SA_Config_ShowVendBar:SetChecked( SliceAdmiral_Save.VendBarShow );
   SA_Config_ShowDPBar:SetChecked( SliceAdmiral_Save.DPBarShow );
   SA_Config_ShowCPBar:SetChecked( SliceAdmiral_Save.CPBarShow );
@@ -414,6 +438,9 @@ function SA_SetScale(NewScale)
     if (SA_Data.BARS['Rup']['obj']) then
       SA_Data.BARS['Rup']['obj']:SetScale ( NewScale / 100 );
     end
+    if (SA_Data.BARS['RevStrike']['obj']) then
+      SA_Data.BARS['RevStrike']['obj']:SetScale ( NewScale / 100 );
+    end
     if (SA_Data.BARS['Vend']['obj']) then
       SA_Data.BARS['Vend']['obj']:SetScale ( NewScale / 100 );
     end
@@ -446,6 +473,9 @@ function SA_SetWidth(w)
     end
     if (SA_Data.BARS['Rup']['obj']) then
       SA_Data.BARS['Rup']['obj']:SetWidth( w );
+    end
+    if (SA_Data.BARS['RevStrike']['obj']) then
+      SA_Data.BARS['RevStrike']['obj']:SetWidth( w );
     end
     if (SA_Data.BARS['Vend']['obj']) then
       SA_Data.BARS['Vend']['obj']:SetWidth( w );
@@ -509,6 +539,7 @@ function SA_Config_RetextureBars()
 
   VTimerEnergy:SetStatusBarTexture(texture);
   SA_Data.BARS['Rup']['obj']:SetStatusBarTexture(texture);
+  SA_Data.BARS['RevStrike']['obj']:SetStatusBarTexture(texture);
   SA_Data.BARS['Vend']['obj']:SetStatusBarTexture(texture);
   SA_Data.BARS['DP']['obj']:SetStatusBarTexture(texture);
   SA_Data.BARS['SnD']['obj']:SetStatusBarTexture(texture);
@@ -566,6 +597,11 @@ function SA_Config_Okay()
     SliceAdmiral_Save.RupBarShow= true;
   else
     SliceAdmiral_Save.RupBarShow= false;
+  end
+  if (SA_Config_ShowRevStrikeBar:GetChecked()) then
+    SliceAdmiral_Save.RevStrikeBarShow= true;
+  else
+    SliceAdmiral_Save.RevStrikeBarShow= false;
   end
   if (SA_Config_ShowVendBar:GetChecked()) then
     SliceAdmiral_Save.VendBarShow= true;
@@ -666,6 +702,9 @@ function SA_Config_Okay()
   SliceAdmiral_Save['RuptExpire'] = UIDropDownMenu_GetSelectedValue( SA_Config_Rupt_ExpireMenu );
   --SliceAdmiral_Save['RuptFail'] =   --TODO add rupture failure!
 
+  SliceAdmiral_Save['RevStrikeAlert'] = UIDropDownMenu_GetSelectedValue( SA_Config_RevStrike_AlertMenu );
+  SliceAdmiral_Save['RevStrikeExpire'] = UIDropDownMenu_GetSelectedValue( SA_Config_RevStrike_ExpireMenu );
+
   SliceAdmiral_Save['VendAlert'] = UIDropDownMenu_GetSelectedValue( SA_Config_Vend_AlertMenu );
   SliceAdmiral_Save['VendExpire'] = UIDropDownMenu_GetSelectedValue( SA_Config_Vend_ExpireMenu );
 
@@ -706,6 +745,7 @@ function SA_Config_Default()
   SliceAdmiral_Save.BarMargin = 3;
   SliceAdmiral_Save.DPBarShow = true;
   SliceAdmiral_Save.RupBarShow = true;
+  SliceAdmiral_Save.RevStrikeBarShow = true;
   SliceAdmiral_Save.VendBarShow = true;
   SliceAdmiral_Save.ShowEnvBar = true;
   SliceAdmiral_Save.HilightBuffed = false;
