@@ -136,8 +136,8 @@ SA_Config_Energy1Menu = nil;
 
 SA_Config_Recup_AlertMenu = nil;
 SA_Config_Recup_ExpireMenu = nil;
---SA_Config_Recup_FailMenu = nil;
---[[SA_Config_Recup_AppliedMenu = nil;
+--[[SA_Config_Recup_FailMenu = nil;
+SA_Config_Recup_AppliedMenu = nil;
 SA_Config_Recup_Refresh3Menu = nil;
 SA_Config_Recup_Refresh2Menu = nil;
 SA_Config_Recup_Refresh1Menu = nil;]]
@@ -384,28 +384,27 @@ function SA_Config_LoadVars()
   end
   SA_Config_BarMargin:SetText(SliceAdmiral_Save.BarMargin);
 
-  SA_Config_ShowRupBar:SetChecked( SliceAdmiral_Save.RupBarShow );
-  SA_Config_ShowRevealBar:SetChecked( SliceAdmiral_Save.RevealBarShow );
-  SA_Config_ShowVendBar:SetChecked( SliceAdmiral_Save.VendBarShow );
-  SA_Config_ShowDPBar:SetChecked( SliceAdmiral_Save.DPBarShow );
   SA_Config_ShowCPBar:SetChecked( SliceAdmiral_Save.CPBarShow );
-
+  SA_Config_ShowDoTDmg:SetChecked( SliceAdmiral_Save.ShowDoTDmg );
+  SA_Config_ShowDPBar:SetChecked( SliceAdmiral_Save.DPBarShow );
+  SA_Config_ShowEnvBar:SetChecked(SliceAdmiral_Save.ShowEnvBar );
+  SA_Config_ShowRecupBar:SetChecked( SliceAdmiral_Save.ShowRecupBar );
+  SA_Config_ShowRevealBar:SetChecked( SliceAdmiral_Save.RevealBarShow );
+  SA_Config_ShowRupBar:SetChecked( SliceAdmiral_Save.RupBarShow );
   SA_Config_ShowSnDBar:SetChecked( SliceAdmiral_Save.ShowSnDBar );
+  SA_Config_ShowStatBar:SetChecked( SliceAdmiral_Save.ShowStatBar );
+  SA_Config_ShowVendBar:SetChecked( SliceAdmiral_Save.VendBarShow );
   if (SliceAdmiral_Save.MasterVolume) then
     SA_Config_MasterVolume:SetChecked( SliceAdmiral_Save.MasterVolume );
   end
-  SA_Config_ShowRecupBar:SetChecked( SliceAdmiral_Save.ShowRecupBar );
   SA_Config_Barsup:SetChecked( SliceAdmiral_Save.Barsup );
   SA_Config_SortBars:SetChecked( SliceAdmiral_Save.SortBars );
-  SA_Config_ShowDoTDmg:SetChecked( SliceAdmiral_Save.ShowDoTDmg );
   SA_Config_DoTCrits:SetChecked( SliceAdmiral_Save.DoTCrits );
-  SA_Config_ShowStatBar:SetChecked( SliceAdmiral_Save.ShowStatBar );
-  SA_Config_ShowEnvBar:SetChecked(SliceAdmiral_Save.ShowEnvBar );
+
   --SA_Config_HilightBuffed:SetChecked(SliceAdmiral_Save.HilightBuffed );
   if ( not SliceAdmiral_Save.EnergyTrans) then
     SliceAdmiral_Save.EnergyTrans = 20;
   end
-
   SA_Config_TransFull:SetValue(SliceAdmiral_Save.EnergyTrans);
   SA_Config_TransFullV:SetText(SliceAdmiral_Save.EnergyTrans);
   if ( not SliceAdmiral_Save.Width ) then
@@ -523,94 +522,25 @@ function SA_Config_Okay()
     SliceAdmiral_Save.IsLocked = false;
     SA:EnableMouse(true);
   end
-  if (SA_Config_HideE:GetChecked()) then
-    SliceAdmiral_Save.HideEnergy = true;
-  else
-    SliceAdmiral_Save.HideEnergy = false;
-  end
-  if (SA_Config_PadLatency:GetChecked()) then
-    SliceAdmiral_Save.PadLatency= true;
-  else
-    SliceAdmiral_Save.PadLatency= false;
-  end
-  if (SA_Config_ShowDPBar:GetChecked()) then
-    SliceAdmiral_Save.DPBarShow= true;
-  else
-    SliceAdmiral_Save.DPBarShow= false;
-  end
-  if (SA_Config_ShowCPBar:GetChecked()) then
-    SliceAdmiral_Save.CPBarShow= true;
-  else
-    SliceAdmiral_Save.CPBarShow= false;
-  end
-  if (SA_Config_ShowRupBar:GetChecked()) then
-    SliceAdmiral_Save.RupBarShow= true;
-  else
-    SliceAdmiral_Save.RupBarShow= false;
-  end
-  if (SA_Config_ShowRevealBar:GetChecked()) then
-    SliceAdmiral_Save.RevealBarShow= true;
-  else
-    SliceAdmiral_Save.RevealBarShow= false;
-  end
-  if (SA_Config_ShowVendBar:GetChecked()) then
-    SliceAdmiral_Save.VendBarShow= true;
-  else
-    SliceAdmiral_Save.VendBarShow= false;
-  end
-  if (SA_Config_ShowSnDBar:GetChecked()) then
-    SliceAdmiral_Save.ShowSnDBar= true;
-  else
-    SliceAdmiral_Save.ShowSnDBar= false;
-  end
-  if (SA_Config_MasterVolume:GetChecked()) then
-    SliceAdmiral_Save.MasterVolume = true;
-  else
-    SliceAdmiral_Save.MasterVolume = false;
-  end
-  if (SA_Config_ShowRecupBar:GetChecked()) then
-    SliceAdmiral_Save.ShowRecupBar= true;
-  else
-    SliceAdmiral_Save.ShowRecupBar= false;
-  end
-  if (SA_Config_Barsup:GetChecked()) then
-    SliceAdmiral_Save.Barsup= true;
-  else
-    SliceAdmiral_Save.Barsup= false;
-  end
-  if (SA_Config_SortBars:GetChecked()) then
-    SliceAdmiral_Save.SortBars= true;
-  else
-    SliceAdmiral_Save.SortBars= false;
-  end
-  if (SA_Config_ShowDoTDmg:GetChecked()) then
-    SliceAdmiral_Save.ShowDoTDmg= true;
-  else
-    SliceAdmiral_Save.ShowDoTDmg= false;
-  end
-  if (SA_Config_DoTCrits:GetChecked()) then
-    SliceAdmiral_Save.DoTCrits= true;
-  else
-    SliceAdmiral_Save.DoTCrits= false;
-  end
-  if (SA_Config_ShowStatBar:GetChecked()) then
-    SliceAdmiral_Save.ShowStatBar= true;
-  else
-    SliceAdmiral_Save.ShowStatBar= false;
-  end
-  if (SA_Config_ShowEnvBar:GetChecked()) then
-    SliceAdmiral_Save.ShowEnvBar= true;
-  else
-    SliceAdmiral_Save.ShowEnvBar= false;
-  end
-  if (SA_Config_HilightBuffed:GetChecked()) then
-    SliceAdmiral_Save.HilightBuffed= true;
-  else
-    SliceAdmiral_Save.HilightBuffed= false;
-  end
+
+  SliceAdmiral_Save.Barsup= SA_Config_Barsup:GetChecked();
+  SliceAdmiral_Save.CPBarShow = SA_Config_ShowCPBar:GetChecked();
+  SliceAdmiral_Save.DoTCrits= SA_Config_DoTCrits:GetChecked();
+  SliceAdmiral_Save.DPBarShow = SA_Config_ShowDPBar:GetChecked();
+  SliceAdmiral_Save.HideEnergy = SA_Config_HideE:GetChecked();
+  SliceAdmiral_Save.HilightBuffed = SA_Config_HilightBuffed:GetChecked();
+  SliceAdmiral_Save.MasterVolume = SA_Config_MasterVolume:GetChecked();
+  SliceAdmiral_Save.PadLatency = SA_Config_PadLatency:GetChecked();
+  SliceAdmiral_Save.RevealBarShow = SA_Config_ShowRevealBar:GetChecked();
+  SliceAdmiral_Save.RupBarShow = SA_Config_ShowRupBar:GetChecked();
+  SliceAdmiral_Save.ShowDoTDmg = SA_Config_ShowDoTDmg:GetChecked();
+  SliceAdmiral_Save.ShowEnvBar = SA_Config_ShowEnvBar:GetChecked();
+  SliceAdmiral_Save.ShowRecupBar = SA_Config_ShowRecupBar:GetChecked()
+  SliceAdmiral_Save.ShowSnDBar = SA_Config_ShowSnDBar:GetChecked();
+  SliceAdmiral_Save.ShowStatBar = SA_Config_ShowStatBar:GetChecked();
+  SliceAdmiral_Save.SortBars = SA_Config_SortBars:GetChecked();
+  SliceAdmiral_Save.VendBarShow = SA_Config_ShowVendBar:GetChecked();
   --
-
-
   SliceAdmiral_Save.Energy1 = SA_Config_Energy1:GetValue();
   SliceAdmiral_Save.Energy2 = SA_Config_Energy2:GetValue();
   SliceAdmiral_Save.Scale = SA_Config_Scale:GetValue();
