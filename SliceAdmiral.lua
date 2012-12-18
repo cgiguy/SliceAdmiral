@@ -1173,27 +1173,19 @@ function CalcExpireTime(expireTime)
   end
 end
 
-function SA_util_SnDBuffTime()
-  local name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable, shouldConsolidate, nSpellId = UnitAura("player", SC_SPELL_SND);
-  if expirationTime then
-    --   print ("SND ETime: " .. expirationTime);
-    SA_Data.SliceExpires = expirationTime;
-  else
-    return 0;
-  end
-  return CalcExpireTime(expirationTime);
-end
-
-function SA_util_RecupTime()
-  local name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable, shouldConsolidate, nSpellId = UnitAura("player", SC_SPELL_RECUP);
-  --   print ("RECUP ETime: " .. expirationTime);
-  if (expirationTime) then
-    SA_Data.RecupExpires = expirationTime;
-  else
-    SA_Data.RecupExpires = 0;
-    return 0;
-  end
-  return CalcExpireTime(expirationTime);
+local function SA_util_Time(expire, unit, spell)
+	local filter = "PLAYER";
+	if unit == "target" then
+	 filter = "PLAYER HARMFUL"
+	end
+	local name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable, shouldConsolidate, SpellId = UnitAura(unit, spell, nil, filter);
+	if expirationTime then
+		SA_Data[expire] = expirationTime;
+		return CalcExpireTime(expirationTime);
+	else 
+		SA_Data[expire] = 0;
+		return 0;
+	end
 end
 
 -- Envenom can"t be refreshed by anything
@@ -1206,50 +1198,14 @@ function SA_util_EnvenomTime()
   end
 end
 
-function SA_util_DPTime()
-  local name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable, shouldConsolidate, nSpellId = UnitDebuff("target", SC_SPELL_DP,nil, "PLAYER");
-  if expirationTime then
-    --   print ("DP ETime: " .. expirationTime);
-    SA_Data.DPExpires = expirationTime;
-  else
-    SA_Data.DPExpires = 0;
-    return 0;
-  end
-  return CalcExpireTime(expirationTime);
-end
-
-function SA_util_RupTime()
-  local name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable, shouldConsolidate, nSpellId = UnitDebuff("target", SC_SPELL_RUP, nil, "PLAYER");
-  if (expirationTime) then
-    -- print ("RUP ETime: " .. expirationTime);
-    SA_Data.RupExpires = expirationTime;
-  else
-    SA_Data.RupExpires = 0;
-    return 0;
-  end
-  return CalcExpireTime(SA_Data.RupExpires);
-end
-
-function SA_util_RevealTime()
-  local name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable, shouldConsolidate, nSpellId = UnitDebuff("target", SC_SPELL_REVEAL, nil, "PLAYER");
-  if (expirationTime) then
-    -- print ("RUP ETime: " .. expirationTime);
-    SA_Data.RevealExpires = expirationTime;
-  else
-    SA_Data.RevealExpires = 0;
-    return 0;
-  end
-  return CalcExpireTime(SA_Data.RevealExpires);
-end
-
-
 -- Vendetta can't be refreshed by anything
 function SA_util_VendTime()
   return CalcExpireTime(SA_Data.VendExpires);
 end
 
 function SA_RupBar()
-  local x = SA_util_RupTime();
+  --local x = SA_util_RupTime();
+  local x = SA_util_Time("RupExpires","target",SC_SPELL_RUP);
   SA_Data.BARS["Rup"]["Expires"] = x;
 
   if (x > 0) then
@@ -1292,7 +1248,8 @@ function SA_RupBar()
 end
 
 function SA_RevealBar()
-  local x = SA_util_RevealTime();
+  --local x = SA_util_RevealTime();
+  local x = SA_util_Time("RevealExpires","target",SC_SPELL_REVEAL);
   SA_Data.BARS["Reveal"]["Expires"] = x;
 
   if (x > 0) then
@@ -1378,8 +1335,9 @@ function SA_VendBar()
 end
 
 function SA_DataPBar()
-  local x = SA_util_DPTime();
-
+  --local x = SA_util_DPTime();
+  local x = SA_util_Time("DPExpires","target",SC_SPELL_DP);
+ 
   if (x > 0) then
     if (SA_Data.BARS["DP"]) then
       SA_Data.BARS["DP"]["obj"]:SetValue(x);
@@ -1393,7 +1351,8 @@ function SA_DataPBar()
 end
 
 function SA_RecupBar()
-  local x = SA_util_RecupTime();
+  --local x = SA_util_RecupTime();
+  local x = SA_util_Time("RecupExpires","player",SC_SPELL_RECUP)
   SA_Data.BARS["Recup"]["Expires"] = x;
   local recup = SA_Data.BARS["Recup"];
 
@@ -1447,7 +1406,8 @@ function SA_SNDCooldown()
     SA_Data.tNow = SA_Data.tNow + (lag*2/1000);
   end
 
-  local x = SA_util_SnDBuffTime();
+  --local x = SA_util_SnDBuffTime();
+  local x = SA_util_Time("SliceExpires","player",SC_SPELL_SND);
   SA_Data.BARS["SnD"]["Expires"] = x;
 
   if (SA_Data.BARS["SnD"]) then
