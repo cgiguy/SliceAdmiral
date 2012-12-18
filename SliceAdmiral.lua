@@ -40,6 +40,8 @@ local framefadeout = 0.2 -- fade delay for leaving combat
 local scaleUI = 0
 local widthUI = 0
 
+local CalcExpireTime -- local is good
+
 SA_Data.BARS = { --TEH BARS
   ["CP"] = {
     ["obj"] = 0
@@ -161,7 +163,7 @@ function SA_BarTexture()
 end
 
 
-function SA_SoundTest(name)
+local function SA_SoundTest(name)
   if SA_Sounds[name] then
     if SliceAdmiral_Save.MasterVolume then
       PlaySoundFile( SA_Sounds[name], "Master" );
@@ -171,7 +173,7 @@ function SA_SoundTest(name)
   end
 end
 
-function SA_Sound(saved)
+local function SA_Sound(saved)
   if SliceAdmiral_Save[saved] then
     if SliceAdmiral_Save.MasterVolume then
       PlaySoundFile( SA_Sounds[ SliceAdmiral_Save[saved] ], "Master" );
@@ -183,7 +185,7 @@ function SA_Sound(saved)
   end
 end
 
-function SA_ChangeAnchor()
+local function SA_ChangeAnchor()
   local LastAnchor = VTimerEnergy;
   local offSetSize = SliceAdmiral_Save.BarMargin; -- other good values, -1, -2
 
@@ -269,7 +271,7 @@ end
 
 -- We only call this if SliceAdmiral_Save.SortBars
 -- and we haven't done it in the last SA_Data.sortPeriod seconds
-function MB_SortBarsByTime(startIndex)
+local function MB_SortBarsByTime(startIndex)
 --[[ 
      Dumb ass sort.  Simple shuffle of the lower bars to higher if
      they are refreshed.  It will only run once every SA_Data.sortPeriod
@@ -1188,21 +1190,6 @@ local function SA_util_Time(expire, unit, spell)
 	end
 end
 
--- Envenom can"t be refreshed by anything
-function SA_util_EnvenomTime()
-  if ((SA_Data.EnvExpires > 0) and (SA_Data.tNow < SA_Data.EnvExpires)) then
-    return SA_Data.EnvExpires - SA_Data.tNow;
-  else
-    SA_Data.EnvExpires = 0;
-    return 0;
-  end
-end
-
--- Vendetta can't be refreshed by anything
-function SA_util_VendTime()
-  return CalcExpireTime(SA_Data.VendExpires);
-end
-
 function SA_RupBar()
   --local x = SA_util_RupTime();
   local x = SA_util_Time("RupExpires","target",SC_SPELL_RUP);
@@ -1292,7 +1279,8 @@ function SA_RevealBar()
 end
 
 function SA_VendBar()
-  local x = SA_util_VendTime();
+  --local x = SA_util_VendTime();
+  local x = SA_util_Time("VendExpires","target",SC_SPELL_VEND);
   SA_Data.BARS["Vend"]["Expires"] = x;
 
   if (x > 0) then
@@ -1389,7 +1377,8 @@ function SA_RecupBar()
 end
 
 function SA_EnvenomBar()
-  local x = SA_util_EnvenomTime();
+  --local x = SA_util_EnvenomTime();
+  local x = SA_util_Time("EnvExpires","player",SC_SPELL_ENV);
   SA_Data.BARS["Env"]["Expires"] = x;
 
   if (x > 0) then
