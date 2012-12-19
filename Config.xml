@@ -502,28 +502,30 @@
     </Anchors>
     <Layers>
       <Layer>
-
-	<FontString name="SA_RevStrikeSounds_Caption" inherits="GameFontNormalLarge" text="Revealing Strike Sounds" justifyH="LEFT">
+<!--
+   Start of Sound Effects Page
+-->
+	<FontString name="SA_SnDSounds_Caption" inherits="GameFontNormalLarge" text="Slice and Dice Sounds" justifyH="LEFT">
 	  <Size x="366" y="32"/>
 	  <Anchors>
+	    <Anchor point="TOPLEFT" relativeTo="$parent">
+	      <Offset x="15" y="-12"/>
+	    </Anchor>
+	  </Anchors>
+	</FontString>
+	<FontString name="SA_Config_SnD_AlertStr" inherits="GameFontNormalSmall" text="Alert" justifyH="LEFT">
+	  <Size x="142" y="20"/>
+	  <Anchors>
+	    <Anchor point="TOPLEFT" relativeTo="SA_Config2" relativePoint="TOPLEFT">
+	      <Offset x="7" y="-35"/>
+	    </Anchor>
+	  </Anchors>
+	</FontString>
+	<FontString name="SA_Config_SnD_ExpireStr" inherits="GameFontNormalSmall" text="Expire" justifyH="LEFT">
+	  <Size x="142" y="20"/>
+	  <Anchors>
 	    <Anchor point="TOPLEFT">
-	      <Offset x="15" y="-280"/>
-	    </Anchor>
-	  </Anchors>
-	</FontString>
-	<FontString name="SA_Config_RevStrike_AlertStr" inherits="GameFontNormalSmall" text="Alert" justifyH="LEFT">
-	  <Size x="142" y="20"/>
-	  <Anchors>
-	    <Anchor point="TOPLEFT" relativeTo="SA_Config2" relativePoint="TOPLEFT">
-	      <Offset x="7" y="-303"/>
-	    </Anchor>
-	  </Anchors>
-	</FontString>
-	<FontString name="SA_Config_RevStrike_ExpireStr" inherits="GameFontNormalSmall" text="Expire" justifyH="LEFT">
-	  <Size x="142" y="20"/>
-	  <Anchors>
-	    <Anchor point="TOPLEFT" relativeTo="SA_Config2" relativePoint="TOPLEFT">
-	      <Offset x="7" y="-346"/>
+	      <Offset x="7" y="-78"/>
 	    </Anchor>
 	  </Anchors>
 	</FontString>
@@ -552,27 +554,20 @@
 	    </Anchor>
 	  </Anchors>
 	</FontString>
-	<FontString name="ExpireSnD_Str" inherits="GameFontNormalSmall" text="Expire" justifyH="LEFT">
-	  <Size x="142" y="20"/>
-	  <Anchors>
-	    <Anchor point="TOPLEFT">
-	      <Offset x="7" y="-78"/>
-	    </Anchor>
-	  </Anchors>
-	</FontString>
-	<FontString name="SA_Config_Tick3Str" inherits="GameFontNormalSmall" text="Alert" justifyH="LEFT">
-	  <Size x="142" y="20"/>
-	  <Anchors>
-	    <Anchor point="TOPLEFT" relativeTo="SA_Config2" relativePoint="TOPLEFT">
-	      <Offset x="7" y="-35"/>
-	    </Anchor>
-	  </Anchors>
-	</FontString>
-	<FontString name="SA_Config2_Caption" inherits="GameFontNormalLarge" text="Slice and Dice Sounds" justifyH="LEFT">
+
+	<FontString name="SA_RecupSounds_Caption" inherits="GameFontNormalLarge" text="Recuperate Sounds" justifyH="LEFT">
 	  <Size x="366" y="32"/>
 	  <Anchors>
 	    <Anchor point="TOPLEFT" relativeTo="$parent">
-	      <Offset x="15" y="-12"/>
+	      <Offset x="218" y="-12"/>
+	    </Anchor>
+	  </Anchors>	
+	</FontString>                
+	<FontString name="SA_Config_Recup_AlertStr" inherits="GameFontNormalSmall" text="Alert" justifyH="LEFT">
+	  <Size x="142" y="20" />
+	  <Anchors>
+	    <Anchor point="TOPLEFT">
+	      <Offset x="211" y="-35" />
 	    </Anchor>
 	  </Anchors>
 	</FontString>
@@ -584,22 +579,7 @@
 	    </Anchor>
 	  </Anchors>
 	</FontString>
-	<FontString name="SA_Config_Recup_AlertStr" inherits="GameFontNormalSmall" text="Alert" justifyH="LEFT">
-	  <Size x="142" y="20" />
-	  <Anchors>
-	    <Anchor point="TOPLEFT">
-	      <Offset x="211" y="-35" />
-	    </Anchor>
-	  </Anchors>
-	</FontString>
-	<FontString name="SA_Config3_Caption" inherits="GameFontNormalLarge" text="Recuperate Sounds" justifyH="LEFT">
-	  <Size x="366" y="32"/>
-	  <Anchors>
-	    <Anchor point="TOPLEFT" relativeTo="$parent">
-	      <Offset x="218" y="-12"/>
-	    </Anchor>
-	  </Anchors>	
-	</FontString>                
+
 	<FontString name="SA_VendSounds_Caption" inherits="GameFontNormalLarge" text="Vendetta Sounds" justifyH="LEFT">
 	  <Size x="366" y="32"/>
 	  <Anchors>
@@ -624,6 +604,32 @@
 	    </Anchor>
 	  </Anchors>
 	</FontString>
+
+	<FontString name="SA_RevStrikeSounds_Caption" inherits="GameFontNormalLarge" text="Revealing Strike Sounds" justifyH="LEFT">
+	  <Size x="366" y="32"/>
+	  <Anchors>
+	    <Anchor point="TOPLEFT">
+	      <Offset x="15" y="-280"/>
+	    </Anchor>
+	  </Anchors>
+	</FontString>
+	<FontString name="SA_Config_RevStrike_AlertStr" inherits="GameFontNormalSmall" text="Alert" justifyH="LEFT">
+	  <Size x="142" y="20"/>
+	  <Anchors>
+	    <Anchor point="TOPLEFT" relativeTo="SA_Config2" relativePoint="TOPLEFT">
+	      <Offset x="7" y="-303"/>
+	    </Anchor>
+	  </Anchors>
+	</FontString>
+	<FontString name="SA_Config_RevStrike_ExpireStr" inherits="GameFontNormalSmall" text="Expire" justifyH="LEFT">
+	  <Size x="142" y="20"/>
+	  <Anchors>
+	    <Anchor point="TOPLEFT" relativeTo="SA_Config2" relativePoint="TOPLEFT">
+	      <Offset x="7" y="-346"/>
+	    </Anchor>
+	  </Anchors>
+	</FontString>
+
 	<FontString name="SA_Config_MasterVolumeStr" inherits="GameFontNormalSmall" text="Use Master Volume" justifyH="LEFT">
 	  <Size x="142" y="20"/>
 	  <Anchors>
@@ -656,6 +662,9 @@
       </CheckButton>
     </Frames>
   </Frame>
+<!--
+   End of Sound Effects Page
+-->
   <Frame name="SA_Config" hidden="true" parent="UIParent" toplevel="true">
     <Size>
       <RelDimension x="1.0" y="1.0"/>
