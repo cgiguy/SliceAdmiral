@@ -18,10 +18,8 @@ SA_Data.lastSort = 0;	       -- Last time bars were sorted
 SA_Data.LastTime = 0;
 SA_Data.maxSortableBars = 5    -- How many sortable non-DP/Envenom timer type bars do we have?
 SA_Data.RecupExpires = 0;
-SA_Data.RevealAlertPending = 0; --HagTest
 SA_Data.RevealExpires = 0;	-- HagTest
 SA_Data.RupExpires = 0;	-- Expiration timers based on GetTime() time
-SA_Data.RuptAlertPending = 0;
 SA_Data.SliceExpires = 0;
 SA_Data.sortPeriod = 0.5;      -- Only sort bars every sortPeriod seconds
 SA_Data.tNow = 0;
@@ -46,56 +44,50 @@ SA_Data.BARS = { --TEH BARS
   ["CP"] = {
     ["obj"] = 0
   },
-  ["Recup"] = {
+  [SC_SPELL_RECUP] = {
     ["obj"] = 0,
     ["Expires"] = 0,		-- Actual time left to expire in seconds
-    ["AlertPending"] = 0,
-    ["Title"] = "Recup"
+    ["AlertPending"] = 0,    
   },
-  ["SnD"] = {
+  [SC_SPELL_SND] = {
     ["obj"] = 0,
     ["Expires"] = 0,
-    ["Title"] = "SnD"
+	["AlertPending"] = 0,    
   },
   ["DP"] = {
     ["obj"] = 0,
-    ["Expires"] = 0,
-    ["Title"] = "DP"
+    ["Expires"] = 0,    
   },
-  ["Rup"] = {
+  [SC_SPELL_RUP] = {
     ["obj"] = 0,
-    ["Expires"] = 0,
-    ["Title"] = "Rup"
+    ["Expires"] = 0, 
+	["AlertPending"] = 0,
   },
-  ["Vend"] = {
+  [SC_SPELL_VEND] = {
     ["obj"] = 0,
-    ["Expires"] = 0,
-    ["Title"] = "Vend"
+    ["Expires"] = 0,    
+	["AlertPending"] = 0,
   },
   ["Env"] = {
     ["obj"] = 0,
-    ["Expires"] = 0,
-    ["Title"] = "Env"
+    ["Expires"] = 0,    
   },
-  ["Reveal"] = {
+  [SC_SPELL_REVEAL] = {
     ["obj"] = 0,
-    ["Expires"] = 0,
-    ["Title"] = "Reveal"
+    ["Expires"] = 0,    
+	["AlertPending"] = 0,
   },
   ["Guil1"] = {
     ["obj"] = 0,
-    ["Expires"] = 0,
-    ["Title"] = "Guil1"
+    ["Expires"] = 0,    
   },
   ["Guil2"] = {
     ["obj"] = 0,
-    ["Expires"] = 0,
-    ["Title"] = "Guil2"
+    ["Expires"] = 0,    
   },
   ["Guil3"] = {
     ["obj"] = 0,
-    ["Expires"] = 0,
-    ["Title"] = "Guil3"
+    ["Expires"] = 0,   
   },
   ["Stat"] = {
     ["obj"] = 0,
@@ -163,7 +155,7 @@ function SA_BarTexture()
 end
 
 
-local function SA_SoundTest(name)
+function SA_SoundTest(name)
   if SA_Sounds[name] then
     if SliceAdmiral_Save.MasterVolume then
       PlaySoundFile( SA_Sounds[name], "Master" );
@@ -228,7 +220,7 @@ local function SA_ChangeAnchor()
       end
     end
   end
-  for i = 1, 5 do
+  for i = 1, SA_Data.maxSortableBars do
     --print(i .. ":" .. SA_Data.BARORDER[i]["Title"] .. " = " .. SA_Data.BARORDER[i]["Expires"]);
     if (SA_Data.BARORDER[i]["Expires"] > 0) then
       SA_Data.BARORDER[i]["obj"]:ClearAllPoints();
@@ -363,14 +355,14 @@ function SA_OnEvent(self, event, ...)
 					SA_Sound("Expire");
 				end
 				SA_Data.SliceExpires = 0;
-				SA_Data.BARS["SnD"]["Expires"] = 0;				
-				SA_Data.BARS["SnD"]["obj"]:Hide();				
+				SA_Data.BARS[SC_SPELL_SND]["Expires"] = 0;				
+				SA_Data.BARS[SC_SPELL_SND]["obj"]:Hide();				
 			else
 				local name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable, shouldConsolidate, nspellId = UnitAura("player", SC_SPELL_SND);
 				--local timeLeftOnLast = SA_Data.SliceExpires - GetTime();
-				SA_Data.BARS["SnD"]["obj"]:Show();
+				SA_Data.BARS[SC_SPELL_SND]["obj"]:Show();
 				SA_Data.SliceExpires = expirationTime;
-				SA_Data.BARS["SnD"]["Expires"] = CalcExpireTime(expirationTime);				
+				SA_Data.BARS[SC_SPELL_SND]["Expires"] = CalcExpireTime(expirationTime);				
 			end
 			SA_ChangeAnchor();
 		end
@@ -381,14 +373,14 @@ function SA_OnEvent(self, event, ...)
 			  SA_Sound("Recup.Expire");
 			end
 			SA_Data.RecupExpires = 0;
-			SA_Data.BARS["Recup"]["Expires"] = 0;
-			SA_Data.BARS["Recup"]["obj"]:Hide();
+			SA_Data.BARS[SC_SPELL_RECUP]["Expires"] = 0;
+			SA_Data.BARS[SC_SPELL_RECUP]["obj"]:Hide();
 		  else
 			local name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable, shouldConsolidate, nSpellId = UnitAura("player", SC_SPELL_RECUP);
 			--local timeLeftOnLast = SA_Data.RecupExpires - GetTime();
 			SA_Data.RecupExpires = expirationTime;
-			SA_Data.BARS["Recup"]["Expires"] = CalcExpireTime(expirationTime);
-			SA_Data.BARS["Recup"]["obj"]:Show();			
+			SA_Data.BARS[SC_SPELL_RECUP]["Expires"] = CalcExpireTime(expirationTime);
+			SA_Data.BARS[SC_SPELL_RECUP]["obj"]:Show();			
 		  end
 		  SA_ChangeAnchor();
 		end
@@ -436,13 +428,13 @@ function SA_OnEvent(self, event, ...)
 				SA_Sound("RuptExpire");
 			  end
 			  SA_Data.RupExpires = 0;
-			  SA_Data.BARS["Rup"]["Expires"] = 0;
-			  SA_Data.BARS["Rup"]["obj"]:Hide();
+			  SA_Data.BARS[SC_SPELL_RUP]["Expires"] = 0;
+			  SA_Data.BARS[SC_SPELL_RUP]["obj"]:Hide();
 			else
 			  local name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable, shouldConsolidate, nSpellId = UnitDebuff("target", SC_SPELL_RUP, nil, "PLAYER");
 			  SA_Data.RupExpires = expirationTime;
-			  SA_Data.BARS["Rup"]["Expires"] = CalcExpireTime(expirationTime);
-			  SA_Data.BARS["Rup"]["obj"]:Show();
+			  SA_Data.BARS[SC_SPELL_RUP]["Expires"] = CalcExpireTime(expirationTime);
+			  SA_Data.BARS[SC_SPELL_RUP]["obj"]:Show();
 			end
 			SA_ChangeAnchor();
 		  end
@@ -454,13 +446,13 @@ function SA_OnEvent(self, event, ...)
 				SA_Sound("RevealExpire");
 			  end
 			  SA_Data.RevealExpires = 0;
-			  SA_Data.BARS["Reveal"]["Expires"] = 0;
-			  SA_Data.BARS["Reveal"]["obj"]:Hide();
+			  SA_Data.BARS[SC_SPELL_REVEAL]["Expires"] = 0;
+			  SA_Data.BARS[SC_SPELL_REVEAL]["obj"]:Hide();
 			else
 			  local name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable, shouldConsolidate, nSpellId = UnitDebuff("target", SC_SPELL_REVEAL, nil, "PLAYER");
 			  SA_Data.RevealExpires = expirationTime;
-			  SA_Data.BARS["Reveal"]["Expires"] = CalcExpireTime(expirationTime);
-			  SA_Data.BARS["Reveal"]["obj"]:Show();
+			  SA_Data.BARS[SC_SPELL_REVEAL]["Expires"] = CalcExpireTime(expirationTime);
+			  SA_Data.BARS[SC_SPELL_REVEAL]["obj"]:Show();
 			end
 			SA_ChangeAnchor();
 		  end
@@ -471,13 +463,13 @@ function SA_OnEvent(self, event, ...)
 				SA_Sound("VendExpire");
 			  end
 			  SA_Data.VendExpires = 0;
-			  SA_Data.BARS["Vend"]["Expires"] = 0;
-			  SA_Data.BARS["Vend"]["obj"]:Hide();
+			  SA_Data.BARS[SC_SPELL_VEND]["Expires"] = 0;
+			  SA_Data.BARS[SC_SPELL_VEND]["obj"]:Hide();
 			else
 			  local name, rank, icon, coun, debuffType, duration, expirationTime, isMine, isStealable, shouldConsolidate, nSpellId = UnitDebuff("target", SC_SPELL_VEND, nil, "PLAYER");
 			  SA_Data.VendExpires = expirationTime;
-			  SA_Data.BARS["Vend"]["Expires"] = CalcExpireTime(expirationTime);
-			  SA_Data.BARS["Vend"]["obj"]:Show();
+			  SA_Data.BARS[SC_SPELL_VEND]["Expires"] = CalcExpireTime(expirationTime);
+			  SA_Data.BARS[SC_SPELL_VEND]["obj"]:Show();
 			end
 			SA_ChangeAnchor();
 		  end
@@ -490,13 +482,13 @@ function SA_OnEvent(self, event, ...)
       -- spellName = GetSpellInfo(spellId);
       if (spellId == SC_SPELL_RUP_ID and SliceAdmiral_Save.RupBarShow) then
 		local amount, overkill, school, resisted, blocked, absorbed, critical, glancing, crushing = select(15, ...)
-		SA_Data.BARS["Rup"]["obj"].DoTtext:SetAlpha(1);
+		SA_Data.BARS[SC_SPELL_RUP]["obj"].DoTtext:SetAlpha(1);
 		if (SliceAdmiral_Save.DoTCrits and critical) then
-		  SA_Data.BARS["Rup"]["obj"].DoTtext:SetText(string.format("*%.0f*", amount));
-		  UIFrameFadeOut(SA_Data.BARS["Rup"]["obj"].DoTtext, 3, 1, 0);
+		  SA_Data.BARS[SC_SPELL_RUP]["obj"].DoTtext:SetText(string.format("*%.0f*", amount));
+		  UIFrameFadeOut(SA_Data.BARS[SC_SPELL_RUP]["obj"].DoTtext, 3, 1, 0);
 		else
-		  SA_Data.BARS["Rup"]["obj"].DoTtext:SetText(amount);
-		  UIFrameFadeOut(SA_Data.BARS["Rup"]["obj"].DoTtext, 2, 1, 0);
+		  SA_Data.BARS[SC_SPELL_RUP]["obj"].DoTtext:SetText(amount);
+		  UIFrameFadeOut(SA_Data.BARS[SC_SPELL_RUP]["obj"].DoTtext, 2, 1, 0);
 		end
       end
       if (spellId == SC_SPELL_DP_ID and SliceAdmiral_Save.DPBarShow) then
@@ -556,17 +548,17 @@ function SA_TestTarget()
     local name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable, shouldConsolidate, nSpellId = UnitDebuff("target", SC_SPELL_RUP, nil, "PLAYER");
     if not name then
       SA_Data.RupExpires = 0;
-      SA_Data.BARS["Rup"]["Expires"] = 0;
-      SA_Data.BARS["Rup"]["obj"]:Hide();
+      SA_Data.BARS[SC_SPELL_RUP]["Expires"] = 0;
+      SA_Data.BARS[SC_SPELL_RUP]["obj"]:Hide();
     else
       if (isMine == "player") then
 		SA_Data.RupExpires = expirationTime;
-		SA_Data.BARS["Rup"]["Expires"] = CalcExpireTime(expirationTime);
-		SA_Data.BARS["Rup"]["obj"]:Show();
+		SA_Data.BARS[SC_SPELL_RUP]["Expires"] = CalcExpireTime(expirationTime);
+		SA_Data.BARS[SC_SPELL_RUP]["obj"]:Show();
       else
 		SA_Data.RupExpires = 0;
-		SA_Data.BARS["Rup"]["Expires"] = 0;
-		SA_Data.BARS["Rup"]["obj"]:Hide();		
+		SA_Data.BARS[SC_SPELL_RUP]["Expires"] = 0;
+		SA_Data.BARS[SC_SPELL_RUP]["obj"]:Hide();		
       end
     end
 	SA_ChangeAnchor();--change les ancres
@@ -575,17 +567,17 @@ function SA_TestTarget()
     local name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable, shouldConsolidate, nSpellId = UnitDebuff("target", SC_SPELL_REVEAL, nil, "PLAYER");
     if not name then
       SA_Data.RevealExpires = 0;
-      SA_Data.BARS["Reveal"]["Expires"] = 0;
-      SA_Data.BARS["Reveal"]["obj"]:Hide();
+      SA_Data.BARS[SC_SPELL_REVEAL]["Expires"] = 0;
+      SA_Data.BARS[SC_SPELL_REVEAL]["obj"]:Hide();
     else
       if (isMine == "player") then
 		SA_Data.RupExpires = expirationTime;
-		SA_Data.BARS["Reveal"]["Expires"] = CalcExpireTime(expirationTime);
-		SA_Data.BARS["Reveal"]["obj"]:Show();
+		SA_Data.BARS[SC_SPELL_REVEAL]["Expires"] = CalcExpireTime(expirationTime);
+		SA_Data.BARS[SC_SPELL_REVEAL]["obj"]:Show();
       else
 		SA_Data.RupExpires = 0;
-		SA_Data.BARS["Reveal"]["Expires"] = 0;
-		SA_Data.BARS["Reveal"]["obj"]:Hide();
+		SA_Data.BARS[SC_SPELL_REVEAL]["Expires"] = 0;
+		SA_Data.BARS[SC_SPELL_REVEAL]["obj"]:Hide();
       end
     end
 	SA_ChangeAnchor();--change les ancres
@@ -594,17 +586,17 @@ function SA_TestTarget()
     local name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable, shouldConsolidate, nSpellId = UnitDebuff("target", SC_SPELL_VEND, nil, "PLAYER");
     if not name then
       SA_Data.VendExpires = 0;
-      SA_Data.BARS["Vend"]["Expires"] = 0;
-      SA_Data.BARS["Vend"]["obj"]:Hide();
+      SA_Data.BARS[SC_SPELL_VEND]["Expires"] = 0;
+      SA_Data.BARS[SC_SPELL_VEND]["obj"]:Hide();
     else
       if (isMine == "player") then
 		SA_Data.VendExpires = expirationTime;
-		SA_Data.BARS["Vend"]["Expires"] = CalcExpireTime(expirationTime);
-		SA_Data.BARS["Vend"]["obj"]:Show();
+		SA_Data.BARS[SC_SPELL_VEND]["Expires"] = CalcExpireTime(expirationTime);
+		SA_Data.BARS[SC_SPELL_VEND]["obj"]:Show();
       else
 		SA_Data.VendExpires = 0;
-		SA_Data.BARS["Vend"]["Expires"] = 0;
-		SA_Data.BARS["Vend"]["obj"]:Hide();
+		SA_Data.BARS[SC_SPELL_VEND]["Expires"] = 0;
+		SA_Data.BARS[SC_SPELL_VEND]["obj"]:Hide();
       end
     end
 	SA_ChangeAnchor();
@@ -1095,23 +1087,23 @@ function SA_OnLoad()
 
     SA_Data.BARS["Stat"]["obj"] = SA_CreateStatBar();
 
-    SA_Data.BARS["SnD"]["obj"] = SA_NewFrame();
-    SA_Data.BARS["SnD"]["obj"]:SetStatusBarColor(255/255, 74/255, 18/255, 0.9);
-    SA_Data.BARS["SnD"]["obj"].icon:SetTexture("Interface\\Icons\\Ability_Rogue_SliceDice");
+    SA_Data.BARS[SC_SPELL_SND]["obj"] = SA_NewFrame();
+    SA_Data.BARS[SC_SPELL_SND]["obj"]:SetStatusBarColor(255/255, 74/255, 18/255, 0.9);
+    SA_Data.BARS[SC_SPELL_SND]["obj"].icon:SetTexture("Interface\\Icons\\Ability_Rogue_SliceDice");
 
-    SA_Data.BARS["Rup"]["obj"] = SA_NewFrame();
-    SA_Data.BARS["Rup"]["obj"]:SetStatusBarColor(130/255, 15/255, 0);
-    SA_Data.BARS["Rup"]["obj"].text2:SetFontObject(SA_Data.BarFont4);
-    SA_Data.BARS["Rup"]["obj"].icon:SetTexture("Interface\\Icons\\Ability_Rogue_Rupture");
+    SA_Data.BARS[SC_SPELL_RUP]["obj"] = SA_NewFrame();
+    SA_Data.BARS[SC_SPELL_RUP]["obj"]:SetStatusBarColor(130/255, 15/255, 0);
+    SA_Data.BARS[SC_SPELL_RUP]["obj"].text2:SetFontObject(SA_Data.BarFont4);
+    SA_Data.BARS[SC_SPELL_RUP]["obj"].icon:SetTexture("Interface\\Icons\\Ability_Rogue_Rupture");
 
-    SA_Data.BARS["Vend"]["obj"] = SA_NewFrame();
-    SA_Data.BARS["Vend"]["obj"]:SetStatusBarColor(130/255, 130/255, 0);
-    SA_Data.BARS["Vend"]["obj"].text2:SetFontObject(SA_Data.BarFont4);
-    SA_Data.BARS["Vend"]["obj"].icon:SetTexture("Interface\\Icons\\Ability_Rogue_Deadliness");
+    SA_Data.BARS[SC_SPELL_VEND]["obj"] = SA_NewFrame();
+    SA_Data.BARS[SC_SPELL_VEND]["obj"]:SetStatusBarColor(130/255, 130/255, 0);
+    SA_Data.BARS[SC_SPELL_VEND]["obj"].text2:SetFontObject(SA_Data.BarFont4);
+    SA_Data.BARS[SC_SPELL_VEND]["obj"].icon:SetTexture("Interface\\Icons\\Ability_Rogue_Deadliness");
 
-    SA_Data.BARS["Recup"]["obj"] = SA_NewFrame();
-    SA_Data.BARS["Recup"]["obj"]:SetStatusBarColor(10/255, 10/255, 150/255);
-    SA_Data.BARS["Recup"]["obj"].icon:SetTexture("Interface\\Icons\\Ability_Rogue_Recuperate");
+    SA_Data.BARS[SC_SPELL_RECUP]["obj"] = SA_NewFrame();
+    SA_Data.BARS[SC_SPELL_RECUP]["obj"]:SetStatusBarColor(10/255, 10/255, 150/255);
+    SA_Data.BARS[SC_SPELL_RECUP]["obj"].icon:SetTexture("Interface\\Icons\\Ability_Rogue_Recuperate");
 
     SA_Data.BARS["DP"]["obj"] = SA_NewFrame();
     SA_Data.BARS["DP"]["obj"]:SetStatusBarColor(96/255, 116/255, 65/255);
@@ -1138,18 +1130,18 @@ function SA_OnLoad()
     --SA_Data.BARS["Guil3"]["obj"].text2:SetFontObject(SA_Data.BarFont4);
     SA_Data.BARS["Guil3"]["obj"].icon:SetTexture("Interface\\Icons\\Inv_Bijou_Red");
 	
-	SA_Data.BARS["Reveal"]["obj"] = SA_NewFrame();
-    SA_Data.BARS["Reveal"]["obj"]:SetStatusBarColor(139/255, 69/255, 19/255);
-    SA_Data.BARS["Reveal"]["obj"].text2:SetFontObject(SA_Data.BarFont4);
-    SA_Data.BARS["Reveal"]["obj"].icon:SetTexture("Interface\\Icons\\Inv_Sword_97");
+	SA_Data.BARS[SC_SPELL_REVEAL]["obj"] = SA_NewFrame();
+    SA_Data.BARS[SC_SPELL_REVEAL]["obj"]:SetStatusBarColor(139/255, 69/255, 19/255);
+    SA_Data.BARS[SC_SPELL_REVEAL]["obj"].text2:SetFontObject(SA_Data.BarFont4);
+    SA_Data.BARS[SC_SPELL_REVEAL]["obj"].icon:SetTexture("Interface\\Icons\\Inv_Sword_97");
 
     SA_Data.BARORDER = {}; -- Initial order puts the longest towards the inside.
     --SA_Data.BARORDER[] = SA_Data.BARS[""]; --Expose Armor 30sec, Anticipation 15sec, Bandits Guile 15 sec, Hemmorrage 24 sec.
-	SA_Data.BARORDER[1] = SA_Data.BARS["SnD"]; -- 12-36 sec
-	SA_Data.BARORDER[2] = SA_Data.BARS["Recup"]; -- 6 - 30 sec
-    SA_Data.BARORDER[3] = SA_Data.BARS["Rup"]; -- 8-24 sec
-    SA_Data.BARORDER[4] = SA_Data.BARS["Vend"]; -- 20 sec
-	SA_Data.BARORDER[5] = SA_Data.BARS["Reveal"]; -- 18 sec
+	SA_Data.BARORDER[1] = SA_Data.BARS[SC_SPELL_SND]; -- 12-36 sec
+	SA_Data.BARORDER[2] = SA_Data.BARS[SC_SPELL_RECUP]; -- 6 - 30 sec
+    SA_Data.BARORDER[3] = SA_Data.BARS[SC_SPELL_RUP]; -- 8-24 sec
+    SA_Data.BARORDER[4] = SA_Data.BARS[SC_SPELL_VEND]; -- 20 sec
+	SA_Data.BARORDER[5] = SA_Data.BARS[SC_SPELL_REVEAL]; -- 18 sec
 
     SA_OnUpdate();
     SA_SetComboPts();
@@ -1175,12 +1167,11 @@ function CalcExpireTime(expireTime)
   end
 end
 
+local Sa_filter = {	["player"] = "PLAYER", 
+					["target"] = "PLAYER HARMFUL", };
+
 local function SA_util_Time(expire, unit, spell)
-	local filter = "PLAYER";
-	if unit == "target" then
-	 filter = "PLAYER HARMFUL"
-	end
-	local name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable, shouldConsolidate, SpellId = UnitAura(unit, spell, nil, filter);
+	local name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable, shouldConsolidate, SpellId = UnitAura(unit, spell, nil, Sa_filter[unit]);
 	if expirationTime then
 		SA_Data[expire] = expirationTime;
 		return CalcExpireTime(expirationTime);
@@ -1190,136 +1181,46 @@ local function SA_util_Time(expire, unit, spell)
 	end
 end
 
-function SA_RupBar()
-  --local x = SA_util_RupTime();
-  local x = SA_util_Time("RupExpires","target",SC_SPELL_RUP);
-  SA_Data.BARS["Rup"]["Expires"] = x;
-
-  if (x > 0) then
-    if (SA_Data.BARS["Rup"]) then
-      SA_Data.BARS["Rup"]["obj"]:SetValue(x);
-      SA_Data.BARS["Rup"]["obj"].text:SetText(string.format("%0.1f", x));
-    end
-  else
-    --SA_Data.BARS["Rup"]["obj"].text2:SetText(isMine2);
-    SA_Data.BARS["Rup"]["obj"]:Hide();
-    SA_Data.RupExpires = 0;
-    SA_Data.BARS["Rup"]["Expires"] = 0;
-  end
-
-  xSound = "RuptAlert";
-  if (x > 0) then
-    if (x <= 3) then
-      if (SA_Data.RuptAlertPending == 3) then
-		SA_Sound(xSound);
-		SA_Data.RuptAlertPending = 2;
-      else
-		if (x <= 2) then
-		  if (SA_Data.RuptAlertPending == 2) then
-			SA_Sound(xSound);
-			SA_Data.RuptAlertPending = 1;
+local function SA_UpdateBar(expire, unit, spell, sa_sound)
+	local sa_time = SA_util_Time(expire, unit, spell);
+	local l_sa_sound = sa_sound;
+	SA_Data.BARS[spell]["Expires"] = sa_time;
+	
+	if sa_time > 0 then
+		if SA_Data.BARS[spell] then
+			SA_Data.BARS[spell]["obj"]:SetValue(sa_time);
+			SA_Data.BARS[spell]["obj"].text:SetText(string.format("%0.1f", sa_time));
+		end
+	else
+		SA_Data.BARS[spell]["obj"]:Hide();
+		SA_Data[expire] = 0;
+		SA_Data.BARS[spell]["Expires"] = 0;
+	end
+	  
+	if sa_time > 0 then
+		if sa_time <= 3 then
+		  if (SA_Data.BARS[spell]["AlertPending"] == 3) then
+			SA_Data.BARS[spell]["AlertPending"] = 2;
+			SA_Sound(l_sa_sound);				
 		  else
-			if (x <= 1) then
-			  if (SA_Data.RuptAlertPending == 1) then
-				SA_Sound(xSound);
-				SA_Data.RuptAlertPending = 0;
+			if sa_time <= 2 then
+			  if (SA_Data.BARS[spell]["AlertPending"] == 2) then		  
+				SA_Data.BARS[spell]["AlertPending"] = 1;
+				SA_Sound(l_sa_sound);			
+			  else
+				if sa_time <= 1 then
+				  if (SA_Data.BARS[spell]["AlertPending"] == 1) then
+					SA_Data.BARS[spell]["AlertPending"] = 0;
+					SA_Sound(l_sa_sound);								
+				  end
+				end
 			  end
 			end
 		  end
+		else
+		  SA_Data.BARS[spell]["AlertPending"] = 3;	  
 		end
-      end
-    else
-      SA_Data.RuptAlertPending = 3;
-    end
-  end
-end
-
-function SA_RevealBar()
-  --local x = SA_util_RevealTime();
-  local x = SA_util_Time("RevealExpires","target",SC_SPELL_REVEAL);
-  SA_Data.BARS["Reveal"]["Expires"] = x;
-
-  if (x > 0) then
-    if (SA_Data.BARS["Reveal"]) then
-      SA_Data.BARS["Reveal"]["obj"]:SetValue(x);
-      SA_Data.BARS["Reveal"]["obj"].text:SetText(string.format("%0.1f", x));
-    end
-  else
-    --SA_Data.BARS["Reveal"]["obj"].text2:SetText(isMine2);
-    SA_Data.BARS["Reveal"]["obj"]:Hide();
-    SA_Data.RevealExpires = 0;
-    SA_Data.BARS["Reveal"]["Expires"] = 0;
-  end
-
-  xSound = "RevealAlert";
-  if (x > 0) then
-    if (x <= 3) then
-      if (SA_Data.RevealAlertPending == 3) then
-		SA_Sound(xSound);
-		SA_Data.RevealAlertPending = 2;
-      else
-		if (x <= 2) then
-		  if (SA_Data.RevealAlertPending == 2) then
-			SA_Sound(xSound);
-			SA_Data.RevealAlertPending = 1;
-		  else
-			if (x <= 1) then
-			  if (SA_Data.RevealAlertPending == 1) then
-				SA_Sound(xSound);
-				SA_Data.RevealAlertPending = 0;
-			  end
-			end
-		  end
-		end
-      end
-    else
-      SA_Data.RevealAlertPending = 3;
-    end
-  end
-end
-
-function SA_VendBar()
-  --local x = SA_util_VendTime();
-  local x = SA_util_Time("VendExpires","target",SC_SPELL_VEND);
-  SA_Data.BARS["Vend"]["Expires"] = x;
-
-  if (x > 0) then
-    if (SA_Data.BARS["Vend"]) then
-      SA_Data.BARS["Vend"]["obj"]:SetValue(x);
-      SA_Data.BARS["Vend"]["obj"].text:SetText(string.format("%0.1f", x));
-    end
-  else
-    --SA_Data.BARS["Vend"]["obj"].text2:SetText(isMine2);
-    SA_Data.BARS["Vend"]["obj"]:Hide();
-    SA_Data.VendExpires = 0;
-    SA_Data.BARS["Vend"]["Expires"] = 0;
-  end
-
-  xSound = "VendAlert";
-  if (x > 0) then
-    if (x <= 3) then
-      if (SA_Data.VendAlertPending == 3) then
-		SA_Sound(xSound);
-		SA_Data.VendAlertPending = 2;
-      else
-		if (x <= 2) then
-		  if (SA_Data.VendAlertPending == 2) then
-			SA_Sound(xSound);
-			SA_Data.VendAlertPending = 1;
-		  else
-			if (x <= 1) then
-			  if (SA_Data.VendAlertPending == 1) then
-				SA_Sound(xSound);
-				SA_Data.VendAlertPending = 0;
-			  end
-			end
-		  end
-		end
-      end
-    else
-      SA_Data.VendAlertPending = 3;
-    end
-  end
+	end
 end
 
 function SA_DataPBar()
@@ -1338,44 +1239,6 @@ function SA_DataPBar()
   end
 end
 
-function SA_RecupBar()
-  --local x = SA_util_RecupTime();
-  local x = SA_util_Time("RecupExpires","player",SC_SPELL_RECUP)
-  SA_Data.BARS["Recup"]["Expires"] = x;
-  local recup = SA_Data.BARS["Recup"];
-
-  if (x > 0) then
-    if (SA_Data.BARS["Recup"]) then
-      SA_Data.BARS["Recup"]["obj"]:SetValue(x);
-      SA_Data.BARS["Recup"]["obj"].text:SetText(string.format("%0.1f", x));
-    end
-
-    if (x <= 3) then
-      if (recup.AlertPending == 3) then
-		SA_Sound("Recup.Alert");
-		recup.AlertPending = 2;
-      else
-		if (x <= 2) then
-		  if (recup.AlertPending == 2) then
-			SA_Sound("Recup.Alert");
-			recup.AlertPending = 1;
-		  else
-			if (x <= 1) then
-			  if (recup.AlertPending == 1) then
-				SA_Sound("Recup.Alert");
-				recup.AlertPending = 0;
-			  end
-			end
-		  end
-		end
-      end
-    else
-      recup.AlertPending = 3;
-    end
-
-  end
-end
-
 function SA_EnvenomBar()
   --local x = SA_util_EnvenomTime();
   local x = SA_util_Time("EnvExpires","player",SC_SPELL_ENV);
@@ -1388,106 +1251,6 @@ function SA_EnvenomBar()
     end
   end
 end
-
-function SA_SNDCooldown()
-  if SliceAdmiral_Save.PadLatency then
-    local down, up, lag = GetNetStats();
-    SA_Data.tNow = SA_Data.tNow + (lag*2/1000);
-  end
-
-  --local x = SA_util_SnDBuffTime();
-  local x = SA_util_Time("SliceExpires","player",SC_SPELL_SND);
-  SA_Data.BARS["SnD"]["Expires"] = x;
-
-  if (SA_Data.BARS["SnD"]) then
-    if (SA_Data.BARS["SnD"]["obj"]) then
-      SA_Data.BARS["SnD"]["obj"]:SetValue(x);
-      if (x > 0) then
-		SA_Data.BARS["SnD"]["obj"].text:SetText(string.format("%0.1f", x));
-      else
-		SA_Data.BARS["SnD"]["obj"].text:SetText("");
-      end
-    end
-  end
-
-  xSound = "Tick3";
-  if (x > 0) then
-    if (x <= 3) then
-      if (SA_Data.AlertPending == 3) then
-		SA_Sound(xSound);
-		SA_Data.AlertPending = 2;
-      else
-		if (x <= 2) then
-		  if (SA_Data.AlertPending == 2) then
-			SA_Sound(xSound);
-			SA_Data.AlertPending = 1;
-		  else
-			if (x <= 1) then
-			  if (SA_Data.AlertPending == 1) then
-				SA_Sound(xSound);
-				SA_Data.AlertPending = 0;
-			  end
-			end
-		  end
-		end
-      end
-    else
-      SA_Data.AlertPending = 3;
-    end
-  end
-
-end
-
---[[
-function SA_SoundCheck()
-  SA_Data.tNow = GetTime();
-  if (SliceAdmiral_Save.PadLatency) then
-    local down, up, lag = GetNetStats();
-    SA_Data.tNow = SA_Data.tNow + (lag*2/1000);
-  end
-
-  local x = SA_Data.BARORDER[1]["Expires"];
-  xSound = SA_Data.BARORDER[1]["AlertSound"];
-  if (x == 0) then
-    if (SA_Data.BARORDER[2]["Expires"] > 0) then
-      x = SA_Data.BARORDER[2]["Expires"]
-      xSound = SA_Data.BARORDER[2]["AlertSound"];
-    else
-      x = SA_Data.BARORDER[3]["Expires"]
-      xSound = SA_Data.BARORDER[3]["AlertSound"];
-    end
-  end --this picks the bar with the lowest timer.
-  xSound = "Tick3";
-
-  --TODO need a y (x equiv) for the 2nd lowest bar
-  --TODO need an AlertPending for each bar...
-
-  if (x > 0) then
-    if (x <= 3) then
-      if (SA_Data.AlertPending == 3) then
-	SA_Sound(xSound);
-	SA_Data.AlertPending = 2;
-      else
-	if (x <= 2) then
-	  if (SA_Data.AlertPending == 2) then
-	    SA_Sound(xSound);
-	    SA_Data.AlertPending = 1;
-	  else
-	    if (x <= 1) then
-	      if (SA_Data.AlertPending == 1) then
-		SA_Sound(xSound);
-		SA_Data.AlertPending = 0;
-	      end
-	    end
-	  end
-	end
-      end
-    else
-      SA_Data.AlertPending = 3;
-    end
-  end
-end
-]]
 
 function SA_OnUpdate()
   SA_Data.tNow = GetTime();
@@ -1516,22 +1279,30 @@ function SA_OnUpdate()
   SA_Data.LastEnergy = UnitMana("player");
 
   if SliceAdmiral_Save.ShowSnDBar then
-    SA_SNDCooldown();
+	  if SliceAdmiral_Save.PadLatency then
+		local down, up, lag = GetNetStats();
+		SA_Data.tNow = SA_Data.tNow + (lag*2/1000);
+	  end
+	SA_UpdateBar("SliceExpires","player",SC_SPELL_SND, "Tick3");
+    --SA_SNDCooldown();
   end
   if SliceAdmiral_Save.RupBarShow then
-    SA_RupBar();
+    SA_UpdateBar("RupExpires", "target", SC_SPELL_RUP, "RuptAlert");
+    --SA_RupBar();
   end
   if SliceAdmiral_Save.RevealBarShow then
-	SA_RevealBar();
+	SA_UpdateBar("RevealExpires", "target", SC_SPELL_REVEAL, "RevealAlert");
+	--SA_UpdateBar(expire, unit, spell, pendingAlert, xSound)	
   end
   if SliceAdmiral_Save.ShowEnvBar then
     SA_EnvenomBar();
   end
   if SliceAdmiral_Save.VendBarShow then
-    SA_VendBar();
+	SA_UpdateBar("VendExpires","target",SC_SPELL_VEND, "VendAlert");
+    --SA_VendBar();
   end
   if SliceAdmiral_Save.ShowRecupBar then
-    SA_RecupBar();
+	SA_UpdateBar("RecupExpires", "player", SC_SPELL_RECUP, "Recup.Alert");    
   end
   if SliceAdmiral_Save.DPBarShow then
     SA_DataPBar();

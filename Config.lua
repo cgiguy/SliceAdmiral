@@ -23,6 +23,7 @@ SliceAdmiral_Save = {
   ["HilightBuffed"] = false,
   ["IsLocked"] = false,
   ["MasterVolume"] = false,
+  ["none"] = "none",
   ["PadLatency"] = true,
   ["Recup.Alert"] = "Tambourine",
   ["Recup.Expire"] = "Price is WRONG",
