@@ -61,7 +61,7 @@
 			<OnEvent>SA_OnEvent(self, event, ...);</OnEvent>
 			<OnMouseDown>SA_MoveStart(self, button);</OnMouseDown>
 			<OnMouseUp>SA_MoveStop(self, button);</OnMouseUp>
-			<OnUpdate>SA_OnUpdate();</OnUpdate>
+			<OnUpdate>SA_OnUpdate(self, elapsed);</OnUpdate>  
 		</Scripts>
 	</Frame>
 	<Frame name="MyDropDownMenu" inherits="UIDropDownMenuTemplate" id="1">

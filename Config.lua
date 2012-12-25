@@ -621,6 +621,7 @@ function SA_Config_Default()
   SliceAdmiral_Save["Scale"] = 140;
   SliceAdmiral_Save["PadLatency"] = true;
   SliceAdmiral_Save["EnergyTrans"] = 50;
+  SliceAdmiral_Save["None"] = "None";
   SliceAdmiral_Save.BarMargin = 3;
   SliceAdmiral_Save.DPBarShow = true;
   SliceAdmiral_Save.RupBarShow = true;
