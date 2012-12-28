@@ -98,7 +98,7 @@ SA_Data.BARS = { --TEH BARS
 
 function SA_MoveStart(self, button)
   if (button == "LeftButton") then
-    if (SliceAdmiral_Save.IsLocked == false) then
+    if not SliceAdmiral_Save.IsLocked then
       SA:StartMoving();
     else
       SA:EnableMouse(false);
@@ -113,7 +113,7 @@ function SA_MoveStart(self, button)
 end
 
 function SA_MoveStop()
-  if (SliceAdmiral_Save.IsLocked == false) then
+  if not SliceAdmiral_Save.IsLocked then
     SA:StopMovingOrSizing();
   end
 end
@@ -945,23 +945,11 @@ function SA_flashBuffedStats()
   end
 
   local statCheck = {};
-  statCheck[1] = false;
-  statCheck[2] = false;
-  statCheck[3] = false;
+  statCheck[1] = ( totalAP > (SA_Data.baseAP * 1.01));
+  statCheck[2] = (crit > (SA_Data.baseCrit * 1.5)) ;
+  statCheck[3] = (mhSpeed < (SA_Data.baseSpeed / 2));
   statCheck[4] = false;
-
-  if ( totalAP > (SA_Data.baseAP * 1.01)) then --TODO explain
-    statCheck[1] = true;
-  end
-
-  if (crit > (SA_Data.baseCrit * 1.5)) then
-    statCheck[2] = true;
-  end
-
-  if (mhSpeed < (SA_Data.baseSpeed / 2)) then
-    statCheck[3] = true;
-  end
-
+  
   for i = 1, numStats do
     if statCheck[i] then
       SA_Data.BARS["Stat"]["obj"].stats[i].fs:SetTextColor(140/255, 15/255, 0);
@@ -1075,23 +1063,19 @@ function SA_OnLoad()
     SA_Data.BARS[SC_SPELL_ENV]["obj"].icon:SetTexture("Interface\\Icons\\Ability_Rogue_Disembowel");
 	
 	SA_Data.BARS["Guil1"]["obj"] = SA_NewFrame();
-    SA_Data.BARS["Guil1"]["obj"]:SetStatusBarColor(34/255, 189/255, 34/255);
-    --SA_Data.BARS["Guil1"]["obj"].text2:SetFontObject(SA_Data.BarFont4);
+    SA_Data.BARS["Guil1"]["obj"]:SetStatusBarColor(34/255, 189/255, 34/255);    
     SA_Data.BARS["Guil1"]["obj"].icon:SetTexture("Interface\\Icons\\Inv_Bijou_Green");
 	
 	SA_Data.BARS["Guil2"]["obj"] = SA_NewFrame();
-    SA_Data.BARS["Guil2"]["obj"]:SetStatusBarColor(255/255, 215/255, 0/255);
-   -- SA_Data.BARS["Guil2"]["obj"].text2:SetFontObject(SA_Data.BarFont4);
+    SA_Data.BARS["Guil2"]["obj"]:SetStatusBarColor(255/255, 215/255, 0/255);   
     SA_Data.BARS["Guil2"]["obj"].icon:SetTexture("Interface\\Icons\\Inv_Bijou_Yellow");
 	
 	SA_Data.BARS["Guil3"]["obj"] = SA_NewFrame();
-    SA_Data.BARS["Guil3"]["obj"]:SetStatusBarColor(200/255, 34/255, 34/255);
-    --SA_Data.BARS["Guil3"]["obj"].text2:SetFontObject(SA_Data.BarFont4);
+    SA_Data.BARS["Guil3"]["obj"]:SetStatusBarColor(200/255, 34/255, 34/255);    
     SA_Data.BARS["Guil3"]["obj"].icon:SetTexture("Interface\\Icons\\Inv_Bijou_Red");
 	
 	SA_Data.BARS[SC_SPELL_REVEAL]["obj"] = SA_NewFrame();
-    SA_Data.BARS[SC_SPELL_REVEAL]["obj"]:SetStatusBarColor(139/255, 69/255, 19/255);
-    SA_Data.BARS[SC_SPELL_REVEAL]["obj"].text2:SetFontObject(SA_Data.BarFont4);
+    SA_Data.BARS[SC_SPELL_REVEAL]["obj"]:SetStatusBarColor(139/255, 69/255, 19/255);    
     SA_Data.BARS[SC_SPELL_REVEAL]["obj"].icon:SetTexture("Interface\\Icons\\Inv_Sword_97");
 
     SA_Data.BARORDER = {}; -- Initial order puts the longest towards the inside.
