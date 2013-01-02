@@ -27,6 +27,7 @@ SA_Data.VendAlertPending = 0;
 SA_Data.VendExpires = 0;
 SA_Data.UpdateInterval = 0.05;
 SA_Data.TimeSinceLastUpdate = 0;
+SA_Data.numStats = 4; --Change to 3 if you don't want Anticipation
 
 local showStatBar = 1    -- show stat bar   AP, crit, etc
 local barsup = 1         -- bars group up or down
@@ -41,6 +42,11 @@ local scaleUI = 0
 local widthUI = 0
 
 local CalcExpireTime -- local is good
+local SA_SetComboPts
+local SA_UpdateStats
+local SA_flashBuffedStats
+local SA_ResetBaseStats
+local SA_TestTarget
 
 SA_Data.BARS = { --TEH BARS
   ["CP"] = {
@@ -79,15 +85,15 @@ SA_Data.BARS = { --TEH BARS
     ["Expires"] = 0,    
 	["AlertPending"] = 0,
   },
-  ["Guil1"] = {
+  [SC_SPELL_BAND1] = {
     ["obj"] = 0,
     ["Expires"] = 0,    
   },
-  ["Guil2"] = {
+  [SC_SPELL_BAND2] = {
     ["obj"] = 0,
     ["Expires"] = 0,    
   },
-  ["Guil3"] = {
+  [SC_SPELL_BAND3] = {
     ["obj"] = 0,
     ["Expires"] = 0,   
   },
@@ -138,7 +144,7 @@ function MyDropDownMenu_OnLoad()
   UIDropDownMenu_AddButton(info2);
 end
 
-function SA_ToggleIsLocked()
+local function SA_ToggleIsLocked()
   if SliceAdmiral_Save.IsLocked then
     SliceAdmiral_Save.IsLocked = false;
     --SA:EnableMouse(true);
@@ -253,11 +259,18 @@ local function SA_ChangeAnchor()
     else
       SA_Data.BARS[SC_SPELL_ENV]["obj"]:SetPoint("TOPLEFT", LastAnchor, "BOTTOMLEFT", 0, -1 * offSetSize);
     end
-    LastAnchor = SA_Data.BARS[SC_SPELL_DP]["obj"];
+    LastAnchor = SA_Data.BARS[SC_SPELL_ENV]["obj"];
   end
   -- HagTest -- Bandits Guile Hackatron
-  if (SA_Data.GuilExpires ~= 0) then
+  if (SA_Data.GuilExpires ~= 0 and SA_Data.BARS[SC_SPELL_BAND3]["Expire"] ~= 0) then
 	--Lots of hacky stuff sins its 3
+	SA_Data.BARS[SC_SPELL_BAND3]["obj"]:ClearAllPoints();
+    if (SliceAdmiral_Save.Barsup) then
+      SA_Data.BARS[SC_SPELL_BAND3]["obj"]:SetPoint("BOTTOMLEFT", LastAnchor, "TOPLEFT", 0, offSetSize);
+    else
+      SA_Data.BARS[SC_SPELL_BAND3]["obj"]:SetPoint("TOPLEFT", LastAnchor, "BOTTOMLEFT", 0, -1 * offSetSize);
+    end
+    LastAnchor = SA_Data.BARS[SC_SPELL_BAND3]["obj"];
   end 
 end
 
@@ -297,18 +310,14 @@ end
 
 function SA_OnEvent(self, event, ...)
   if (event == "COMBAT_LOG_EVENT_UNFILTERED") then
-    local timestamp, type, hideCaster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags = select(1, ...);
+    local timestamp, type, hideCaster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName = ...;
     if (type == "SPELL_AURA_REFRESH" or type == "SPELL_AURA_APPLIED" or type == "SPELL_AURA_REMOVED" or type == "SPELL_AURA_APPLIED_DOSE" or type == "SPELL_PERIODIC_AURA_REMOVED" or type == "SPELL_PERIODIC_AURA_APPLIED" or type == "SPELL_PERIODIC_AURA_APPLIED_DOSE" or type == "SPELL_PERIODIC_AURA_REFRESH") then
       local spellId, spellName, spellSchool = select(12, ...);
       local isMySpell;
       --   print ("spellId = " .. spellId .. " (" .. spellName .. ")");
       --   spellName = GetSpellInfo(spellId);
       --   print("SourceName: " .. sourceName);
-      if (sourceName == UnitName("player")) then
-        isMySpell = true;
-      else
-		isMySpell = false;
-      end
+      isMySpell = (sourceName == UnitName("player"));   
       if (destName == UnitName("player")) then
         --print("Spell on player: " .. spellName);
 		if (spellId == SC_SPELL_SND_ID and SliceAdmiral_Save.ShowSnDBar) then
@@ -320,7 +329,7 @@ function SA_OnEvent(self, event, ...)
 				SA_Data.BARS[SC_SPELL_SND]["Expires"] = 0;				
 				SA_Data.BARS[SC_SPELL_SND]["obj"]:Hide();				
 			else
-				local name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable, shouldConsolidate, nspellId = UnitAura("player", SC_SPELL_SND);
+				local name, rank, icon, count, debuffType, duration, expirationTime = UnitAura("player", SC_SPELL_SND);
 				--local timeLeftOnLast = SA_Data.SliceExpires - GetTime();
 				SA_Data.BARS[SC_SPELL_SND]["obj"]:Show();
 				SA_Data.SliceExpires = expirationTime;
@@ -338,7 +347,7 @@ function SA_OnEvent(self, event, ...)
 			SA_Data.BARS[SC_SPELL_RECUP]["Expires"] = 0;
 			SA_Data.BARS[SC_SPELL_RECUP]["obj"]:Hide();
 		  else
-			local name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable, shouldConsolidate, nSpellId = UnitAura("player", SC_SPELL_RECUP);
+			local name, rank, icon, count, debuffType, duration, expirationTime = UnitAura("player", SC_SPELL_RECUP);
 			--local timeLeftOnLast = SA_Data.RecupExpires - GetTime();
 			SA_Data.RecupExpires = expirationTime;
 			SA_Data.BARS[SC_SPELL_RECUP]["Expires"] = CalcExpireTime(expirationTime);
@@ -356,7 +365,7 @@ function SA_OnEvent(self, event, ...)
 			SA_Data.BARS[SC_SPELL_ENV]["Expires"] = 0;			
 			SA_Data.BARS[SC_SPELL_ENV]["obj"]:Hide();
 		  else
-			local name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable, shouldConsolidate, nSpellId = UnitAura("player", SC_SPELL_ENV);
+			local name, rank, icon, count, debuffType, duration, expirationTime = UnitAura("player", SC_SPELL_ENV);
 			--local timeLeftOnLast = SA_Data.EnvExpires - GetTime();
 			SA_Data.EnvExpires = expirationTime;
 			SA_Data.BARS[SC_SPELL_ENV]["Expires"] = CalcExpireTime(expirationTime);
@@ -374,7 +383,7 @@ function SA_OnEvent(self, event, ...)
 			  SA_Data.BARS[SC_SPELL_DP]["Expires"] = 0;
 			  SA_Data.BARS[SC_SPELL_DP]["obj"]:Hide();
 			else
-			  local name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable, shouldConsolidate, nspellId = UnitDebuff("target", SC_SPELL_DP, nil, "PLAYER");
+			  local name, rank, icon, count, debuffType, duration, expirationTime = UnitDebuff("target", SC_SPELL_DP, nil, "PLAYER");
 			  SA_Data.DPExpires = expirationTime;
 			  SA_Data.BARS[SC_SPELL_DP]["Expires"] = CalcExpireTime(expirationTime);
 			-- SA_Data.BARS[SC_SPELL_DP]["obj"].text2:SetText("x" .. string.format("%i", count1));
@@ -393,7 +402,7 @@ function SA_OnEvent(self, event, ...)
 			  SA_Data.BARS[SC_SPELL_RUP]["Expires"] = 0;
 			  SA_Data.BARS[SC_SPELL_RUP]["obj"]:Hide();
 			else
-			  local name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable, shouldConsolidate, nSpellId = UnitDebuff("target", SC_SPELL_RUP, nil, "PLAYER");
+			  local name, rank, icon, count, debuffType, duration, expirationTime = UnitDebuff("target", SC_SPELL_RUP, nil, "PLAYER");
 			  SA_Data.RupExpires = expirationTime;
 			  SA_Data.BARS[SC_SPELL_RUP]["Expires"] = CalcExpireTime(expirationTime);
 			  SA_Data.BARS[SC_SPELL_RUP]["obj"]:Show();
@@ -411,7 +420,7 @@ function SA_OnEvent(self, event, ...)
 			  SA_Data.BARS[SC_SPELL_REVEAL]["Expires"] = 0;
 			  SA_Data.BARS[SC_SPELL_REVEAL]["obj"]:Hide();
 			else
-			  local name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable, shouldConsolidate, nSpellId = UnitDebuff("target", SC_SPELL_REVEAL, nil, "PLAYER");
+			  local name, rank, icon, count, debuffType, duration, expirationTime = UnitDebuff("target", SC_SPELL_REVEAL, nil, "PLAYER");
 			  SA_Data.RevealExpires = expirationTime;
 			  SA_Data.BARS[SC_SPELL_REVEAL]["Expires"] = CalcExpireTime(expirationTime);
 			  SA_Data.BARS[SC_SPELL_REVEAL]["obj"]:Show();
@@ -428,7 +437,7 @@ function SA_OnEvent(self, event, ...)
 			  SA_Data.BARS[SC_SPELL_VEND]["Expires"] = 0;
 			  SA_Data.BARS[SC_SPELL_VEND]["obj"]:Hide();
 			else
-			  local name, rank, icon, coun, debuffType, duration, expirationTime, isMine, isStealable, shouldConsolidate, nSpellId = UnitDebuff("target", SC_SPELL_VEND, nil, "PLAYER");
+			  local name, rank, icon, coun, debuffType, duration, expirationTime = UnitDebuff("target", SC_SPELL_VEND, nil, "PLAYER");
 			  SA_Data.VendExpires = expirationTime;
 			  SA_Data.BARS[SC_SPELL_VEND]["Expires"] = CalcExpireTime(expirationTime);
 			  SA_Data.BARS[SC_SPELL_VEND]["obj"]:Show();
@@ -468,7 +477,7 @@ function SA_OnEvent(self, event, ...)
   end -- event == "COMBAT_LOG_EVENT_UNFILTERED"
 
   if (event == "UNIT_COMBO_POINTS") then
-    local unit = select(1, ...);
+    local unit = ...;
     if (unit and unit == "player") then
       SA_SetComboPts();
     end
@@ -487,7 +496,7 @@ end
 
 function SA_TestTarget() 
   if SliceAdmiral_Save.DPBarShow then
-	local name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable, shouldConsolidate, nspellId = UnitDebuff("target", SC_SPELL_DP, nil, "PLAYER");
+	local name, rank, icon, count, debuffType, duration, expirationTime, isMine = UnitDebuff("target", SC_SPELL_DP, nil, "PLAYER");
     if not name then
       SA_Data.DPExpires = 0;
       SA_Data.BARS[SC_SPELL_DP]["Expires"] = 0;
@@ -506,7 +515,7 @@ function SA_TestTarget()
     end
   end
   if SliceAdmiral_Save.RupBarShow then
-    local name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable, shouldConsolidate, nSpellId = UnitDebuff("target", SC_SPELL_RUP, nil, "PLAYER");
+    local name, rank, icon, count, debuffType, duration, expirationTime, isMine = UnitDebuff("target", SC_SPELL_RUP, nil, "PLAYER");
     if not name then
       SA_Data.RupExpires = 0;
       SA_Data.BARS[SC_SPELL_RUP]["Expires"] = 0;
@@ -524,7 +533,7 @@ function SA_TestTarget()
     end	
   end
   if SliceAdmiral_Save.RevealBarShow then
-    local name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable, shouldConsolidate, nSpellId = UnitDebuff("target", SC_SPELL_REVEAL, nil, "PLAYER");
+    local name, rank, icon, count, debuffType, duration, expirationTime, isMine = UnitDebuff("target", SC_SPELL_REVEAL, nil, "PLAYER");
     if not name then
       SA_Data.RevealExpires = 0;
       SA_Data.BARS[SC_SPELL_REVEAL]["Expires"] = 0;
@@ -542,7 +551,7 @@ function SA_TestTarget()
     end	
   end
   if SliceAdmiral_Save.VendBarShow then
-    local name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable, shouldConsolidate, nSpellId = UnitDebuff("target", SC_SPELL_VEND, nil, "PLAYER");
+    local name, rank, icon, count, debuffType, duration, expirationTime, isMine = UnitDebuff("target", SC_SPELL_VEND, nil, "PLAYER");
     if not name then
       SA_Data.VendExpires = 0;
       SA_Data.BARS[SC_SPELL_VEND]["Expires"] = 0;
@@ -610,13 +619,13 @@ function SA_SetComboPts()
   end
 end
 
-function SA_Unload()
+local function SA_Unload()
   SA:UnregisterAllEvents();
   SA:Hide();
   SA_Config_CPFrame:Hide();
 end
 
-function SA_NewFrame()
+local function SA_NewFrame()
   local f = CreateFrame("StatusBar", nil, SA);
 
   f:SetWidth(widthUI);
@@ -695,7 +704,7 @@ function SA_NewFrame()
 
 end
 
-function SA_CPFrame()
+local function SA_CPFrame()
   local f = CreateFrame("StatusBar", nil, SA);
   local width = widthUI --SA_Data.BARS["CP"]["obj"]:GetWidth();
 
@@ -791,7 +800,7 @@ end
 function SA_UpdateStatWidths()
   local width = VTimerEnergy:GetWidth()
 
-  local numStats = 3 --HP TODO option for this
+  local numStats = SA_Data.numStats --HP TODO option for this
   local spacing = width/90;
   local cpwidth = ((width-(spacing*3))/(numStats));
   local cur_location = 0; --small initial offset
@@ -814,7 +823,7 @@ function SA_UpdateStatWidths()
   end
 end
 
-function SA_CreateStatBar()
+local function SA_CreateStatBar()
   local f = CreateFrame("StatusBar", nil, SA);
   local width = widthUI;
 
@@ -847,7 +856,7 @@ function SA_CreateStatBar()
 
   f.stats = {}
 
-  local numStats = 3; --HP TODO option for this
+  local numStats = SA_Data.numStats; --HP TODO option for this
   local spacing = width/60;
   local cpwidth = ((width-(spacing*3))/(numStats*1.5));
   local cur_location = 2; --small initial offset
@@ -860,8 +869,8 @@ function SA_CreateStatBar()
   end
 
   local fontstyle = "OUTLINE"
-
-  for i = 1, numStats do
+ 
+  for i = 1, numStats do	
     --Create the frame & space it
     local statText = CreateFrame("Frame", nil, f)
     statText:ClearAllPoints()
@@ -878,6 +887,10 @@ function SA_CreateStatBar()
 
     --Create stat label frame
     local labelFrame = CreateFrame("Frame", nil, f)
+	local action = {[1] = function() labelFrame.fs:SetText("ap") end,
+					[2] = function() labelFrame.fs:SetText("crit") end,
+					[3] = function() labelFrame.fs:SetText("speed") end,
+					[4] = function() labelFrame.fs:SetText(SC_SPELL_ANTICI) end };
     labelFrame:ClearAllPoints()
     labelFrame:SetPoint("TOPLEFT", f, "TOPLEFT", cur_location, 0)
     labelFrame:SetPoint("BOTTOMRIGHT", f, "BOTTOMLEFT", cur_location + cpwidth, 0)
@@ -887,15 +900,7 @@ function SA_CreateStatBar()
     labelFrame.fs:SetJustifyV("BOTTOM")
     labelFrame.fs:SetFont(font, fontsize/1.8, "");
     labelFrame.fs:SetAllPoints();
-    if (i == 1) then
-      labelFrame.fs:SetText("ap");
-    elseif (i == 2) then
-      labelFrame.fs:SetText("crit");
-    elseif (i == 3) then
-      labelFrame.fs:SetText("speed");
-    elseif (i == 4) then
-      labelFrame.fs:SetText("Stat 4");
-    end
+    action[i]();
 
     f.stats[i] = statText;
     f.stats[i].labelFrame = labelFrame;
@@ -916,6 +921,8 @@ function SA_UpdateStats()
   local totalAP = baseAP+buffAP+negAP;
   local crit = GetCritChance();
   local mhSpeed, ohSpeed = UnitAttackSpeed("player");
+  local name, rank, icon, count = UnitAura("player", SC_SPELL_ANTICI);
+  local antici = count or 0;
 
   if (SA_Data.BARS["Stat"]["obj"].stats[1]) then
     SA_Data.BARS["Stat"]["obj"].stats[1].fs:SetText(totalAP);
@@ -926,18 +933,23 @@ function SA_UpdateStats()
   if (SA_Data.BARS["Stat"]["obj"].stats[3]) then
     SA_Data.BARS["Stat"]["obj"].stats[3].fs:SetText(string.format("%.2f", mhSpeed));
   end
-
+  if (SA_Data.BARS["Stat"]["obj"].stats[4]) then
+    SA_Data.BARS["Stat"]["obj"].stats[4].fs:SetText(antici);
+  end
+	
   if SliceAdmiral_Save.HilightBuffed then
     SA_flashBuffedStats()
   end
 end
 
 function SA_flashBuffedStats()
-  local numStats = 3;
+  local numStats = SA_Data.numStats;
   local baseAP, buffAP, negAP = UnitAttackPower("player");
   local totalAP = baseAP+buffAP+negAP;
   local crit = GetCritChance();
   local mhSpeed, ohSpeed = UnitAttackSpeed("player");
+  local name, rank, icon, count = UnitAura("player", SC_SPELL_ANTICI);
+  local antici = count or 0;
 
   if (not SA_Data.baseAP or SA_Data.baseAP == 0) then --initialize here since all stats = 0 when OnLoad is called.
     SA_ResetBaseStats();
@@ -948,7 +960,7 @@ function SA_flashBuffedStats()
   statCheck[1] = ( totalAP > (SA_Data.baseAP * 1.01));
   statCheck[2] = (crit > (SA_Data.baseCrit * 1.5)) ;
   statCheck[3] = (mhSpeed < (SA_Data.baseSpeed / 2));
-  statCheck[4] = false;
+  statCheck[4] = (antici >= 4);
   
   for i = 1, numStats do
     if statCheck[i] then
@@ -1062,17 +1074,17 @@ function SA_OnLoad()
     SA_Data.BARS[SC_SPELL_ENV]["obj"].text2:SetFontObject(SA_Data.BarFont4);
     SA_Data.BARS[SC_SPELL_ENV]["obj"].icon:SetTexture("Interface\\Icons\\Ability_Rogue_Disembowel");
 	
-	SA_Data.BARS["Guil1"]["obj"] = SA_NewFrame();
-    SA_Data.BARS["Guil1"]["obj"]:SetStatusBarColor(34/255, 189/255, 34/255);    
-    SA_Data.BARS["Guil1"]["obj"].icon:SetTexture("Interface\\Icons\\Inv_Bijou_Green");
+	SA_Data.BARS[SC_SPELL_BAND1]["obj"] = SA_NewFrame();
+    SA_Data.BARS[SC_SPELL_BAND1]["obj"]:SetStatusBarColor(34/255, 189/255, 34/255);    
+    SA_Data.BARS[SC_SPELL_BAND1]["obj"].icon:SetTexture("Interface\\Icons\\Inv_Bijou_Green");
 	
-	SA_Data.BARS["Guil2"]["obj"] = SA_NewFrame();
-    SA_Data.BARS["Guil2"]["obj"]:SetStatusBarColor(255/255, 215/255, 0/255);   
-    SA_Data.BARS["Guil2"]["obj"].icon:SetTexture("Interface\\Icons\\Inv_Bijou_Yellow");
+	SA_Data.BARS[SC_SPELL_BAND2]["obj"] = SA_NewFrame();
+    SA_Data.BARS[SC_SPELL_BAND2]["obj"]:SetStatusBarColor(255/255, 215/255, 0/255);   
+    SA_Data.BARS[SC_SPELL_BAND2]["obj"].icon:SetTexture("Interface\\Icons\\Inv_Bijou_Yellow");
 	
-	SA_Data.BARS["Guil3"]["obj"] = SA_NewFrame();
-    SA_Data.BARS["Guil3"]["obj"]:SetStatusBarColor(200/255, 34/255, 34/255);    
-    SA_Data.BARS["Guil3"]["obj"].icon:SetTexture("Interface\\Icons\\Inv_Bijou_Red");
+	SA_Data.BARS[SC_SPELL_BAND3]["obj"] = SA_NewFrame();
+    SA_Data.BARS[SC_SPELL_BAND3]["obj"]:SetStatusBarColor(200/255, 34/255, 34/255);    
+    SA_Data.BARS[SC_SPELL_BAND3]["obj"].icon:SetTexture("Interface\\Icons\\Inv_Bijou_Red");
 	
 	SA_Data.BARS[SC_SPELL_REVEAL]["obj"] = SA_NewFrame();
     SA_Data.BARS[SC_SPELL_REVEAL]["obj"]:SetStatusBarColor(139/255, 69/255, 19/255);    
@@ -1097,6 +1109,12 @@ function SA_OnLoad()
   end
 end
 
+function SA_talent()
+local currentSpec = GetSpecialization();
+local id, currentSpecName = GetSpecializationInfo(currentSpec);
+print("Your current spec:", currentSpecName);
+end
+
 function CalcExpireTime(expireTime)
   if (expireTime == nil) then
     return 0
@@ -1114,7 +1132,7 @@ local Sa_filter = {	["player"] = "PLAYER",
 					["target"] = "PLAYER HARMFUL", };
 
 local function SA_util_Time(expire, unit, spell)
-	local name, rank, icon, count, debuffType, duration, expirationTime, isMine, isStealable, shouldConsolidate, SpellId = UnitAura(unit, spell, nil, Sa_filter[unit]);
+	local name, rank, icon, count, debuffType, duration, expirationTime  = UnitAura(unit, spell, nil, Sa_filter[unit]);
 	if expirationTime then
 		SA_Data[expire] = expirationTime;
 		return CalcExpireTime(expirationTime);
@@ -1125,8 +1143,7 @@ local function SA_util_Time(expire, unit, spell)
 end
 
 local function SA_UpdateBar(expire, unit, spell, sa_sound)
-	local sa_time = SA_util_Time(expire, unit, spell);
-	local l_sa_sound = sa_sound;
+	local sa_time = SA_util_Time(expire, unit, spell);	
 	SA_Data.BARS[spell]["Expires"] = sa_time;
 	
 	if sa_time > 0 then
@@ -1144,17 +1161,17 @@ local function SA_UpdateBar(expire, unit, spell, sa_sound)
 		if sa_time <= 3 then
 		  if (SA_Data.BARS[spell]["AlertPending"] == 3) then
 			SA_Data.BARS[spell]["AlertPending"] = 2;
-			SA_Sound(l_sa_sound);				
+			SA_Sound(sa_sound);
 		  else
 			if sa_time <= 2 then
 			  if (SA_Data.BARS[spell]["AlertPending"] == 2) then		  
 				SA_Data.BARS[spell]["AlertPending"] = 1;
-				SA_Sound(l_sa_sound);			
+				SA_Sound(sa_sound);
 			  else
 				if sa_time <= 1 then
 				  if (SA_Data.BARS[spell]["AlertPending"] == 1) then
 					SA_Data.BARS[spell]["AlertPending"] = 0;
-					SA_Sound(l_sa_sound);								
+					SA_Sound(sa_sound);
 				  end
 				end
 			  end
