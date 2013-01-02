@@ -56,7 +56,7 @@ SliceAdmiral_Save = {
 
 function SA_Config_OnEvent(self, event, ...)
   if (event == "ADDON_LOADED") then
-    local arg1 = select(1, ...);
+    local arg1 = ...;
     local localizedClass, englishClass = UnitClass("player");
     if (arg1 == "SliceAdmiral" and englishClass == "ROGUE") then
       SA_Config_LoadVars();
@@ -64,27 +64,43 @@ function SA_Config_OnEvent(self, event, ...)
   end
 end
 
-
-function SA_Config_Menu_OnClick(self) -- See note 1
+local function SA_Config_Menu_OnClick(self) -- See note 1
   UIDropDownMenu_SetSelectedValue(self.owner, self.value);
   UIDropDownMenu_SetText(self.owner, self.value);
-  SA_SoundTest(self.value);
-  
+  SA_SoundTest(self.value);  
 end
 
-function SA_Config_Menu_OnClickTexture(self) -- See note 1
+local function SA_Config_Menu_OnClickTexture(self) -- See note 1
   -- DEFAULT_CHAT_FRAME:AddMessage("Chose texture: " .. self.value);
   UIDropDownMenu_SetSelectedValue(self.owner, self.value);
   UIDropDownMenu_SetText(self.owner, self.value);
 end
 
-function SA_Config_Expire_Initialise(self) SA_Config_SoundMenu_Init(self,"Fail"); end
-function SA_Config_Fail_Initialise(self) SA_Config_SoundMenu_Init(self,"Fail"); end
-function SA_Config_Tick_Initialise(self) SA_Config_SoundMenu_Init(self,"Tick"); end
-function SA_Config_Apply_Initialise(self) SA_Config_SoundMenu_Init(self,"Apply"); end
-function SA_Config_Energy_Initialise(self) SA_Config_SoundMenu_Init(self,"Energy"); end
+local function SA_Config_SoundMenu_Init(self,WhichMenu,level)
+  local this = self or _G.this
+  level = level or 1 --drop down menus can have sub menus. The value of "level" determines the drop down sub menu tier.
 
-function SA_Config_Texture_Initialise(self,level)
+  local info = UIDropDownMenu_CreateInfo();
+  local SoundName, SoundPath;
+
+  for ignore, SoundName in pairs(SA_SoundMenu[WhichMenu]) do
+    info.text = SoundName;
+    info.value = SoundName;
+    info.func = function(self) SA_Config_Menu_OnClick(self) end; --sets the function to execute when this item is clicked
+    info.owner = self; --binds the drop down menu as the parent of the menu item. This is very important for dynamic drop down menues.
+    info.checked = nil; --initially set the menu item to being unchecked with a yellow tick
+    info.icon = nil; --we can use this to set an icon for the drop down menu item to accompany the text
+    UIDropDownMenu_AddButton(info, level); --Adds the new button to the drop down menu specified in the UIDropDownMenu_Initialise function. In this case, it is MyDropDownMenu
+  end
+end
+
+local function SA_Config_Expire_Initialise(self) SA_Config_SoundMenu_Init(self,"Fail"); end
+-- function SA_Config_Fail_Initialise(self) SA_Config_SoundMenu_Init(self,"Fail"); end
+local function SA_Config_Tick_Initialise(self) SA_Config_SoundMenu_Init(self,"Tick"); end
+--function SA_Config_Apply_Initialise(self) SA_Config_SoundMenu_Init(self,"Apply"); end
+local function SA_Config_Energy_Initialise(self) SA_Config_SoundMenu_Init(self,"Energy"); end
+
+local function SA_Config_Texture_Initialise(self,level)
   local this = self or _G.this
   level = level or 1 --drop down menus can have sub menus. The value of "level" determines the drop down sub menu tier.
 
@@ -105,54 +121,36 @@ function SA_Config_Texture_Initialise(self,level)
   UIDropDownMenu_SetText(self,SliceAdmiral_Save.BarTexture);
 end
 
-function SA_Config_SoundMenu_Init(self,WhichMenu,level)
-  local this = self or _G.this
-  level = level or 1 --drop down menus can have sub menus. The value of "level" determines the drop down sub menu tier.
-
-  local info = UIDropDownMenu_CreateInfo();
-  local SoundName, SoundPath;
-
-  for ignore, SoundName in pairs(SA_SoundMenu[WhichMenu]) do
-    info.text = SoundName;
-    info.value = SoundName;
-    info.func = function(self) SA_Config_Menu_OnClick(self) end; --sets the function to execute when this item is clicked
-    info.owner = self; --binds the drop down menu as the parent of the menu item. This is very important for dynamic drop down menues.
-    info.checked = nil; --initially set the menu item to being unchecked with a yellow tick
-    info.icon = nil; --we can use this to set an icon for the drop down menu item to accompany the text
-    UIDropDownMenu_AddButton(info, level); --Adds the new button to the drop down menu specified in the UIDropDownMenu_Initialise function. In this case, it is MyDropDownMenu
-  end
-end
-
-SA_Config_FailMenu = nil;
-SA_Config_ExpireMenu = nil;
-SA_Config_Tick3Menu = nil;
+--SA_Config_FailMenu = nil;
+local SA_Config_ExpireMenu = nil;
+local SA_Config_Tick3Menu = nil;
 --[[SA_Config_Tick2Menu = nil;
 SA_Config_Tick1Menu = nil;
 SA_Config_Applied3Menu = nil;
 SA_Config_Applied2Menu = nil;
 SA_Config_Applied1Menu = nil;
 SA_Config_AppliedMenu = nil;]]
-SA_Config_Energy2Menu = nil;
-SA_Config_Energy1Menu = nil;
+local SA_Config_Energy2Menu = nil;
+local SA_Config_Energy1Menu = nil;
 
-SA_Config_Recup_AlertMenu = nil;
-SA_Config_Recup_ExpireMenu = nil;
+local SA_Config_Recup_AlertMenu = nil;
+local SA_Config_Recup_ExpireMenu = nil;
 --[[SA_Config_Recup_FailMenu = nil;
 SA_Config_Recup_AppliedMenu = nil;
 SA_Config_Recup_Refresh3Menu = nil;
 SA_Config_Recup_Refresh2Menu = nil;
 SA_Config_Recup_Refresh1Menu = nil;]]
 
-SA_Config_Rupt_AlertMenu = nil;
-SA_Config_Rupt_ExpireMenu = nil;
+local SA_Config_Rupt_AlertMenu = nil;
+local SA_Config_Rupt_ExpireMenu = nil;
 
-SA_Config_Reveal_AlertMenu = nil;
-SA_Config_Reveal_ExpireMenu = nil;
+local SA_Config_Reveal_AlertMenu = nil;
+local SA_Config_Reveal_ExpireMenu = nil;
 
-SA_Config_Vend_AlertMenu = nil;
-SA_Config_Vend_ExpireMenu = nil;
+local SA_Config_Vend_AlertMenu = nil;
+local SA_Config_Vend_ExpireMenu = nil;
 
-SA_Config_BarTextureMenu = nil;
+local SA_Config_BarTextureMenu = nil;
 
 
 function SA_Config_OnLoad(panel)
@@ -200,7 +198,7 @@ function SA_Config_OnLoad(panel)
   panel.okay = function (self) SA_Config_Okay(); end;
   panel.cancel = function (self)  SA_Config_Cancel();  end;
   panel.default = function (self) SA_Config_Default(); end;
-  InterfaceOptions_AddCategory(panel);--]]
+  InterfaceOptions_AddCategory(panel);
 
   ---  ENERGY FRAME --- only sound drop downs
   panel = SA_Config_EnergyFrame;
@@ -394,10 +392,8 @@ function SA_Config_LoadVars()
   SA_Config_ShowRupBar:SetChecked( SliceAdmiral_Save.RupBarShow );
   SA_Config_ShowSnDBar:SetChecked( SliceAdmiral_Save.ShowSnDBar );
   SA_Config_ShowStatBar:SetChecked( SliceAdmiral_Save.ShowStatBar );
-  SA_Config_ShowVendBar:SetChecked( SliceAdmiral_Save.VendBarShow );
-  if (SliceAdmiral_Save.MasterVolume) then
-    SA_Config_MasterVolume:SetChecked( SliceAdmiral_Save.MasterVolume );
-  end
+  SA_Config_ShowVendBar:SetChecked( SliceAdmiral_Save.VendBarShow ); 
+  SA_Config_MasterVolume:SetChecked( SliceAdmiral_Save.MasterVolume );  
   SA_Config_Barsup:SetChecked( SliceAdmiral_Save.Barsup );
   SA_Config_SortBars:SetChecked( SliceAdmiral_Save.SortBars );
   SA_Config_DoTCrits:SetChecked( SliceAdmiral_Save.DoTCrits );
@@ -420,13 +416,11 @@ function SA_Config_LoadVars()
     SA_Config_OtherVars();
   end
 
-
   --[[if (SliceAdmiral_Save.Barsup) then
   print("Done Loading Vars from Config (true)")
   else
   print("Done Loading Vars from Config (false)")
   end]]
-
 end
 
 function SA_SetScale(NewScale)
@@ -437,7 +431,6 @@ function SA_SetScale(NewScale)
 	for k,v in pairs(SA_Data.BARS) do
 		SA_Data.BARS[k]["obj"]:SetScale(NewScale/100);
 	end
-
   end
 end
 
@@ -452,6 +445,22 @@ function SA_SetWidth(w)
     SA_Spark2:SetPoint("TOPLEFT", VTimerEnergy, "TOPLEFT", (SliceAdmiral_Save.Energy2 / UnitManaMax("player") * w), 0);
     SA_UpdateCPWidths();
     SA_UpdateStatWidths();
+  end
+end
+
+local function SA_Config_RetextureBars()
+  local texture = SA_BarTexture();
+  
+  VTimerEnergy:SetStatusBarTexture(texture);
+  
+  for k,v in pairs(SA_Data.BARS) do
+	if not (k == "CP" or k == "Stat") then
+		SA_Data.BARS[k]["obj"]:SetStatusBarTexture(texture);
+	end
+  end
+
+  for i = 1, 5 do
+    SA_Data.BARS["CP"]["obj"].combos[i].bg:SetTexture(texture);
   end
 end
 
@@ -489,23 +498,6 @@ function SA_Config_VarsChanged()
   SA_Config_RetextureBars();
   SA_Config_OtherVars();
 end
-function SA_Config_RetextureBars()
-  local texture = SA_BarTexture();
-
-  VTimerEnergy:SetStatusBarTexture(texture);
-  
-  for k,v in pairs(SA_Data.BARS) do
-	if not (k == "CP" or k == "Stat") then
-		SA_Data.BARS[k]["obj"]:SetStatusBarTexture(texture);
-	end
-  end
-
-  for i = 1, 5 do
-    SA_Data.BARS["CP"]["obj"].combos[i].bg:SetTexture(texture);
-  end
-
-end
-
 
 function SA_Config_OtherVars()
   local p1 = SliceAdmiral_Save.Energy1 / UnitManaMax("player") * SliceAdmiral_Save.Width;

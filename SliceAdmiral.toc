@@ -6,8 +6,8 @@
 ## DefaultState: Enabled
 ## LoadOnDemand: 0
 ## SavedVariables: SliceAdmiral_Save
-Config.lua
 localization.lua
+Config.lua
 SliceAdmiral.lua
 Resources.lua
 Config.xml
