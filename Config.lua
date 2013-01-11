@@ -64,6 +64,9 @@ function SA_Config_OnEvent(self, event, ...)
   end
 end
 
+function SA_Config_Checkbutton_OnLoad(checkButton)	
+    _G[checkButton:GetName() .. "Text"]:SetText(checkButton:GetText())	
+end
 local function SA_Config_Menu_OnClick(self) -- See note 1
   UIDropDownMenu_SetSelectedValue(self.owner, self.value);
   UIDropDownMenu_SetText(self.owner, self.value);
@@ -398,7 +401,7 @@ function SA_Config_LoadVars()
   SA_Config_SortBars:SetChecked( SliceAdmiral_Save.SortBars );
   SA_Config_DoTCrits:SetChecked( SliceAdmiral_Save.DoTCrits );
 
-  --SA_Config_HilightBuffed:SetChecked(SliceAdmiral_Save.HilightBuffed );
+  SA_Config_HilightBuffed:SetChecked(SliceAdmiral_Save.HilightBuffed );
   if ( not SliceAdmiral_Save.EnergyTrans) then
     SliceAdmiral_Save.EnergyTrans = 20;
   end
