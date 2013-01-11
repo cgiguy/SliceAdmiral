@@ -1,45 +1,5 @@
 <Ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.blizzard.com/wow/ui/">
   <Script file="Config.lua"/>
-<!--
-  <Frame name="SA_MB" hidden="true" parent="UIParent">
-    <Size>
-      <AbsDimension x="800" y="800"/>
-    </Size>
-    <Anchors>
-      <Anchor point="TOPLEFT">
-	<Offset x="0" y="0"/>
-      </Anchor>
-    </Anchors>
-    <Layers>
-      <Layer>
-	<FontString name="SA_MB_Label1" inherits="GameFontNormalLarge" text="Top Left" justifyH="LEFT">
-	  <Size x="366" y="32"/>
-	  <Anchors>
-	    <Anchor point="TOPLEFT">
-	      <Offset x="0" y="0"/>
-	    </Anchor>
-	  </Anchors>
-	</FontString>
-	<FontString name="SA_MB_Label2" inherits="GameFontNormalLarge" text="CENTER" justifyH="CENTER">
-	  <Size x="366" y="32"/>
-	  <Anchors>
-	    <Anchor point="TOPLEFT">
-	      <Offset x="0" y="0"/>
-	    </Anchor>
-	  </Anchors>
-	</FontString>
-	<FontString name="SA_MB_Label3" inherits="GameFontNormalLarge" text="Top Right" justifyH="RIGHT">
-	  <Size x="366" y="32"/>
-	  <Anchors>
-	    <Anchor point="TOPLEFT">
-	      <Offset x="0" y="0"/>
-	    </Anchor>
-	  </Anchors>
-	</FontString>
-      </Layer>
-    </Layers>
-  </Frame>
--->
   <Frame name="SA_Config_CPFrame" hidden="true" parent="UIParent"> <!-- Timer bars-->
     <Size x="256" y="256"/>
     <Anchors>
@@ -57,62 +17,6 @@
 			</Anchor>
 		  </Anchors>
 		</FontString>
-		<!--<FontString name="SliceAndDice" inherits="GameFontWhite" text="Slice and Dice" justifyH="LEFT">
-		  <Size x="120" y="22"/>
-		  <Anchors>
-			<Anchor point="TOPLEFT">
-			  <Offset x="41" y="-45"/>			  
-			</Anchor>
-		  </Anchors>
-		</FontString>
-		 <FontString name="Rupture" inherits="GameFontWhite" text="Rupture" justifyH="LEFT">
-		  <Size x="120" y="22"/>
-		  <Anchors>
-			<Anchor point="TOPLEFT">
-			  <Offset x="41" y="-71"/>
-			</Anchor>
-		  </Anchors>
-		</FontString>
-		<FontString name="Recuperate" inherits="GameFontWhite" text="Recuperate" justifyH="LEFT">
-		  <Size x="120" y="22"/>
-		  <Anchors>
-			<Anchor point="TOPLEFT">
-			  <Offset x="41" y="-101"/>
-			</Anchor>
-		  </Anchors>
-		</FontString>
-		<FontString name="DeadlyPoison" inherits="GameFontWhite" text="Deadly Poison" justifyH="LEFT">
-		  <Size x="120" y="22"/>
-		  <Anchors>
-			<Anchor point="TOPLEFT">
-			  <Offset x="41" y="-131"/>
-			</Anchor>
-		  </Anchors>
-		</FontString>
-		<FontString name="EnvenomBuff" inherits="GameFontWhite" text="Envenom Buff" justifyH="LEFT">
-		  <Size x="120" y="22"/>
-		  <Anchors>
-			<Anchor point="TOPLEFT">
-			  <Offset x="41" y="-161"/>
-			</Anchor>
-		  </Anchors>
-		</FontString>
-		<FontString name="VendettaBuff" inherits="GameFontWhite" text="Vendetta Buff" justifyH="LEFT">
-		  <Size x="120" y="22"/>
-		  <Anchors>
-			<Anchor point="TOPLEFT">
-			  <Offset x="41" y="-191"/>
-			</Anchor>
-		  </Anchors>
-		</FontString>
-		<FontString name="Reveal" inherits="GameFontWhite" text="Revealing Strike" justifyH="LEFT">
-		  <Size x="120" y="22"/>
-		  <Anchors>
-			<Anchor point="TOPLEFT">
-			  <Offset x="41" y="-221"/>
-			</Anchor>
-		  </Anchors>
-		</FontString> -->
 		<FontString name="BarOptions" inherits="" font="GameFontNormalLarge" text="Bar Options" justifyH="LEFT">
 		  <Size x="226" y="20"/>
 		  <Anchors>
@@ -121,38 +25,6 @@
 			</Anchor>
 		  </Anchors>
 		</FontString>
-		<!--<FontString name="BarsGrowUp" inherits="GameFontWhite" text="Bars grow up" justifyH="LEFT">
-		  <Size x="120" y="22"/>
-		  <Anchors>
-			<Anchor point="TOPLEFT">
-			  <Offset x="231" y="-45"/>			  
-			</Anchor>
-		  </Anchors>
-		</FontString>
-		<FontString name="SortBars" inherits="GameFontWhite" text="Sort bars by duration" justifyH="LEFT">
-		  <Size x="160" y="22"/>
-		  <Anchors>
-			<Anchor point="TOPLEFT">
-			  <Offset x="231" y="-71"/>
-			</Anchor>
-		  </Anchors>
-		</FontString>
-		<FontString name="ShowTicks" inherits="GameFontWhite" text="Show DoT ticks" justifyH="LEFT"> 
-		  <Size x="120" y="22"/>
-		  <Anchors>
-			<Anchor point="TOPLEFT">
-			  <Offset x="231" y="-101"/>
-			</Anchor>
-		  </Anchors>
-		</FontString>
-		<FontString name="HighlightCrits" inherits="GameFontWhite" text="Highlight DoT crits" justifyH="LEFT"> 
-		  <Size x="120" y="22"/>
-		  <Anchors>
-			<Anchor point="TOPLEFT">
-			  <Offset x="261" y="-131"/>
-			</Anchor>
-		  </Anchors>
-		</FontString> -->
       </Layer>
     </Layers> 
     <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
@@ -329,13 +201,6 @@
 			</Anchor>
 		  </Anchors>
 		</FontString>
-		<!--<FontString name="ShowComboPoints" inherits="GameFontWhite" text="Show Combo Points" justifyH="LEFT">
-		  <Anchors>
-			<Anchor point="TOPLEFT">
-			  <Offset x="41" y="-45"/>
-			</Anchor>
-		  </Anchors>
-		</FontString>-->
 		<FontString name="Color" inherits="GameFontWhite" text="Color" justifyH="LEFT">
 		  <Anchors>
 			<Anchor point="TOPLEFT">
@@ -351,20 +216,6 @@
 			</Anchor>
 		  </Anchors>
 		</FontString>
-		<!--<FontString name="ShowStatBar" inherits="GameFontWhite" text="Show Stat Bar" justifyH="LEFT">
-		  <Anchors>
-			<Anchor point="TOPLEFT">
-			  <Offset x="41" y="-235"/>
-			</Anchor>
-		  </Anchors>
-		</FontString>-->
-		<!--<FontString name="HilightBuffed" inherits="GameFontWhite" text="Hilight when mega-buffed" justifyH="LEFT">
-		  <Anchors>
-			<Anchor point="TOPLEFT">
-			  <Offset x="71" y="-265"/>
-			</Anchor>
-		  </Anchors>
-		</FontString>-->
       </Layer>
     </Layers>
     <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
@@ -453,14 +304,6 @@
 			</Anchor>
 		  </Anchors>
 		</FontString>
-		<!--<FontString name="FontString7" inherits="GameFontWhite" text="Hide Energy Bar" justifyH="LEFT" maxLines="1">
-		  <Size x="146" y="20"/>
-		  <Anchors>
-			<Anchor point="TOPLEFT">
-			  <Offset x="38" y="-40"/>
-			</Anchor>
-		  </Anchors>
-		</FontString>-->
 		<FontString name="SA_Config_TransFullStr" inherits="GameFontNormal" text="Transparency (Full)">
 		  <Size x="130" y="20"/>
 		  <Anchors>
@@ -573,40 +416,6 @@
     </Anchors>
     <Layers>
       <Layer>
-<!--
-	<FontString name="SA_Label1" inherits="GameFontNormalLarge" text="Top Left" justifyH="LEFT">
-	  <Size x="366" y="32"/>
-	  <Anchors>
-	    <Anchor point="TOPLEFT">
-	      <Offset x="0" y="0"/>
-	    </Anchor>
-	  </Anchors>
-	</FontString>
-	<FontString name="SA_Label2" inherits="GameFontNormalLarge" text="CENTER" justifyH="CENTER">
-	  <Size x="366" y="32"/>
-	  <Anchors>
-	    <Anchor point="TOPLEFT">
-	      <Offset x="0" y="0"/>
-	    </Anchor>
-	  </Anchors>
-	</FontString>
-	<FontString name="SA_Label3" inherits="GameFontNormalLarge" text="Top Right" justifyH="RIGHT">
-	  <Size x="366" y="32"/>
-	  <Anchors>
-	    <Anchor point="TOPLEFT">
-	      <Offset x="0" y="0"/>
-	    </Anchor>
-	  </Anchors>
-	</FontString>
-	<FontString name="SA_Label4" inherits="GameFontNormalLarge" text="Bottom Right" justifyH="RIGHT">
-	  <Size x="366" y="32"/>
-	  <Anchors>
-	    <Anchor point="TOPLEFT">
-	      <Offset><RelDimension x="1.0" y="0.0"/></Offset>
-	    </Anchor>
-	  </Anchors>
-	</FontString>
--->
 		<FontString name="SA_RuptSounds_Caption" inherits="GameFontNormalLarge" text="Rupture Sounds" justifyH="LEFT">
 		  <Size x="366" y="32"/>
 		  <Anchors>
@@ -743,14 +552,6 @@
 			</Anchor>
 		  </Anchors>
 		</FontString>
-		<!--<FontString name="SA_Config_MasterVolumeStr" inherits="GameFontNormalSmall" text="Use Master Volume" justifyH="LEFT">
-		  <Size x="142" y="20"/>
-		  <Anchors>
-			<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT">
-			  <Offset x="45" y="-392"/>
-			</Anchor>
-		  </Anchors>
-		</FontString>-->
       </Layer>
     </Layers>
     <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
@@ -831,14 +632,6 @@
 			</Anchor>
 		  </Anchors>
 		</FontString>
-		<!--<FontString name="FontString5" inherits="GameFontWhite" text="Pad Alerts with Latency" justifyH="LEFT" maxLines="1">
-		  <Size x="183" y="20"/>
-		  <Anchors>
-			<Anchor point="TOPLEFT">
-			  <Offset x="39" y="-77"/>
-			</Anchor>
-		  </Anchors>
-		</FontString>-->
 		<FontString name="SA_Config_BarTextureStr" inherits="GameFontNormalSmall" text="Bar Texture" justifyH="LEFT">
 		  <Size x="130" y="24"/>
 		  <Anchors>
@@ -854,14 +647,6 @@
 			</Anchor>
 		  </Anchors>
 		</FontString>
-		<!--<FontString name="FontString2" inherits="GameFontWhite" text="Disable Right Click to Move" justifyH="LEFT">
-		  <Size x="231" y="20"/>
-		  <Anchors>
-			<Anchor point="TOPLEFT" relativeTo="SA_Config">
-			  <Offset x="34" y="-51"/>
-			</Anchor>
-		  </Anchors>
-		</FontString>-->
       </Layer>
     </Layers>
     <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">

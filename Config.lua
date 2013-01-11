@@ -98,9 +98,7 @@ local function SA_Config_SoundMenu_Init(self,WhichMenu,level)
 end
 
 local function SA_Config_Expire_Initialise(self) SA_Config_SoundMenu_Init(self,"Fail"); end
--- function SA_Config_Fail_Initialise(self) SA_Config_SoundMenu_Init(self,"Fail"); end
 local function SA_Config_Tick_Initialise(self) SA_Config_SoundMenu_Init(self,"Tick"); end
---function SA_Config_Apply_Initialise(self) SA_Config_SoundMenu_Init(self,"Apply"); end
 local function SA_Config_Energy_Initialise(self) SA_Config_SoundMenu_Init(self,"Energy"); end
 
 local function SA_Config_Texture_Initialise(self,level)
@@ -124,25 +122,15 @@ local function SA_Config_Texture_Initialise(self,level)
   UIDropDownMenu_SetText(self,SliceAdmiral_Save.BarTexture);
 end
 
---SA_Config_FailMenu = nil;
+
 local SA_Config_ExpireMenu = nil;
 local SA_Config_Tick3Menu = nil;
---[[SA_Config_Tick2Menu = nil;
-SA_Config_Tick1Menu = nil;
-SA_Config_Applied3Menu = nil;
-SA_Config_Applied2Menu = nil;
-SA_Config_Applied1Menu = nil;
-SA_Config_AppliedMenu = nil;]]
+
 local SA_Config_Energy2Menu = nil;
 local SA_Config_Energy1Menu = nil;
 
 local SA_Config_Recup_AlertMenu = nil;
 local SA_Config_Recup_ExpireMenu = nil;
---[[SA_Config_Recup_FailMenu = nil;
-SA_Config_Recup_AppliedMenu = nil;
-SA_Config_Recup_Refresh3Menu = nil;
-SA_Config_Recup_Refresh2Menu = nil;
-SA_Config_Recup_Refresh1Menu = nil;]]
 
 local SA_Config_Rupt_AlertMenu = nil;
 local SA_Config_Rupt_ExpireMenu = nil;
@@ -164,7 +152,6 @@ function SA_Config_OnLoad(panel)
 
   SA_Config:SetBackdrop(nil);
   SA_Config2:SetBackdrop(nil);
---  SA_MB:SetBackdrop(nil);
 
   panel:RegisterEvent("ADDON_LOADED");
 
@@ -172,8 +159,6 @@ function SA_Config_OnLoad(panel)
   SA_Config_BarTextureMenu:SetPoint("TOPLEFT", SA_Config_BarTextureStr, "TOPLEFT", 0, -20);
   UIDropDownMenu_SetWidth(SA_Config_BarTextureMenu, 142);
   UIDropDownMenu_SetButtonWidth(SA_Config_BarTextureMenu, 20);
-  --  local foo = function(parent) SA_Config_Texture_Initialise(SA_Config_BarTextureMenu); end;
-  --  UIDropDownMenu_Initialize(SA_Config_BarTextureMenu, foo);
   UIDropDownMenu_Initialize(SA_Config_BarTextureMenu, SA_Config_Texture_Initialise);
 
   panel.name = "SliceAdmiral";
@@ -187,7 +172,6 @@ function SA_Config_OnLoad(panel)
   panel:SetBackdrop(nil);
   panel.parent= "SliceAdmiral";
   panel.name= SC_TIMERBARS; --SC_LANG_CP;
-  --ShowTimerBars.text = "Show Timer Barzzz";
   panel.okay = function (self) SA_Config_Okay(); end;
   panel.cancel = function (self)  SA_Config_Cancel();  end;
   panel.default = function (self) SA_Config_Default(); end;
@@ -301,13 +285,6 @@ function SA_Config_OnLoad(panel)
   SA_Config2.default = function (self) SA_Config_Default(); end;
   InterfaceOptions_AddCategory(SA_Config2);
 
---  SA_MB.parent = "SliceAdmiral";
---  SA_MB.name = "Mark Test";
---  SA_MB.okay =    function (self) SA_Config_Okay(); end;
---  SA_MB.cancel =  function (self) SA_Config_Cancel();  end;
---  SA_MB.default = function (self) SA_Config_Default(); end;
---  InterfaceOptions_AddCategory(SA_MB);
-
   --Text at top of frames
   SA_Config3_Caption:SetText( SC_SPELL_RECUP .. " " .. SC_LANG_SOUNDS);
   SA_Config2_Caption:SetText( SC_SPELL_SND .. " " .. SC_LANG_SOUNDS);
@@ -317,33 +294,20 @@ function SA_Config_OnLoad(panel)
 end
 
 function SA_Config_LoadVars()
-  --UIDropDownMenu_SetSelectedValue(SA_Config_FailMenu, SliceAdmiral_Save.Fail );
   UIDropDownMenu_SetSelectedValue(SA_Config_ExpireMenu, SliceAdmiral_Save.Expire );
   UIDropDownMenu_SetText(SA_Config_ExpireMenu, SliceAdmiral_Save.Expire );
   UIDropDownMenu_SetSelectedValue(SA_Config_Tick3Menu, SliceAdmiral_Save.Tick3 );
   UIDropDownMenu_SetText(SA_Config_Tick3Menu, SliceAdmiral_Save.Tick3 );
-  --UIDropDownMenu_SetSelectedValue(SA_Config_Tick2Menu, SliceAdmiral_Save.Tick2 );
-  --UIDropDownMenu_SetSelectedValue(SA_Config_Tick1Menu, SliceAdmiral_Save.Tick1 );
-  --UIDropDownMenu_SetSelectedValue(SA_Config_Applied3Menu, SliceAdmiral_Save.Apply3 );
-  --UIDropDownMenu_SetSelectedValue(SA_Config_Applied2Menu, SliceAdmiral_Save.Apply2 );
-  --UIDropDownMenu_SetSelectedValue(SA_Config_Applied1Menu, SliceAdmiral_Save.Apply1 );
-  --UIDropDownMenu_SetSelectedValue(SA_Config_AppliedMenu, SliceAdmiral_Save.Applied );
   UIDropDownMenu_SetSelectedValue(SA_Config_Energy2Menu, SliceAdmiral_Save.EnergySound2 );
   UIDropDownMenu_SetText(SA_Config_Energy2Menu, SliceAdmiral_Save.EnergySound2 );
   UIDropDownMenu_SetSelectedValue(SA_Config_Energy1Menu, SliceAdmiral_Save.EnergySound1 );
   UIDropDownMenu_SetText(SA_Config_Energy1Menu, SliceAdmiral_Save.EnergySound1 );
-
 
   -- hunger for blood --
   UIDropDownMenu_SetSelectedValue(SA_Config_Recup_AlertMenu, SliceAdmiral_Save["Recup.Alert"] );
   UIDropDownMenu_SetText(SA_Config_Recup_AlertMenu, SliceAdmiral_Save["Recup.Alert"] );
   UIDropDownMenu_SetSelectedValue(SA_Config_Recup_ExpireMenu, SliceAdmiral_Save["Recup.Expire"] );
   UIDropDownMenu_SetText(SA_Config_Recup_ExpireMenu, SliceAdmiral_Save["Recup.Expire"] );
-  --UIDropDownMenu_SetSelectedValue(SA_Config_Recup_FailMenu, SliceAdmiral_Save["Recup.Fail"] );
-  --UIDropDownMenu_SetSelectedValue(SA_Config_Recup_AppliedMenu, SliceAdmiral_Save["Recup.Applied"] );
-  --UIDropDownMenu_SetSelectedValue(SA_Config_Recup_Refresh3Menu, SliceAdmiral_Save["Recup.Refresh3"] );
-  --UIDropDownMenu_SetSelectedValue(SA_Config_Recup_Refresh2Menu, SliceAdmiral_Save["Recup.Refresh2"] );
-  --UIDropDownMenu_SetSelectedValue(SA_Config_Recup_Refresh1Menu, SliceAdmiral_Save["Recup.Refresh1"] );
   UIDropDownMenu_SetSelectedValue(SA_Config_Rupt_ExpireMenu, SliceAdmiral_Save["RuptExpire"]);
   UIDropDownMenu_SetText(SA_Config_Rupt_ExpireMenu, SliceAdmiral_Save["RuptExpire"]);
   UIDropDownMenu_SetSelectedValue(SA_Config_Rupt_AlertMenu, SliceAdmiral_Save["RuptAlert"]);
@@ -359,12 +323,8 @@ function SA_Config_LoadVars()
   UIDropDownMenu_SetSelectedValue(SA_Config_Vend_AlertMenu, SliceAdmiral_Save["VendAlert"]);
   UIDropDownMenu_SetText(SA_Config_Vend_AlertMenu, SliceAdmiral_Save["VendAlert"]);
 
-
-  --  DEFAULT_CHAT_FRAME:AddMessage("Original menu texture value: " .. UIDropDownMenu_GetSelectedValue(SA_Config_BarTextureMenu));
   UIDropDownMenu_SetSelectedValue(SA_Config_BarTextureMenu, SliceAdmiral_Save.BarTexture);
   UIDropDownMenu_SetText(SA_Config_BarTextureMenu, SliceAdmiral_Save.BarTexture);
-  --  DEFAULT_CHAT_FRAME:AddMessage("Trying to config texture to " .. SliceAdmiral_Save.BarTexture);
-
 
   SA_Config_HideE:SetChecked( SliceAdmiral_Save.HideEnergy );
   SA_Config_Lock:SetChecked( SliceAdmiral_Save.IsLocked );
@@ -418,19 +378,12 @@ function SA_Config_LoadVars()
     SA_Config_VarsChanged();
     SA_Config_OtherVars();
   end
-
-  --[[if (SliceAdmiral_Save.Barsup) then
-  print("Done Loading Vars from Config (true)")
-  else
-  print("Done Loading Vars from Config (false)")
-  end]]
 end
 
 function SA_SetScale(NewScale)
   if (NewScale >= 50) then
     SA:SetScale ( NewScale / 100 );
-    VTimerEnergy:SetScale ( NewScale / 100 );
-	
+    VTimerEnergy:SetScale ( NewScale / 100 );	
 	for k,v in pairs(SA_Data.BARS) do
 		SA_Data.BARS[k]["obj"]:SetScale(NewScale/100);
 	end
@@ -442,8 +395,7 @@ function SA_SetWidth(w)
     VTimerEnergy:SetWidth( w);
 	for k,v in pairs(SA_Data.BARS) do
 		SA_Data.BARS[k]["obj"]:SetWidth(w);
-	end
-		
+	end		
     SA_Spark1:SetPoint("TOPLEFT", VTimerEnergy, "TOPLEFT", (SliceAdmiral_Save.Energy1 / UnitManaMax("player") * w), 0);
     SA_Spark2:SetPoint("TOPLEFT", VTimerEnergy, "TOPLEFT", (SliceAdmiral_Save.Energy2 / UnitManaMax("player") * w), 0);
     SA_UpdateCPWidths();
@@ -452,8 +404,7 @@ function SA_SetWidth(w)
 end
 
 local function SA_Config_RetextureBars()
-  local texture = SA_BarTexture();
-  
+  local texture = SA_BarTexture();  
   VTimerEnergy:SetStatusBarTexture(texture);
   
   for k,v in pairs(SA_Data.BARS) do
@@ -554,28 +505,17 @@ function SA_Config_Okay()
 
   SliceAdmiral_Save.Fail = UIDropDownMenu_GetSelectedValue( SA_Config_ExpireMenu );
   SliceAdmiral_Save.Expire = UIDropDownMenu_GetSelectedValue( SA_Config_ExpireMenu );
-  SliceAdmiral_Save.Tick3 = UIDropDownMenu_GetSelectedValue( SA_Config_Tick3Menu );
-  --[[SliceAdmiral_Save.Tick2 = UIDropDownMenu_GetSelectedValue( SA_Config_Tick2Menu );
-  SliceAdmiral_Save.Tick1 = UIDropDownMenu_GetSelectedValue( SA_Config_Tick1Menu );
-  SliceAdmiral_Save.Applied = UIDropDownMenu_GetSelectedValue( SA_Config_AppliedMenu );
-  SliceAdmiral_Save.Apply3 = UIDropDownMenu_GetSelectedValue( SA_Config_Applied3Menu );
-  SliceAdmiral_Save.Apply2 = UIDropDownMenu_GetSelectedValue( SA_Config_Applied2Menu );
-  SliceAdmiral_Save.Apply1 = UIDropDownMenu_GetSelectedValue( SA_Config_Applied1Menu );]]
+  SliceAdmiral_Save.Tick3 = UIDropDownMenu_GetSelectedValue( SA_Config_Tick3Menu );  
   SliceAdmiral_Save.EnergySound1 = UIDropDownMenu_GetSelectedValue( SA_Config_Energy1Menu );
   SliceAdmiral_Save.EnergySound2 = UIDropDownMenu_GetSelectedValue( SA_Config_Energy2Menu );
 
   -- page two --
   SliceAdmiral_Save["Recup.Alert"] = UIDropDownMenu_GetSelectedValue( SA_Config_Recup_AlertMenu );
   SliceAdmiral_Save["Recup.Expire"] = UIDropDownMenu_GetSelectedValue(SA_Config_Recup_ExpireMenu );
-  SliceAdmiral_Save["Recup.Fail"] = UIDropDownMenu_GetSelectedValue(SA_Config_Recup_ExpireMenu );
-  --[[SliceAdmiral_Save["Recup.Applied"] = UIDropDownMenu_GetSelectedValue(SA_Config_Recup_AppliedMenu );
-  SliceAdmiral_Save["Recup.Refresh3"] = UIDropDownMenu_GetSelectedValue(SA_Config_Recup_Refresh3Menu );
-  SliceAdmiral_Save["Recup.Refresh2"] = UIDropDownMenu_GetSelectedValue(SA_Config_Recup_Refresh2Menu );
-  SliceAdmiral_Save["Recup.Refresh1"] = UIDropDownMenu_GetSelectedValue(SA_Config_Recup_Refresh1Menu );]]
+  SliceAdmiral_Save["Recup.Fail"] = UIDropDownMenu_GetSelectedValue(SA_Config_Recup_ExpireMenu );  
 
   SliceAdmiral_Save["RuptAlert"] = UIDropDownMenu_GetSelectedValue( SA_Config_Rupt_AlertMenu );
-  SliceAdmiral_Save["RuptExpire"] = UIDropDownMenu_GetSelectedValue( SA_Config_Rupt_ExpireMenu );
-  --SliceAdmiral_Save["RuptFail"] =   --TODO add rupture failure!
+  SliceAdmiral_Save["RuptExpire"] = UIDropDownMenu_GetSelectedValue( SA_Config_Rupt_ExpireMenu );  
   SliceAdmiral_Save["RevealAlert"] = UIDropDownMenu_GetSelectedValue( SA_Config_Reveal_AlertMenu );
   SliceAdmiral_Save["RevealExpire"] = UIDropDownMenu_GetSelectedValue( SA_Config_Reveal_ExpireMenu );
 
@@ -643,8 +583,7 @@ end
 function SA_Config_TransFullV_OnTextChanged(self)
   local adjust = floor(self:GetText() + 0.5);
   if ( adjust > 0) then
-    SA_Config_TransFull:SetValue( adjust );
-    --SA_SetWidth( adjust );
+    SA_Config_TransFull:SetValue( adjust );    
     VTimerEnergy:SetAlpha( adjust / 100.0 );
   end
 end

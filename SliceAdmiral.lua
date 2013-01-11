@@ -110,12 +110,6 @@ function SA_MoveStart(self, button)
       SA:EnableMouse(false);
     end
   end
-
-  --if (button == "RightButton") then
-  --local x, y = GetCursorPosition();
-  --local scale = UIParent:GetEffectiveScale()
-  --ToggleDropDownMenu(1, nil, MyDropDownMenu, UIParent, x/scale, y/scale);
-  --end
 end
 
 function SA_MoveStop()
@@ -138,19 +132,16 @@ function MyDropDownMenu_OnLoad()
 
   info2            = {};
   info2.text       = "Close"--"Recalibrate Base Stats";
-  info2.value      = "OptionVariable";
-  --info2.func       = SA_UpdateStats
+  info2.value      = "OptionVariable";  
 
   UIDropDownMenu_AddButton(info2);
 end
 
 local function SA_ToggleIsLocked()
   if SliceAdmiral_Save.IsLocked then
-    SliceAdmiral_Save.IsLocked = false;
-    --SA:EnableMouse(true);
+    SliceAdmiral_Save.IsLocked = false;    
   else
-    SliceAdmiral_Save.IsLocked = true;
-    --SA:EnableMouse(false);
+    SliceAdmiral_Save.IsLocked = true;    
   end
 end
 
@@ -189,11 +180,9 @@ local function SA_ChangeAnchor()
   local offSetSize = SliceAdmiral_Save.BarMargin; -- other good values, -1, -2
 
   -- Stat bar goes first, because it's fucking awesome like that
-  if (showStatBar == 1) then
-    --if (SliceAdmiral_Save.Barsup) then
+  if (showStatBar == 1) then    
     SA_Data.BARS["Stat"]["obj"]:ClearAllPoints();
-    SA_Data.BARS["Stat"]["obj"]:SetPoint("BOTTOMLEFT", LastAnchor, "TOPLEFT", 0, offSetSize);
-    --end
+    SA_Data.BARS["Stat"]["obj"]:SetPoint("BOTTOMLEFT", LastAnchor, "TOPLEFT", 0, offSetSize);    
   end
 
   --anchor CPs on stat bar if energy bar is hidden.
@@ -227,8 +216,7 @@ local function SA_ChangeAnchor()
       end
     end
   end
-  for i = 1, SA_Data.maxSortableBars do
-    --print(i .. ":" .. SA_Data.BARORDER[i]["Title"] .. " = " .. SA_Data.BARORDER[i]["Expires"]);
+  for i = 1, SA_Data.maxSortableBars do    
     if (SA_Data.BARORDER[i]["Expires"] > 0) then
       SA_Data.BARORDER[i]["obj"]:ClearAllPoints();
       if SliceAdmiral_Save.Barsup then
@@ -292,19 +280,6 @@ local function MB_SortBarsByTime(startIndex)
 	table.sort(SA_Data.BARORDER, function(a,b) return a["Expires"] < b["Expires"] end)
     SA_Data.lastSort = SA_Data.tNow;	
 	SA_ChangeAnchor();
-    --[[for i = startIndex, SA_Data.maxSortableBars-1 do
-      if (SA_Data.BARORDER[i]["Expires"] > SA_Data.BARORDER[i+1]["Expires"]) then
-		local tmp = SA_Data.BARORDER[i];
-		SA_Data.BARORDER[i] = SA_Data.BARORDER[i+1];
-		SA_Data.BARORDER[i+1] = tmp;
-		anchorChange = true;
-      end
-    end ]] 
-      
---    print(startIndex .. ":" .. SA_Data.tNow);
---    for i = 1, SA_Data.maxSortableBars do
---      print(i .. ":" .. SA_Data.BARORDER[i]["Title"] .. " = " .. SA_Data.BARORDER[i]["Expires"])
---    end
   end
 end
 
@@ -347,8 +322,7 @@ function SA_OnEvent(self, event, ...)
 			SA_Data.BARS[SC_SPELL_RECUP]["Expires"] = 0;
 			SA_Data.BARS[SC_SPELL_RECUP]["obj"]:Hide();
 		  else
-			local name, rank, icon, count, debuffType, duration, expirationTime = UnitAura("player", SC_SPELL_RECUP);
-			--local timeLeftOnLast = SA_Data.RecupExpires - GetTime();
+			local name, rank, icon, count, debuffType, duration, expirationTime = UnitAura("player", SC_SPELL_RECUP);			
 			SA_Data.RecupExpires = expirationTime;
 			SA_Data.BARS[SC_SPELL_RECUP]["Expires"] = CalcExpireTime(expirationTime);
 			SA_Data.BARS[SC_SPELL_RECUP]["obj"]:Show();			
@@ -357,16 +331,12 @@ function SA_OnEvent(self, event, ...)
 		end
 	-- ENVENOM EVENT --
 		if (spellId == SC_SPELL_ENV_ID and SliceAdmiral_Save.ShowEnvBar) then
-		  if (type == "SPELL_AURA_REMOVED") then
-			if (UnitAffectingCombat("player")) then
-			  --SA_Sound("Env.Expire");
-			end
+		  if (type == "SPELL_AURA_REMOVED") then			
 			SA_Data.EnvExpires = 0;
 			SA_Data.BARS[SC_SPELL_ENV]["Expires"] = 0;			
 			SA_Data.BARS[SC_SPELL_ENV]["obj"]:Hide();
 		  else
-			local name, rank, icon, count, debuffType, duration, expirationTime = UnitAura("player", SC_SPELL_ENV);
-			--local timeLeftOnLast = SA_Data.EnvExpires - GetTime();
+			local name, rank, icon, count, debuffType, duration, expirationTime = UnitAura("player", SC_SPELL_ENV);			
 			SA_Data.EnvExpires = expirationTime;
 			SA_Data.BARS[SC_SPELL_ENV]["Expires"] = CalcExpireTime(expirationTime);
 			SA_Data.BARS[SC_SPELL_ENV]["obj"]:Show();
@@ -375,8 +345,7 @@ function SA_OnEvent(self, event, ...)
 		end
       else
 		if (destName == UnitName("target")) then
-		  -- DEADLY POISON EVENT --
-		  --print("Spell on target: " .. spellName .. "(" .. type .. ")");
+		  -- DEADLY POISON EVENT --		  
 		  if (isMySpell and spellId == SC_SPELL_DP_ID and SliceAdmiral_Save.DPBarShow) then
 			if (type == "SPELL_AURA_REMOVED") then
 			  SA_Data.DPExpires = 0;
@@ -385,15 +354,13 @@ function SA_OnEvent(self, event, ...)
 			else
 			  local name, rank, icon, count, debuffType, duration, expirationTime = UnitDebuff("target", SC_SPELL_DP, nil, "PLAYER");
 			  SA_Data.DPExpires = expirationTime;
-			  SA_Data.BARS[SC_SPELL_DP]["Expires"] = CalcExpireTime(expirationTime);
-			-- SA_Data.BARS[SC_SPELL_DP]["obj"].text2:SetText("x" .. string.format("%i", count1));
+			  SA_Data.BARS[SC_SPELL_DP]["Expires"] = CalcExpireTime(expirationTime);			
 			  SA_Data.BARS[SC_SPELL_DP]["obj"]:Show();
 			end
 			SA_ChangeAnchor();
 		  end
 		  -- RUPTURE EVENT --
-		  if (isMySpell and spellId == SC_SPELL_RUP_ID and SliceAdmiral_Save.RupBarShow) then
-			-- print("Rupture event: " .. type);
+		  if (isMySpell and spellId == SC_SPELL_RUP_ID and SliceAdmiral_Save.RupBarShow) then			
 			if (type == "SPELL_AURA_REMOVED") then
 			  if (UnitAffectingCombat("player")) then
 				SA_Sound("RuptExpire");
@@ -410,8 +377,7 @@ function SA_OnEvent(self, event, ...)
 			SA_ChangeAnchor();
 		  end
 		  -- HagTest REVEALING STRIKE EVENT --
-		  if (isMySpell and spellId == SC_SPELL_REVEAL_ID and SliceAdmiral_Save.RevealBarShow) then
-			-- print("Rupture event: " .. type);
+		  if (isMySpell and spellId == SC_SPELL_REVEAL_ID and SliceAdmiral_Save.RevealBarShow) then			
 			if (type == "SPELL_AURA_REMOVED") then
 			  if (UnitAffectingCombat("player")) then
 				SA_Sound("RevealExpire");
@@ -449,8 +415,7 @@ function SA_OnEvent(self, event, ...)
     end -- "SPELL_AURA_REFRESH" or ...
     -- DOT monitors
     if (SliceAdmiral_Save.ShowDoTDmg and type == "SPELL_PERIODIC_DAMAGE" and destName == UnitName("target") and sourceName == UnitName("player")) then
-      local spellId, spellName, spellSchool = select(12, ...);
-      -- spellName = GetSpellInfo(spellId);
+      local spellId, spellName, spellSchool = select(12, ...);      
       if (spellId == SC_SPELL_RUP_ID and SliceAdmiral_Save.RupBarShow) then
 		local amount, overkill, school, resisted, blocked, absorbed, critical, glancing, crushing = select(15, ...)
 		SA_Data.BARS[SC_SPELL_RUP]["obj"].DoTtext:SetAlpha(1);
@@ -504,8 +469,7 @@ function SA_TestTarget()
     else
       if (isMine == "player") then
 		SA_Data.DPExpires = expirationTime;
-		SA_Data.BARS[SC_SPELL_DP]["Expires"] = CalcExpireTime(expirationTime);
-		--SA_Data.BARS[SC_SPELL_DP]["obj"].text2:SetText("x" .. string.format("%i", count));
+		SA_Data.BARS[SC_SPELL_DP]["Expires"] = CalcExpireTime(expirationTime);		
 		SA_Data.BARS[SC_SPELL_DP]["obj"]:Show();
       else
 		SA_Data.DPExpires = 0;
@@ -596,12 +560,7 @@ function SA_SetComboPts()
 		SA_Data.BARS["CP"]["obj"].combos[i]:Hide();
       end
       SA_Combo:SetText("");
-    end
-    --[[if points > 0 then
-    SA_Data.BARS["CP"]["obj"].comboText:SetText(points);
-    else
-    SA_Data.BARS["CP"]["obj"].comboText:SetText("");
-    end]]
+    end    
     curCombo = points;
     if curCombo == 0 and not incombat and visible then
       --UIFrameFadeOut(SA_Data.BARS["CP"]["obj"], framefadeout);
@@ -631,15 +590,9 @@ local function SA_NewFrame()
   f:SetWidth(widthUI);
   f:SetScale(scaleUI);
   f:SetHeight(12);
-
-  --f:SetPoint("BOTTOMLEFT", SA_Data.BARS["Stat"]["obj"], "TOPLEFT", 0, 2);
-  --if (SliceAdmiral_Save.Barsup) then
-  -- print("True while creating timer bar")
+ 
   f:SetPoint("BOTTOMLEFT", VTimerEnergy, "TOPLEFT", 2, 0);
-  --else
-  -- f:SetPoint("TOPLEFT", VTimerEnergy, "BOTTOMLEFT", 0, -2); --orig (goes down)
-  --end
-
+  
   f:SetStatusBarTexture(SA_BarTexture());
   f:SetStatusBarColor(0.768627451, 0, 0, 1);
   f:EnableMouse(false);
@@ -711,16 +664,11 @@ local function SA_CPFrame()
   f:ClearAllPoints();
   f:SetWidth(width);
   f:SetScale(scaleUI);
-  f:SetHeight(10)
-  --if (SliceAdmiral_Save.Barsup) then
-  --   print("True while creating CP bar")
+  f:SetHeight(10)  
   f:SetPoint("TOPLEFT", VTimerEnergy, "BOTTOMLEFT", 1, 0);
-  --else
-  -- f:SetPoint("BOTTOMLEFT", VTimerEnergy, "TOPLEFT", 0, 3); --orig (top?)
-  --end
+  
   f.bg = f:CreateTexture(nil, "BACKGROUND")
-  f.bg:ClearAllPoints()
-  --f.bg:SetAllPoints(f)
+  f.bg:ClearAllPoints()  
   f.bg:SetPoint("TOPLEFT", f, "TOPLEFT", -1, 1)
   f.bg:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", 1, -2)
   f.bg:SetTexture(SA_BarTexture())
@@ -750,12 +698,7 @@ local function SA_CPFrame()
 		       insets = { left = 2, right = 2, top = 2, bottom = 2 }});
     combo:SetBackdropColor( 1, 0.86, 0.1);
 
-    combo.bg = combo:CreateTexture(nil, "BACKGROUND")
-    --[[combo.bg:ClearAllPoints()
-    combo.bg:SetAllPoints(combo)
-    combo.bg:SetTexture(SA_BarTexture())
-    combo.bg:SetVertexColor(1, 0.86, 0.1)
-    combo.bg:SetAlpha(1)]]
+    combo.bg = combo:CreateTexture(nil, "BACKGROUND")    
     combo:Hide()
 
     f.combos[i] = combo
@@ -765,14 +708,6 @@ local function SA_CPFrame()
   f.overlay = CreateFrame("Frame", nil, f)
   f.overlay:ClearAllPoints()
   f.overlay:SetAllPoints(f)
-  --[[f.comboText = f.overlay:CreateFontString(nil, "OVERLAY")
-  f.comboText:SetFont(font, fontsize, fontstyle)
-  f.comboText:SetShadowOffset(1, -1)
-  f.comboText:SetShadowColor(0, 0, 0, 1)
-  f.comboText:SetJustifyH("CENTER")
-  f.comboText:ClearAllPoints()
-  f.comboText:SetAllPoints(f.overlay)
-  --f.comboText:SetText("5")]]
 
   visible = false
   f:Hide();
@@ -831,28 +766,15 @@ local function SA_CreateStatBar()
   f:SetWidth(width);
   f:SetScale(scaleUI);
   f:SetHeight(15)
-
-  --if (SliceAdmiral_Save.Barsup) then
-  --    print("True while creating stat bar")
-  f:SetPoint("BOTTOMLEFT", VTimerEnergy, "TOPLEFT", 0, 1)
-  --else
-  --    print("FAlse while creating stat bar")
-  -- f:SetPoint("TOPLEFT", VTimerEnergy, "BOTTOMLEFT", 0, -3)
-  --end
+  f:SetPoint("BOTTOMLEFT", VTimerEnergy, "TOPLEFT", 0, 1)  
 
   f.bg = f:CreateTexture(nil, "BACKGROUND")
-  f.bg:ClearAllPoints()
-  --f.bg:SetAllPoints(f)
+  f.bg:ClearAllPoints()  
   f.bg:SetPoint("TOPLEFT", f, "TOPLEFT", -1, 2)
   f.bg:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", 1, -1)
   f.bg:SetTexture(SA_BarTexture())
   f.bg:SetVertexColor(0.3, 0.3, 0.3)
   f.bg:SetAlpha(0.7)
-  --[[f:SetBackdrop({bgFile = "Interface/Tooltips/UI-Tooltip-Background",
-  edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
-  tile = true, tileSize = 8, edgeSize = 8,
-  insets = { left = 0, right = 0, top = 0, bottom = 0 }});
-  f:SetBackdropColor(0,0,0,1);]]
 
   f.stats = {}
 
@@ -877,8 +799,7 @@ local function SA_CreateStatBar()
   for i = 1, numStats do	
     --Create the frame & space it
     local statText = CreateFrame("Frame", nil, f)
-    statText:ClearAllPoints()
-    --statText:SetBackdropBorderColor(1,0.1,0.1);
+    statText:ClearAllPoints()    
     statText:SetPoint("TOPLEFT", f, "TOPLEFT", cur_location, 0)
     statText:SetPoint("BOTTOMRIGHT", f, "BOTTOMLEFT", cur_location + cpwidth, 0)
     --Create stat FontString
@@ -892,8 +813,7 @@ local function SA_CreateStatBar()
     --Create stat label frame
     local labelFrame = CreateFrame("Frame", nil, f)	
     labelFrame:ClearAllPoints()
-    labelFrame:SetPoint("TOPLEFT", f, "TOPLEFT", cur_location, 0)
-    --labelFrame:SetPoint("BOTTOMRIGHT", f, "BOTTOMLEFT", cur_location + cpwidth -20, 0)
+    labelFrame:SetPoint("TOPLEFT", f, "TOPLEFT", cur_location, 0)    
     ----Create stat label FontString
     labelFrame.fs = labelFrame:CreateFontString("$parentText","ARTWORK","GameFontNormal");
     labelFrame.fs:SetJustifyH("CENTER")
@@ -980,7 +900,7 @@ function SA_ResetBaseStats()
   SA_Data.baseAP = baseAP+buffAP;
   SA_Data.baseCrit = crit;
   SA_Data.baseSpeed = mhSpeed;
-  --print("Base#s: ".. SA_Data.baseAP .. " " .. SA_Data.baseCrit .. " " .. SA_Data.baseSpeed);
+  
 end
 
 function SA_OnLoad()
@@ -1008,9 +928,7 @@ function SA_OnLoad()
 
     SA_Data.BarFont4 = CreateFont("VTimerFont4");
     SA_Data.BarFont4:SetFont("Fonts\\FRIZQT__.TTF", 8)
-    SA_Data.BarFont4:SetShadowColor(0,0,0, 0.7);
-    --SA_Data.BarFont4:SetTextColor(213/255,200/255,184/255,1);
-    SA_Data.BarFont3:SetTextColor(0,0,0,1);
+    SA_Data.BarFont4:SetShadowColor(0,0,0, 0.7);        
     SA_Data.BarFont4:SetShadowOffset(0.8, -0.8);
 
     SA_Data.LastEnergy = UnitMana("player");
@@ -1025,7 +943,7 @@ function SA_OnLoad()
 			       tile=true, tileSize=1, edgeSize=0,
 			       insets={left=-1, right=-1, top=-1, bottom=0}
 			   });
-    --"Interface\\TargetingFrame\\UI-StatusBar"
+    
     VTimerEnergy:SetBackdropBorderColor(1,1,1,1);
     VTimerEnergy:SetBackdropColor(0,0,0,0.2);
     VTimerEnergy:SetStatusBarTexture(SA_BarTexture());
@@ -1058,8 +976,7 @@ function SA_OnLoad()
     SA_Data.BARS[SC_SPELL_RECUP]["obj"].icon:SetTexture("Interface\\Icons\\Ability_Rogue_Recuperate");
 
     SA_Data.BARS[SC_SPELL_DP]["obj"] = SA_NewFrame();
-    SA_Data.BARS[SC_SPELL_DP]["obj"]:SetStatusBarColor(96/255, 116/255, 65/255);
-    --SA_Data.BARS[SC_SPELL_DP]["obj"].text2:SetFontObject(SA_Data.BarFont4);
+    SA_Data.BARS[SC_SPELL_DP]["obj"]:SetStatusBarColor(96/255, 116/255, 65/255);    
     SA_Data.BARS[SC_SPELL_DP]["obj"].icon:SetTexture("Interface\\Icons\\Ability_Rogue_DualWeild");
 
     SA_Data.BARS[SC_SPELL_ENV]["obj"] = SA_NewFrame();
@@ -1113,8 +1030,7 @@ function CalcExpireTime(expireTime)
     return 0
   end
 
-  if ((expireTime > 0) and (SA_Data.tNow < expireTime)) then
-    -- print ("Expires: " .. expireTime - SA_Data.tNow);
+  if ((expireTime > 0) and (SA_Data.tNow < expireTime)) then    
     return expireTime - SA_Data.tNow;
   else
     return 0;
@@ -1225,30 +1141,24 @@ if (SA_Data.TimeSinceLastUpdate > SA_Data.UpdateInterval) then
 		local down, up, lag = GetNetStats();
 		SA_Data.tNow = SA_Data.tNow + (lag*2/1000);
 	  end
-	SA_UpdateBar("SliceExpires","player",SC_SPELL_SND, "Tick3");
-    --SA_SNDCooldown();
+	SA_UpdateBar("SliceExpires","player",SC_SPELL_SND, "Tick3");    
   end
   if SliceAdmiral_Save.RupBarShow then
-    SA_UpdateBar("RupExpires", "target", SC_SPELL_RUP, "RuptAlert");
-    --SA_RupBar();
+    SA_UpdateBar("RupExpires", "target", SC_SPELL_RUP, "RuptAlert");    
   end
   if SliceAdmiral_Save.RevealBarShow then
-	SA_UpdateBar("RevealExpires", "target", SC_SPELL_REVEAL, "RevealAlert");
-	--SA_UpdateBar(expire, unit, spell, pendingAlert, xSound)	
+	SA_UpdateBar("RevealExpires", "target", SC_SPELL_REVEAL, "RevealAlert");	
   end
-  if SliceAdmiral_Save.ShowEnvBar then
-    --SA_EnvenomBar();
+  if SliceAdmiral_Save.ShowEnvBar then    
 	SA_QuickUpdateBar("EnvExpires","player",SC_SPELL_ENV);
   end
   if SliceAdmiral_Save.VendBarShow then
-	SA_UpdateBar("VendExpires","target",SC_SPELL_VEND, "VendAlert");
-    --SA_VendBar();
+	SA_UpdateBar("VendExpires","target",SC_SPELL_VEND, "VendAlert");    
   end
   if SliceAdmiral_Save.ShowRecupBar then
 	SA_UpdateBar("RecupExpires", "player", SC_SPELL_RECUP, "Recup.Alert");    
   end
-  if SliceAdmiral_Save.DPBarShow then
-    --SA_DataPBar();
+  if SliceAdmiral_Save.DPBarShow then    
 	SA_QuickUpdateBar("DPExpires","target",SC_SPELL_DP);
   end
 
