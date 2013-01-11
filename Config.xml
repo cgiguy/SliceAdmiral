@@ -40,7 +40,7 @@
     </Layers>
   </Frame>
 -->
-  <Frame name="SA_Config_CPFrame" hidden="true" parent="UIParent">
+  <Frame name="SA_Config_CPFrame" hidden="true" parent="UIParent"> <!-- Timer bars-->
     <Size x="256" y="256"/>
     <Anchors>
       <Anchor point="TOPLEFT">
@@ -171,7 +171,7 @@
 		<Size x="25" y="25"/>
 		<Anchors>
 		  <Anchor point="TOPLEFT">
-			<Offset x="15" y="-41"/>
+			<Offset x="15" y="-40"/>
 		  </Anchor>
 		</Anchors>
 		<scripts>
@@ -184,7 +184,7 @@
 		<Size x="25" y="25"/>
 		<Anchors>
 		  <Anchor point="TOPLEFT">
-			<Offset x="15" y="-71"/>
+			<Offset x="15" y="-60"/>
 		  </Anchor>
 		</Anchors>
 		<scripts>
@@ -197,7 +197,7 @@
 		<Size x="25" y="25"/>
 		<Anchors>
 		  <Anchor point="TOPLEFT">
-			<Offset x="15" y="-101"/>
+			<Offset x="15" y="-80"/>
 		  </Anchor>
 		</Anchors>
 		<scripts>
@@ -210,7 +210,7 @@
 		<Size x="25" y="25"/>
 		<Anchors>
 		  <Anchor point="TOPLEFT">
-			<Offset x="15" y="-131"/>
+			<Offset x="15" y="-100"/>
 		  </Anchor>
 		</Anchors>
 		<scripts>
@@ -223,7 +223,7 @@
 		<Size x="25" y="25"/>
 		<Anchors>
 		  <Anchor point="TOPLEFT">
-			<Offset x="15" y="-161"/>
+			<Offset x="15" y="-120"/>
 		  </Anchor>
 		</Anchors>
 		<scripts>
@@ -236,7 +236,7 @@
 		<Size x="25" y="25"/>
 		<Anchors>
 		  <Anchor point="TOPLEFT">
-			<Offset x="15" y="-191"/>
+			<Offset x="15" y="-140"/>
 		  </Anchor>
 		</Anchors>
 		<scripts>
@@ -249,7 +249,7 @@
 		<Size x="25" y="25"/>
 		<Anchors>
 		  <Anchor point="TOPLEFT">
-			<Offset x="15" y="-221"/>
+			<Offset x="15" y="-160"/>
 		  </Anchor>
 		</Anchors>
 		<scripts>
@@ -262,7 +262,7 @@
 		<Size x="25" y="25"/>
 		<Anchors>
 		  <Anchor point="TOPLEFT">
-			<Offset x="205" y="-41"/>
+			<Offset x="205" y="-40"/>
 		  </Anchor>
 		</Anchors>
 		<scripts>
@@ -275,7 +275,7 @@
 		<Size x="25" y="25"/>
 		<Anchors>
 		  <Anchor point="TOPLEFT">
-			<Offset x="205" y="-71"/>
+			<Offset x="205" y="-60"/>
 		  </Anchor>
 		</Anchors>
 		<scripts>
@@ -288,7 +288,7 @@
 		<Size x="25" y="25"/>
 		<Anchors>
 		  <Anchor point="TOPLEFT">
-			<Offset x="205" y="-101"/>
+			<Offset x="205" y="-80"/>
 		  </Anchor>
 		</Anchors>
 		<scripts>
@@ -301,7 +301,7 @@
 		<Size x="25" y="25"/>
 		<Anchors>
 		  <Anchor point="TOPLEFT">
-			<Offset x="235" y="-131"/>
+			<Offset x="225" y="-100"/>
 		  </Anchor>
 		</Anchors>
 		<scripts>
@@ -312,7 +312,7 @@
       </CheckButton>
     </Frames>
   </Frame>
-  <Frame name="SA_Config_StatBar" hidden="true" parent="UIParent">
+  <Frame name="SA_Config_StatBar" hidden="true" parent="UIParent"> <!-- Combo Points and Stats -->
     <Size x="256" y="256"/>
 		<Anchors>
 		  <Anchor point="TOPLEFT">
@@ -329,13 +329,13 @@
 			</Anchor>
 		  </Anchors>
 		</FontString>
-		<FontString name="ShowComboPoints" inherits="GameFontWhite" text="Show Combo Points" justifyH="LEFT">
+		<!--<FontString name="ShowComboPoints" inherits="GameFontWhite" text="Show Combo Points" justifyH="LEFT">
 		  <Anchors>
 			<Anchor point="TOPLEFT">
 			  <Offset x="41" y="-45"/>
 			</Anchor>
 		  </Anchors>
-		</FontString>
+		</FontString>-->
 		<FontString name="Color" inherits="GameFontWhite" text="Color" justifyH="LEFT">
 		  <Anchors>
 			<Anchor point="TOPLEFT">
@@ -351,20 +351,20 @@
 			</Anchor>
 		  </Anchors>
 		</FontString>
-		<FontString name="ShowStatBar" inherits="GameFontWhite" text="Show Stat Bar" justifyH="LEFT">
+		<!--<FontString name="ShowStatBar" inherits="GameFontWhite" text="Show Stat Bar" justifyH="LEFT">
 		  <Anchors>
 			<Anchor point="TOPLEFT">
 			  <Offset x="41" y="-235"/>
 			</Anchor>
 		  </Anchors>
-		</FontString>
-		<FontString name="HilightBuffed" inherits="GameFontWhite" text="Hilight when mega-buffed" justifyH="LEFT">
+		</FontString>-->
+		<!--<FontString name="HilightBuffed" inherits="GameFontWhite" text="Hilight when mega-buffed" justifyH="LEFT">
 		  <Anchors>
 			<Anchor point="TOPLEFT">
 			  <Offset x="71" y="-265"/>
 			</Anchor>
 		  </Anchors>
-		</FontString>
+		</FontString>-->
       </Layer>
     </Layers>
     <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
@@ -379,41 +379,64 @@
       </EdgeSize>
     </Backdrop>
     <Frames>
-      <CheckButton name="SA_Config_ShowCPBar" inherits="UICheckButtonTemplate">
+      <CheckButton name="SA_Config_ShowCPBar" inherits="InterfaceOptionsCheckButtonTemplate" text="Show Combo Points">
 		<Size x="25" y="25"/>
 		<Anchors>
 		  <Anchor point="TOPLEFT">
-			<Offset x="15" y="-41"/>
+			<Offset x="15" y="-40"/>
 		  </Anchor>
 		</Anchors>
+		<scripts>
+			<onload>
+				SA_Config_Checkbutton_OnLoad(self)
+			</onload>
+		</scripts>
       </CheckButton>
-      <CheckButton name="SA_Config_ShowStatBar" inherits="UICheckButtonTemplate">
+      <CheckButton name="SA_Config_ShowStatBar" inherits="InterfaceOptionsCheckButtonTemplate" text="Show Stat Bar" >
 		<Size x="25" y="25"/>
 		<Anchors>
 		  <Anchor point="TOPLEFT">
 			<Offset x="15" y="-231"/>
 		  </Anchor>
 		</Anchors>
+		<scripts>
+			<onload>
+				SA_Config_Checkbutton_OnLoad(self)
+			</onload>
+		</scripts>
       </CheckButton>
-      <CheckButton name="SA_Config_HilightBuffed" inherits="UICheckButtonTemplate">
+      <CheckButton name="SA_Config_HilightBuffed" inherits="InterfaceOptionsCheckButtonTemplate" text="Hilight when mega-buffed">
 		<Size x="25" y="25"/>
 		<Anchors>
 		  <Anchor point="TOPLEFT">
 			<Offset x="45" y="-261"/>
 		  </Anchor>
 		</Anchors>
+		<scripts>
+			<onload>
+				SA_Config_Checkbutton_OnLoad(self)
+			</onload>
+		</scripts>
       </CheckButton>
     </Frames>
   </Frame>
-  <Frame name="SA_Config_EnergyFrame" hidden="true" parent="UIParent" toplevel="true">
+  <Frame name="SA_Config_EnergyFrame" hidden="true" parent="UIParent"> <!-- Energy Settings -->
     <Size x="256" y="256"/>
     <Anchors>
       <Anchor point="TOPLEFT">
-		<Offset x="3" y="-255"/>
+		<Offset x="9" y="-255"/>
       </Anchor>
     </Anchors>
     <Layers>
       <Layer>
+		<FontString name="SA_Config_EnergyFrame_Caption" inherits="" font="GameFontNormalLarge" text="Energy Settings" justifyH="LEFT">
+		  <Size x="226" y="20"/>
+		  <Anchors>
+			<Anchor point="TOPLEFT">
+			  <Offset x="15" y="-15"/>
+			</Anchor>
+		  </Anchors>
+		</FontString>
 		<FontString name="FontString4" inherits="GameFontNormal" text="Energy Marker II">
 		  <Size x="130" y="20"/>
 		  <Anchors>
@@ -430,14 +453,14 @@
 			</Anchor>
 		  </Anchors>
 		</FontString>
-		<FontString name="FontString7" inherits="GameFontWhite" text="Hide Energy Bar" justifyH="LEFT" maxLines="1">
+		<!--<FontString name="FontString7" inherits="GameFontWhite" text="Hide Energy Bar" justifyH="LEFT" maxLines="1">
 		  <Size x="146" y="20"/>
 		  <Anchors>
 			<Anchor point="TOPLEFT">
 			  <Offset x="38" y="-40"/>
 			</Anchor>
 		  </Anchors>
-		</FontString>
+		</FontString>-->
 		<FontString name="SA_Config_TransFullStr" inherits="GameFontNormal" text="Transparency (Full)">
 		  <Size x="130" y="20"/>
 		  <Anchors>
@@ -445,15 +468,7 @@
 			  <Offset x="15" y="-135"/>
 			</Anchor>
 		  </Anchors>
-		</FontString>
-		<FontString name="SA_Config_EnergyFrame_Caption" inherits="GameFontNormalLarge" setAllPoints="true" text="Energy Settings" nonspacewrap="true" justifyH="LEFT">
-		  <Size x="227" y="20"/>
-		  <Anchors>
-			<Anchor point="TOPLEFT" relativeTo="$parent">
-			  <Offset x="14" y="-14"/>
-			</Anchor>
-		  </Anchors>
-		</FontString>
+		</FontString>		
 	  </Layer>
     </Layers>
     <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
@@ -512,13 +527,18 @@
 		  <OnTextChanged>SA_Config_Energy2V_OnTextChanged(self);</OnTextChanged>
 		</Scripts>
       </EditBox>
-      <CheckButton name="SA_Config_HideE" inherits="UICheckButtonTemplate" parent="SA_Config_EnergyFrame" text="Don't Show">
-		<Size x="18" y="20"/>
+      <CheckButton name="SA_Config_HideE" inherits="InterfaceOptionsCheckButtonTemplate" parent="SA_Config_EnergyFrame" text="Hide Energy Bar">
+		<Size x="25" y="25"/>
 		<Anchors>
 		  <Anchor point="TOPLEFT">
 			<Offset x="17" y="-40"/>
 		  </Anchor>
 		</Anchors>
+		<scripts>
+			<onload>
+				SA_Config_Checkbutton_OnLoad(self)
+			</onload>
+		</scripts>
       </CheckButton>
       <EditBox name="SA_Config_TransFullV" font="GameFontNormal" blinkSpeed="20" autoFocus="false">
 		<Size x="36" y="20"/>
@@ -723,14 +743,14 @@
 			</Anchor>
 		  </Anchors>
 		</FontString>
-		<FontString name="SA_Config_MasterVolumeStr" inherits="GameFontNormalSmall" text="Use Master Volume" justifyH="LEFT">
+		<!--<FontString name="SA_Config_MasterVolumeStr" inherits="GameFontNormalSmall" text="Use Master Volume" justifyH="LEFT">
 		  <Size x="142" y="20"/>
 		  <Anchors>
 			<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT">
 			  <Offset x="45" y="-392"/>
 			</Anchor>
 		  </Anchors>
-		</FontString>
+		</FontString>-->
       </Layer>
     </Layers>
     <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
@@ -745,20 +765,25 @@
       </EdgeSize>
     </Backdrop>
     <Frames>
-      <CheckButton name="SA_Config_MasterVolume" inherits="UICheckButtonTemplate">
+      <CheckButton name="SA_Config_MasterVolume" inherits="InterfaceOptionsCheckButtonTemplate" text="Use Master Volume">
 		<Size x="25" y="25"/>
 		<Anchors>
 		  <Anchor point="TOPLEFT">
 			<Offset x="15" y="-390"/>
 		  </Anchor>
 		</Anchors>
+		<scripts>
+			<onload>
+				SA_Config_Checkbutton_OnLoad(self)
+			</onload>
+		</scripts>
       </CheckButton>
     </Frames>
   </Frame>
-  <Frame name="SA_Config" hidden="true" parent="UIParent" toplevel="true">
+  <Frame name="SA_Config" hidden="true" parent="UIParent" toplevel="true"> <!-- Main -->
     <Size x="256" y="256" />
     <Anchors>
-      <Anchor point="TOPLEFT"/>
+      <Anchor point="TOPLEFT"/>	  
     </Anchors>
     <Scripts>
       <OnLoad>SA_Config_OnLoad(self);</OnLoad>
@@ -766,6 +791,14 @@
     </Scripts>
     <Layers>
       <Layer>
+		<FontString name="FontString1" inherits="" font="GameFontNormalLarge" text="Slice Admiral" justifyH="LEFT">
+		  <Size x="366" y="20"/>
+		  <Anchors>
+			<Anchor point="TOPLEFT">
+			  <Offset x="15" y="-15"/>
+			</Anchor>
+		  </Anchors>
+		</FontString>
 		<FontString name="SA_FontWidthStr" inherits="GameFontNormal" text="Bar Width">
 		  <Size x="130" y="20"/>
 		  <Anchors>
@@ -790,14 +823,6 @@
 			</Anchor>
 		  </Anchors>
 		</FontString>
-		<FontString name="FontString1" inherits="GameFontNormalLarge" text="Slice Admiral" justifyH="LEFT">
-		  <Size x="366" y="32"/>
-		  <Anchors>
-			<Anchor point="TOPLEFT">
-			  <Offset x="14" y="-13"/>
-			</Anchor>
-		  </Anchors>
-		</FontString>
 		<FontString name="FontString8" inherits="GameTooltipTextSmall" text="Click the + next to 'SliceAdmiral' in the list to the left for more options." justifyV="BOTTOM" justifyH="LEFT">
 		  <Size x="356" y="31"/>
 		  <Anchors>
@@ -806,14 +831,14 @@
 			</Anchor>
 		  </Anchors>
 		</FontString>
-		<FontString name="FontString5" inherits="GameFontWhite" text="Pad Alerts with Latency" justifyH="LEFT" maxLines="1">
+		<!--<FontString name="FontString5" inherits="GameFontWhite" text="Pad Alerts with Latency" justifyH="LEFT" maxLines="1">
 		  <Size x="183" y="20"/>
 		  <Anchors>
 			<Anchor point="TOPLEFT">
 			  <Offset x="39" y="-77"/>
 			</Anchor>
 		  </Anchors>
-		</FontString>
+		</FontString>-->
 		<FontString name="SA_Config_BarTextureStr" inherits="GameFontNormalSmall" text="Bar Texture" justifyH="LEFT">
 		  <Size x="130" y="24"/>
 		  <Anchors>
@@ -829,14 +854,14 @@
 			</Anchor>
 		  </Anchors>
 		</FontString>
-		<FontString name="FontString2" inherits="GameFontWhite" text="Disable Right Click to Move" justifyH="LEFT">
+		<!--<FontString name="FontString2" inherits="GameFontWhite" text="Disable Right Click to Move" justifyH="LEFT">
 		  <Size x="231" y="20"/>
 		  <Anchors>
 			<Anchor point="TOPLEFT" relativeTo="SA_Config">
 			  <Offset x="34" y="-51"/>
 			</Anchor>
 		  </Anchors>
-		</FontString>
+		</FontString>-->
       </Layer>
     </Layers>
     <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
@@ -862,13 +887,18 @@
 		  <OnTextChanged>local adjust = floor(self:GetText() + 0.5);if ( adjust > 0) then SA_Config_Width:SetValue( adjust );SA_SetWidth( adjust );end</OnTextChanged>
 		</Scripts>
       </EditBox>
-      <CheckButton name="SA_Config_Lock" inherits="UICheckButtonTemplate" parent="SA_Config" text="Lock Placement">
-		<Size x="18" y="20"/>
+      <CheckButton name="SA_Config_Lock" inherits="InterfaceOptionsCheckButtonTemplate" parent="SA_Config" text="Disable Right Click to Move">
+		<Size x="25" y="25"/>
 		<Anchors>
 		  <Anchor point="TOPLEFT">
-			<Offset x="15" y="-51"/>
+			<Offset x="15" y="-40"/>
 		  </Anchor>
 		</Anchors>
+		<scripts>
+			<onload>
+				SA_Config_Checkbutton_OnLoad(self)
+			</onload>
+		</scripts>
       </CheckButton>
       <Slider name="SA_Config_Scale" inherits="OptionsSliderTemplate" minValue="50" maxValue="200" defaultValue="100" valueStep="10">
 		<Size x="130" y="10"/>
@@ -903,13 +933,18 @@
 		  <OnClick>SA:ClearAllPoints();SA:SetPoint("TOPLEFT", 100, -150);</OnClick>
 		</Scripts>
       </Button>
-      <CheckButton name="SA_Config_PadLatency" inherits="UICheckButtonTemplate" parent="SA_Config">
-		<Size x="18" y="20"/>
+      <CheckButton name="SA_Config_PadLatency" inherits="InterfaceOptionsCheckButtonTemplate" text="Pad Alerts with Latency" parent="SA_Config">
+		<Size x="25" y="25"/>
 		<Anchors>
 		  <Anchor point="TOPLEFT">
-			<Offset x="15" y="-77"/>
+			<Offset x="15" y="-60"/>
 		  </Anchor>
 		</Anchors>
+		<scripts>
+			<onload>
+				SA_Config_Checkbutton_OnLoad(self)
+			</onload>
+		</scripts>
       </CheckButton>
       <EditBox name="SA_Config_BarMargin" font="GameFontNormal" letters="3" numeric="true">
 		<Size x="34" y="20"/>

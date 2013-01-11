@@ -635,7 +635,7 @@ local function SA_NewFrame()
   --f:SetPoint("BOTTOMLEFT", SA_Data.BARS["Stat"]["obj"], "TOPLEFT", 0, 2);
   --if (SliceAdmiral_Save.Barsup) then
   -- print("True while creating timer bar")
-  f:SetPoint("BOTTOMLEFT", VTimerEnergy, "TOPLEFT", 0, 2);
+  f:SetPoint("BOTTOMLEFT", VTimerEnergy, "TOPLEFT", 2, 0);
   --else
   -- f:SetPoint("TOPLEFT", VTimerEnergy, "BOTTOMLEFT", 0, -2); --orig (goes down)
   --end
@@ -664,8 +664,8 @@ local function SA_NewFrame()
   f.text:SetFontObject(SA_Data.BarFont2);
   f.text:SetHeight(10)
   f.text:SetWidth(30);
-  f.text:SetPoint("TOPRIGHT", f, "TOPRIGHT",  -5, 0);
-  f.text:SetJustifyH("RIGHT")
+  f.text:SetPoint("TOPRIGHT", f, "TOPRIGHT",  -2, -1);
+  f.text:SetJustifyH("RIGHT")  
   f.text:SetText("");
 
   -- icon on the left --
@@ -674,7 +674,7 @@ local function SA_NewFrame()
   end
   f.icon:SetHeight(f:GetHeight());
   f.icon:SetWidth(f.icon:GetHeight());
-  f.icon:SetPoint("TOPLEFT", f, "TOPLEFT", 1, -1);
+  f.icon:SetPoint("TOPLEFT", f, "TOPLEFT", 0, 0);
   f.icon:SetBlendMode("ADD");
   f.icon:SetAlpha(.99);
 
@@ -714,15 +714,15 @@ local function SA_CPFrame()
   f:SetHeight(10)
   --if (SliceAdmiral_Save.Barsup) then
   --   print("True while creating CP bar")
-  f:SetPoint("TOPLEFT", VTimerEnergy, "BOTTOMLEFT", 0, -3);
+  f:SetPoint("TOPLEFT", VTimerEnergy, "BOTTOMLEFT", 1, 0);
   --else
   -- f:SetPoint("BOTTOMLEFT", VTimerEnergy, "TOPLEFT", 0, 3); --orig (top?)
   --end
   f.bg = f:CreateTexture(nil, "BACKGROUND")
   f.bg:ClearAllPoints()
   --f.bg:SetAllPoints(f)
-  f.bg:SetPoint("TOPLEFT", f, "TOPLEFT", -2, 2)
-  f.bg:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", 2, -2)
+  f.bg:SetPoint("TOPLEFT", f, "TOPLEFT", -1, 1)
+  f.bg:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", 1, -2)
   f.bg:SetTexture(SA_BarTexture())
   f.bg:SetVertexColor(0.3, 0.3, 0.3)
   f.bg:SetAlpha(0.7)
@@ -834,7 +834,7 @@ local function SA_CreateStatBar()
 
   --if (SliceAdmiral_Save.Barsup) then
   --    print("True while creating stat bar")
-  f:SetPoint("BOTTOMLEFT", VTimerEnergy, "TOPLEFT", 0, 3)
+  f:SetPoint("BOTTOMLEFT", VTimerEnergy, "TOPLEFT", 0, 1)
   --else
   --    print("FAlse while creating stat bar")
   -- f:SetPoint("TOPLEFT", VTimerEnergy, "BOTTOMLEFT", 0, -3)
@@ -843,8 +843,8 @@ local function SA_CreateStatBar()
   f.bg = f:CreateTexture(nil, "BACKGROUND")
   f.bg:ClearAllPoints()
   --f.bg:SetAllPoints(f)
-  f.bg:SetPoint("TOPLEFT", f, "TOPLEFT", -2, 2)
-  f.bg:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", 2, -2)
+  f.bg:SetPoint("TOPLEFT", f, "TOPLEFT", -1, 2)
+  f.bg:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", 1, -1)
   f.bg:SetTexture(SA_BarTexture())
   f.bg:SetVertexColor(0.3, 0.3, 0.3)
   f.bg:SetAlpha(0.7)
@@ -858,17 +858,21 @@ local function SA_CreateStatBar()
 
   local numStats = SA_Data.numStats; --HP TODO option for this
   local spacing = width/60;
-  local cpwidth = ((width-(spacing*3))/(numStats*1.5));
-  local cur_location = 2; --small initial offset
+  local cpwidth = ((width-(spacing*3))/(numStats));
+  local cur_location = 1; --small initial offset
 
   -- text
   local font = "Fonts\\FRIZQT__.TTF"
   local fontsize = 9
   if (numStats > 3) then
-    fontsize = 7;
+    fontsize = 8;
   end
 
   local fontstyle = "OUTLINE"
+  local lableText = {[1] = "AP",
+					[2] = "Crit",
+					[3] = "Speed",
+					[4] = SC_SPELL_ANTICI }
  
   for i = 1, numStats do	
     --Create the frame & space it
@@ -886,21 +890,17 @@ local function SA_CreateStatBar()
     statText.fs:SetText("");
 
     --Create stat label frame
-    local labelFrame = CreateFrame("Frame", nil, f)
-	local action = {[1] = function() labelFrame.fs:SetText("ap") end,
-					[2] = function() labelFrame.fs:SetText("crit") end,
-					[3] = function() labelFrame.fs:SetText("speed") end,
-					[4] = function() labelFrame.fs:SetText(SC_SPELL_ANTICI) end };
+    local labelFrame = CreateFrame("Frame", nil, f)	
     labelFrame:ClearAllPoints()
     labelFrame:SetPoint("TOPLEFT", f, "TOPLEFT", cur_location, 0)
-    labelFrame:SetPoint("BOTTOMRIGHT", f, "BOTTOMLEFT", cur_location + cpwidth, 0)
+    --labelFrame:SetPoint("BOTTOMRIGHT", f, "BOTTOMLEFT", cur_location + cpwidth -20, 0)
     ----Create stat label FontString
     labelFrame.fs = labelFrame:CreateFontString("$parentText","ARTWORK","GameFontNormal");
     labelFrame.fs:SetJustifyH("CENTER")
     labelFrame.fs:SetJustifyV("BOTTOM")
-    labelFrame.fs:SetFont(font, fontsize/1.8, "");
-    labelFrame.fs:SetAllPoints();
-    action[i]();
+    labelFrame.fs:SetFont(font, fontsize/1.6, "");
+    labelFrame.fs:SetText(lableText[i]);
+	labelFrame.fs:SetAllPoints();    
 
     f.stats[i] = statText;
     f.stats[i].labelFrame = labelFrame;
@@ -938,26 +938,19 @@ function SA_UpdateStats()
   end
 	
   if SliceAdmiral_Save.HilightBuffed then
-    SA_flashBuffedStats()
+    SA_flashBuffedStats(totalAP,buffAP,crit,mhSpeed,antici)
   end
 end
 
-function SA_flashBuffedStats()
+function SA_flashBuffedStats(totalAP,buffAP,crit,mhSpeed,antici)  
   local numStats = SA_Data.numStats;
-  local baseAP, buffAP, negAP = UnitAttackPower("player");
-  local totalAP = baseAP+buffAP+negAP;
-  local crit = GetCritChance();
-  local mhSpeed, ohSpeed = UnitAttackSpeed("player");
-  local name, rank, icon, count = UnitAura("player", SC_SPELL_ANTICI);
-  local antici = count or 0;
-
   if (not SA_Data.baseAP or SA_Data.baseAP == 0) then --initialize here since all stats = 0 when OnLoad is called.
     SA_ResetBaseStats();
     return
   end
 
   local statCheck = {};
-  statCheck[1] = ( totalAP > (SA_Data.baseAP * 1.01));
+  statCheck[1] = ( totalAP > (totalAP - buffAP));
   statCheck[2] = (crit > (SA_Data.baseCrit * 1.5)) ;
   statCheck[3] = (mhSpeed < (SA_Data.baseSpeed / 2));
   statCheck[4] = (antici >= 4);
