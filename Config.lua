@@ -1,9 +1,6 @@
 -- Author      : cgiguy
 -- Create Date : 9/12/2008 9:43:03 PM
-SliceAdmiral_Save = {
-  ["Applied"] = "None",
-  ["Apply1"] = "None",
-  ["Apply2"] = "None",
+SliceAdmiral_Save = {      
   ["BarMargin"] = "3",
   ["Barsup"] = true,
   ["BarTexture"] = "Smooth",
@@ -67,6 +64,7 @@ end
 function SA_Config_Checkbutton_OnLoad(checkButton)	
     _G[checkButton:GetName() .. "Text"]:SetText(checkButton:GetText())	
 end
+
 local function SA_Config_Menu_OnClick(self) -- See note 1
   UIDropDownMenu_SetSelectedValue(self.owner, self.value);
   UIDropDownMenu_SetText(self.owner, self.value);
@@ -538,16 +536,11 @@ function SA_Config_Default()
   SliceAdmiral_Save.Expire = "BassDrum";
   SliceAdmiral_Save.Tick3 = "Tambourine";
   SliceAdmiral_Save.Tick2 = "Tambourine";
-  SliceAdmiral_Save.Tick1 = "Tambourine";
-  SliceAdmiral_Save.Applied = "None";
-  SliceAdmiral_Save.Apply3 = "None";
-  SliceAdmiral_Save.Apply2 = "None";
-  SliceAdmiral_Save.Apply1 = "None";
+  SliceAdmiral_Save.Tick1 = "Tambourine";     
   SliceAdmiral_Save.EnergySound1 = "None";
   SliceAdmiral_Save.EnergySound2 = "None";
   SliceAdmiral_Save["Recup.Fail"] = "Waaaah";
-  SliceAdmiral_Save["Recup.Expire"] = "Waaaah";
-  SliceAdmiral_Save["Recup.Applied"] = "None";
+  SliceAdmiral_Save["Recup.Expire"] = "Waaaah";  
   SliceAdmiral_Save["Recup.Refresh3"] = "None";
   SliceAdmiral_Save["Recup.Refresh2"] = "None";
   SliceAdmiral_Save["Recup.Refresh1"] = "None";

@@ -8,14 +8,11 @@ SA_Version = GetAddOnMetadata("SliceAdmiral", "Version")
 SA_Data = {};
 SA_Data.AlertPending = 0;
 SA_Data.BarFont = 0;
-SA_Data.curCombo = 0;
 SA_Data.DPExpires = 0;
 SA_Data.EnvExpires = 0;
 SA_Data.GuilExpires = 0;	-- HagTest
 SA_Data.LastEnergy = 0;
-SA_Data.LastSliceExpire = 0;
 SA_Data.lastSort = 0;	       -- Last time bars were sorted
-SA_Data.LastTime = 0;
 SA_Data.maxSortableBars = 5    -- How many sortable non-DP/Envenom timer type bars do we have?
 SA_Data.RecupExpires = 0;
 SA_Data.RevealExpires = 0;	-- HagTest
@@ -23,7 +20,6 @@ SA_Data.RupExpires = 0;	-- Expiration timers based on GetTime() time
 SA_Data.SliceExpires = 0;
 SA_Data.sortPeriod = 0.5;      -- Only sort bars every sortPeriod seconds
 SA_Data.tNow = 0;
-SA_Data.VendAlertPending = 0;
 SA_Data.VendExpires = 0;
 SA_Data.UpdateInterval = 0.05;
 SA_Data.TimeSinceLastUpdate = 0;
@@ -118,31 +114,8 @@ function SA_MoveStop()
   end
 end
 
-function MyDropDownMenu_OnLoad()
-  info = {};
-  if SliceAdmiral_Save.IsLocked then
-    info.text = "Unlock Position";
-  else
-    info.text = "Lock Position";
-  end
-  info.value = "OptionVariable";
-  info.func = SA_ToggleIsLocked
-
-  UIDropDownMenu_AddButton(info);
-
-  info2            = {};
-  info2.text       = "Close"--"Recalibrate Base Stats";
-  info2.value      = "OptionVariable";  
-
-  UIDropDownMenu_AddButton(info2);
-end
-
-local function SA_ToggleIsLocked()
-  if SliceAdmiral_Save.IsLocked then
-    SliceAdmiral_Save.IsLocked = false;    
-  else
-    SliceAdmiral_Save.IsLocked = true;    
-  end
+local function SA_ToggleIsLocked()  
+    SliceAdmiral_Save.IsLocked = not SliceAdmiral_Save.IsLocked;      
 end
 
 function SA_BarTexture()
@@ -794,7 +767,7 @@ local function SA_CreateStatBar()
   local lableText = {[1] = "AP",
 					[2] = "Crit",
 					[3] = "Speed",
-					[4] = SC_SPELL_ANTICI }
+					[4] = "Extra CP" }
  
   for i = 1, numStats do	
     --Create the frame & space it

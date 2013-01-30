@@ -64,12 +64,4 @@
 			<OnUpdate>SA_OnUpdate(self, elapsed);</OnUpdate>  
 		</Scripts>
 	</Frame>
-	<Frame name="MyDropDownMenu" inherits="UIDropDownMenuTemplate" id="1">
-       <Scripts>
-           <OnLoad>
-               UIDropDownMenu_Initialize(self, MyDropDownMenu_OnLoad, "MENU");
-           </OnLoad>
-       </Scripts>
-   </Frame>
-
 </Ui>

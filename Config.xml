@@ -46,11 +46,11 @@
 			<Offset x="15" y="-40"/>
 		  </Anchor>
 		</Anchors>
-		<scripts>
-			<onload>
+		<Scripts>
+			<OnLoad>
 				SA_Config_Checkbutton_OnLoad(self)
-			</onload>
-		</scripts>
+			</OnLoad>
+		</Scripts>
       </CheckButton>
       <CheckButton name="SA_Config_ShowRupBar" text="Rupture" inherits="InterfaceOptionsCheckButtonTemplate">
 		<Size x="25" y="25"/>
@@ -59,11 +59,11 @@
 			<Offset x="15" y="-60"/>
 		  </Anchor>
 		</Anchors>
-		<scripts>
-			<onload>
+		<Scripts>
+			<OnLoad>
 				SA_Config_Checkbutton_OnLoad(self)
-			</onload>
-		</scripts>
+			</OnLoad>
+		</Scripts>
       </CheckButton>
       <CheckButton name="SA_Config_ShowRecupBar" text="Recuperate" inherits="InterfaceOptionsCheckButtonTemplate">
 		<Size x="25" y="25"/>
@@ -72,11 +72,11 @@
 			<Offset x="15" y="-80"/>
 		  </Anchor>
 		</Anchors>
-		<scripts>
-			<onload>
+		<Scripts>
+			<OnLoad>
 				SA_Config_Checkbutton_OnLoad(self)
-			</onload>
-		</scripts>
+			</OnLoad>
+		</Scripts>
       </CheckButton>
       <CheckButton name="SA_Config_ShowDPBar" text="Deadly Poison" inherits="InterfaceOptionsCheckButtonTemplate">
 		<Size x="25" y="25"/>
@@ -85,11 +85,11 @@
 			<Offset x="15" y="-100"/>
 		  </Anchor>
 		</Anchors>
-		<scripts>
-			<onload>
+		<Scripts>
+			<OnLoad>
 				SA_Config_Checkbutton_OnLoad(self)
-			</onload>
-		</scripts>
+			</OnLoad>
+		</Scripts>
       </CheckButton>
       <CheckButton name="SA_Config_ShowEnvBar" text="Envenom Buff" inherits="InterfaceOptionsCheckButtonTemplate">
 		<Size x="25" y="25"/>
@@ -98,11 +98,11 @@
 			<Offset x="15" y="-120"/>
 		  </Anchor>
 		</Anchors>
-		<scripts>
-			<onload>
+		<Scripts>
+			<OnLoad>
 				SA_Config_Checkbutton_OnLoad(self)
-			</onload>
-		</scripts>
+			</OnLoad>
+		</Scripts>
       </CheckButton>
       <CheckButton name="SA_Config_ShowVendBar" text="Vendetta Buff" inherits="InterfaceOptionsCheckButtonTemplate">
 		<Size x="25" y="25"/>
@@ -111,11 +111,11 @@
 			<Offset x="15" y="-140"/>
 		  </Anchor>
 		</Anchors>
-		<scripts>
-			<onload>
+		<Scripts>
+			<OnLoad>
 				SA_Config_Checkbutton_OnLoad(self)
-			</onload>
-		</scripts>
+			</OnLoad>
+		</Scripts>
       </CheckButton>
 	  <CheckButton name="SA_Config_ShowRevealBar" text="Revealing Strike" inherits="InterfaceOptionsCheckButtonTemplate">
 		<Size x="25" y="25"/>
@@ -124,11 +124,11 @@
 			<Offset x="15" y="-160"/>
 		  </Anchor>
 		</Anchors>
-		<scripts>
-			<onload>
+		<Scripts>
+			<OnLoad>
 				SA_Config_Checkbutton_OnLoad(self)
-			</onload>
-		</scripts>
+			</OnLoad>
+		</Scripts>
       </CheckButton>
       <CheckButton name="SA_Config_Barsup" text="Bars grow up" inherits="InterfaceOptionsCheckButtonTemplate">
 		<Size x="25" y="25"/>
@@ -137,11 +137,11 @@
 			<Offset x="205" y="-40"/>
 		  </Anchor>
 		</Anchors>
-		<scripts>
-			<onload>
+		<Scripts>
+			<OnLoad>
 				SA_Config_Checkbutton_OnLoad(self)
-			</onload>
-		</scripts>
+			</OnLoad>
+		</Scripts>
       </CheckButton>
       <CheckButton name="SA_Config_SortBars" text="Sort bars by duration" inherits="InterfaceOptionsCheckButtonTemplate">
 		<Size x="25" y="25"/>
@@ -150,11 +150,11 @@
 			<Offset x="205" y="-60"/>
 		  </Anchor>
 		</Anchors>
-		<scripts>
-			<onload>
+		<Scripts>
+			<OnLoad>
 				SA_Config_Checkbutton_OnLoad(self)
-			</onload>
-		</scripts>
+			</OnLoad>
+		</Scripts>
       </CheckButton>
       <CheckButton name="SA_Config_ShowDoTDmg" text="Show DoT ticks"  inherits="InterfaceOptionsCheckButtonTemplate">
 		<Size x="25" y="25"/>
@@ -163,11 +163,11 @@
 			<Offset x="205" y="-80"/>
 		  </Anchor>
 		</Anchors>
-		<scripts>
-			<onload>
+		<Scripts>
+			<OnLoad>
 				SA_Config_Checkbutton_OnLoad(self)
-			</onload>
-		</scripts>
+			</OnLoad>
+		</Scripts>
       </CheckButton>
       <CheckButton name="SA_Config_DoTCrits" text="Highlight DoT crits" inherits="InterfaceOptionsCheckButtonTemplate">
 		<Size x="25" y="25"/>
@@ -176,11 +176,11 @@
 			<Offset x="225" y="-100"/>
 		  </Anchor>
 		</Anchors>
-		<scripts>
-			<onload>
+		<Scripts>
+			<OnLoad>
 				SA_Config_Checkbutton_OnLoad(self)
-			</onload>
-		</scripts>
+			</OnLoad>
+		</Scripts>
       </CheckButton>
     </Frames>
   </Frame>
@@ -237,11 +237,11 @@
 			<Offset x="15" y="-40"/>
 		  </Anchor>
 		</Anchors>
-		<scripts>
-			<onload>
+		<Scripts>
+			<OnLoad>
 				SA_Config_Checkbutton_OnLoad(self)
-			</onload>
-		</scripts>
+			</OnLoad>
+		</Scripts>
       </CheckButton>
       <CheckButton name="SA_Config_ShowStatBar" inherits="InterfaceOptionsCheckButtonTemplate" text="Show Stat Bar" >
 		<Size x="25" y="25"/>
@@ -250,11 +250,11 @@
 			<Offset x="15" y="-231"/>
 		  </Anchor>
 		</Anchors>
-		<scripts>
-			<onload>
+		<Scripts>
+			<OnLoad>
 				SA_Config_Checkbutton_OnLoad(self)
-			</onload>
-		</scripts>
+			</OnLoad>
+		</Scripts>
       </CheckButton>
       <CheckButton name="SA_Config_HilightBuffed" inherits="InterfaceOptionsCheckButtonTemplate" text="Hilight when mega-buffed">
 		<Size x="25" y="25"/>
@@ -263,11 +263,11 @@
 			<Offset x="45" y="-261"/>
 		  </Anchor>
 		</Anchors>
-		<scripts>
-			<onload>
+		<Scripts>
+			<OnLoad>
 				SA_Config_Checkbutton_OnLoad(self)
-			</onload>
-		</scripts>
+			</OnLoad>
+		</Scripts>
       </CheckButton>
     </Frames>
   </Frame>
@@ -377,11 +377,11 @@
 			<Offset x="17" y="-40"/>
 		  </Anchor>
 		</Anchors>
-		<scripts>
-			<onload>
+		<Scripts>
+			<OnLoad>
 				SA_Config_Checkbutton_OnLoad(self)
-			</onload>
-		</scripts>
+			</OnLoad>
+		</Scripts>
       </CheckButton>
       <EditBox name="SA_Config_TransFullV" font="GameFontNormal" blinkSpeed="20" autoFocus="false">
 		<Size x="36" y="20"/>
@@ -573,11 +573,11 @@
 			<Offset x="15" y="-390"/>
 		  </Anchor>
 		</Anchors>
-		<scripts>
-			<onload>
+		<Scripts>
+			<OnLoad>
 				SA_Config_Checkbutton_OnLoad(self)
-			</onload>
-		</scripts>
+			</OnLoad>
+		</Scripts>
       </CheckButton>
     </Frames>
   </Frame>
@@ -679,11 +679,11 @@
 			<Offset x="15" y="-40"/>
 		  </Anchor>
 		</Anchors>
-		<scripts>
-			<onload>
+		<Scripts>
+			<OnLoad>
 				SA_Config_Checkbutton_OnLoad(self)
-			</onload>
-		</scripts>
+			</OnLoad>
+		</Scripts>
       </CheckButton>
       <Slider name="SA_Config_Scale" inherits="OptionsSliderTemplate" minValue="50" maxValue="200" defaultValue="100" valueStep="10">
 		<Size x="130" y="10"/>
@@ -725,11 +725,11 @@
 			<Offset x="15" y="-60"/>
 		  </Anchor>
 		</Anchors>
-		<scripts>
-			<onload>
+		<Scripts>
+			<OnLoad>
 				SA_Config_Checkbutton_OnLoad(self)
-			</onload>
-		</scripts>
+			</OnLoad>
+		</Scripts>
       </CheckButton>
       <EditBox name="SA_Config_BarMargin" font="GameFontNormal" letters="3" numeric="true">
 		<Size x="34" y="20"/>
