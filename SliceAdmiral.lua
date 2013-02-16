@@ -316,6 +316,10 @@ function SA_OnEvent(self, event, ...)
 		  end
 		  SA_ChangeAnchor();
 		end
+	-- Anticipation event --
+		if (spellId == SC_SPELL_ANTICI_ID and SliceAdmiral_Save.CPBarShow and type == "SPELL_AURA_REMOVED") then		
+			SA_SetComboPts();
+		end
       else
 		if (destName == UnitName("target")) then
 		  -- DEADLY POISON EVENT --		  
@@ -505,16 +509,26 @@ function SA_TestTarget()
       end
     end	
   end
-  SA_ChangeAnchor();
+  SA_ChangeAnchor();  
 end
 
 local curCombo = 0
 
-function SA_SetComboPts()
-  local points = GetComboPoints("player");
+function SA_SetComboPts()  
   if SliceAdmiral_Save.CPBarShow then
+	local points = GetComboPoints("player");
+	local name, rank, icon, count, _, duration, expirationTime, _,_,_,_= UnitAura("player", "Anticipation")
+	if name and count > 0 then
+	 for i = 1, count do
+		SA_Data.BARS["CP"]["obj"].antis[i]:Show();
+	 end	 
+	else
+	 for i = 1, 5 do
+		SA_Data.BARS["CP"]["obj"].antis[i]:Hide();
+	 end
+	end
     if points == curCombo then
-      if curCombo == 0 and not incombat and visible then
+      if curCombo == 0 and visible then
 		--UIFrameFadeOut(SA_Data.BARS["CP"]["obj"], framefadeout);
 		visible = false;
       elseif curCombo > 0 and not visible then
@@ -535,7 +549,7 @@ function SA_SetComboPts()
       SA_Combo:SetText("");
     end    
     curCombo = points;
-    if curCombo == 0 and not incombat and visible then
+    if curCombo == 0 and visible then
       --UIFrameFadeOut(SA_Data.BARS["CP"]["obj"], framefadeout);
       visible = false;
     elseif curCombo > 0 and not visible then
@@ -637,30 +651,31 @@ local function SA_CPFrame()
   f:ClearAllPoints();
   f:SetWidth(width);
   f:SetScale(scaleUI);
-  f:SetHeight(10)  
+  f:SetHeight(10);  
   f:SetPoint("TOPLEFT", VTimerEnergy, "BOTTOMLEFT", 1, 0);
   
-  f.bg = f:CreateTexture(nil, "BACKGROUND")
-  f.bg:ClearAllPoints()  
-  f.bg:SetPoint("TOPLEFT", f, "TOPLEFT", -1, 1)
-  f.bg:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", 1, -2)
-  f.bg:SetTexture(SA_BarTexture())
-  f.bg:SetVertexColor(0.3, 0.3, 0.3)
-  f.bg:SetAlpha(0.7)
+  f.bg = f:CreateTexture(nil, "BACKGROUND");
+  f.bg:ClearAllPoints();
+  f.bg:SetPoint("TOPLEFT", f, "TOPLEFT", -1, 1);
+  f.bg:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", 1, -2);
+  f.bg:SetTexture(SA_BarTexture());
+  f.bg:SetVertexColor(0.3, 0.3, 0.3);
+  f.bg:SetAlpha(0.7);
 
-  f.combos = {}
+  f.combos = {};
+  f.antis = {};
 
   local cx = 0;
   local spacing = width/30; --orig:= 3
   local cpwidth = ((width-(spacing*4))/9.2);
 
   -- text
-  local font = "Fonts\\FRIZQT__.TTF"
-  local fontsize = 12
-  local fontstyle = "OUTLINE"
+  local font = "Fonts\\FRIZQT__.TTF";
+  local fontsize = 12;
+  local fontstyle = "OUTLINE";
 
   for i = 1, 5 do
-    local combo = CreateFrame("Frame", nil, f)
+    local combo = CreateFrame("Frame", nil, f);	
     combo:ClearAllPoints()
     combo:SetPoint("TOPLEFT", f, "TOPLEFT", cx, 0)
     combo:SetPoint("BOTTOMRIGHT", f, "BOTTOMLEFT", cx + cpwidth, 0)
@@ -672,9 +687,29 @@ local function SA_CPFrame()
     combo:SetBackdropColor( 1, 0.86, 0.1);
 
     combo.bg = combo:CreateTexture(nil, "BACKGROUND")    
-    combo:Hide()
+    combo:Hide()	
+    f.combos[i] = combo;	
+	
+    cx = cx + cpwidth + spacing
+  end
+  cx = 0; 
+  for i = 1, 5 do
+    local anti = CreateFrame("Frame", nil, f);
+	anti:SetFrameLevel(14); -- Better than f.combo[i] as parrent due to visibility
+    anti:ClearAllPoints()
+    anti:SetPoint("TOPLEFT", f, "TOPLEFT", cx, 0)
+    anti:SetPoint("BOTTOMRIGHT", f, "BOTTOMLEFT", cx + cpwidth, 0)
 
-    f.combos[i] = combo
+    anti:SetBackdrop({bgFile = "Interface/Tooltips/UI-Tooltip-Background",
+		       edgeFile = "Interface/DialogFrame/UI-DialogBox-Gold-Border", --"Interface/Tooltips/UI-Tooltip-Border"
+		       tile = true, tileSize = 8, edgeSize = 8,
+		       insets = { left = 2, right = 2, top = 2, bottom = 2 }});
+    anti:SetBackdropColor( 0.1, 0.86, 1);
+
+    anti.bg = anti:CreateTexture(nil, "BACKGROUND")    
+    anti:Hide()	    
+	f.antis[i] = anti;
+	
     cx = cx + cpwidth + spacing
   end
 
@@ -697,9 +732,13 @@ function SA_UpdateCPWidths()
 
   for i = 1, 5 do
     local combo = SA_Data.BARS["CP"]["obj"].combos[i]
-    combo:ClearAllPoints()
+	local anti = SA_Data.BARS["CP"]["obj"].antis[i]
+    combo:ClearAllPoints()	
+	anti:ClearAllPoints()
     combo:SetPoint("TOPLEFT", f, "TOPLEFT", cx, 0)
+	anti:SetPoint("TOPLEFT", f, "TOPLEFT", cx, 0)
     combo:SetPoint("BOTTOMRIGHT", f, "BOTTOMLEFT", cx + cpwidth, 0)
+	anti:SetPoint("BOTTOMRIGHT", f, "BOTTOMLEFT", cx + cpwidth, 0)
 
     cx = cx + cpwidth + spacing
   end
@@ -767,7 +806,7 @@ local function SA_CreateStatBar()
   local lableText = {[1] = "AP",
 					[2] = "Crit",
 					[3] = "Speed",
-					[4] = "Extra CP" }
+					[4] = "Armor" }
  
   for i = 1, numStats do	
     --Create the frame & space it
@@ -814,8 +853,8 @@ function SA_UpdateStats()
   local totalAP = baseAP+buffAP+negAP;
   local crit = GetCritChance();
   local mhSpeed, ohSpeed = UnitAttackSpeed("player");
-  local name, rank, icon, count = UnitAura("player", SC_SPELL_ANTICI);
-  local antici = count or 0;
+  local name, _, icon, count = UnitAura("target", SC_SPELL_WEAKEN, nil, "HARMFUL");
+  local armor = count or 0;  
 
   if (SA_Data.BARS["Stat"]["obj"].stats[1]) then
     SA_Data.BARS["Stat"]["obj"].stats[1].fs:SetText(totalAP);
@@ -827,15 +866,15 @@ function SA_UpdateStats()
     SA_Data.BARS["Stat"]["obj"].stats[3].fs:SetText(string.format("%.2f", mhSpeed));
   end
   if (SA_Data.BARS["Stat"]["obj"].stats[4]) then
-    SA_Data.BARS["Stat"]["obj"].stats[4].fs:SetText(antici);
+    SA_Data.BARS["Stat"]["obj"].stats[4].fs:SetText(armor);
   end
 	
   if SliceAdmiral_Save.HilightBuffed then
-    SA_flashBuffedStats(totalAP,buffAP,crit,mhSpeed,antici)
+    SA_flashBuffedStats(totalAP,buffAP,crit,mhSpeed,armor)
   end
 end
 
-function SA_flashBuffedStats(totalAP,buffAP,crit,mhSpeed,antici)  
+function SA_flashBuffedStats(totalAP,buffAP,crit,mhSpeed,armor)  
   local numStats = SA_Data.numStats;
   if (not SA_Data.baseAP or SA_Data.baseAP == 0) then --initialize here since all stats = 0 when OnLoad is called.
     SA_ResetBaseStats();
@@ -846,7 +885,7 @@ function SA_flashBuffedStats(totalAP,buffAP,crit,mhSpeed,antici)
   statCheck[1] = ( totalAP > (totalAP - buffAP));
   statCheck[2] = (crit > (SA_Data.baseCrit * 1.5)) ;
   statCheck[3] = (mhSpeed < (SA_Data.baseSpeed / 2));
-  statCheck[4] = (antici >= 4);
+  statCheck[4] = (armor == 0 and UnitExists("target"));
   
   for i = 1, numStats do
     if statCheck[i] then
