@@ -515,8 +515,8 @@ end
 local curCombo = 0
 
 function SA_SetComboPts()  
-  if SliceAdmiral_Save.CPBarShow then
-	local points = GetComboPoints("player");
+  local points = GetComboPoints("player");  
+  if SliceAdmiral_Save.CPBarShow then	
 	local name, rank, icon, count, _, duration, expirationTime, _,_,_,_= UnitAura("player", "Anticipation")
 	if name and count > 0 then
 	 for i = 1, count do
@@ -526,17 +526,7 @@ function SA_SetComboPts()
 	 for i = 1, 5 do
 		SA_Data.BARS["CP"]["obj"].antis[i]:Hide();
 	 end
-	end
-    if points == curCombo then
-      if curCombo == 0 and visible then
-		--UIFrameFadeOut(SA_Data.BARS["CP"]["obj"], framefadeout);
-		visible = false;
-      elseif curCombo > 0 and not visible then
-		--UIFrameFadeIn(SA_Data.BARS["CP"]["obj"], framefadein);
-		visible = true;
-      end
-      return
-    end
+	end    
     if (points > curCombo) then
       for i = curCombo + 1, points do
 		SA_Data.BARS["CP"]["obj"].combos[i]:Show();
@@ -548,20 +538,13 @@ function SA_SetComboPts()
       end
       SA_Combo:SetText("");
     end    
-    curCombo = points;
-    if curCombo == 0 and visible then
-      --UIFrameFadeOut(SA_Data.BARS["CP"]["obj"], framefadeout);
-      visible = false;
-    elseif curCombo > 0 and not visible then
-      --UIFrameFadeIn(SA_Data.BARS["CP"]["obj"], framefadein);
-      visible = true;
-    end
+    curCombo = points;    
   else
     if (points > curCombo) then
       SA_Combo:SetText(points);
     else
       SA_Combo:SetText("");
-    end
+    end	
   end
 end
 
@@ -716,8 +699,7 @@ local function SA_CPFrame()
   f.overlay = CreateFrame("Frame", nil, f)
   f.overlay:ClearAllPoints()
   f.overlay:SetAllPoints(f)
-
-  visible = false
+  
   f:Hide();
   return f;
 end
@@ -854,7 +836,7 @@ function SA_UpdateStats()
   local crit = GetCritChance();
   local mhSpeed, ohSpeed = UnitAttackSpeed("player");
   local name, _, icon, count = UnitAura("target", SC_SPELL_WEAKEN, nil, "HARMFUL");
-  local armor = count or 0;  
+  local armor = (count or 0)*4;  
 
   if (SA_Data.BARS["Stat"]["obj"].stats[1]) then
     SA_Data.BARS["Stat"]["obj"].stats[1].fs:SetText(totalAP);
@@ -866,7 +848,7 @@ function SA_UpdateStats()
     SA_Data.BARS["Stat"]["obj"].stats[3].fs:SetText(string.format("%.2f", mhSpeed));
   end
   if (SA_Data.BARS["Stat"]["obj"].stats[4]) then
-    SA_Data.BARS["Stat"]["obj"].stats[4].fs:SetText(armor);
+    SA_Data.BARS["Stat"]["obj"].stats[4].fs:SetText(string.format("%i%%", armor));
   end
 	
   if SliceAdmiral_Save.HilightBuffed then

@@ -26,7 +26,7 @@
 							</Anchors>
 						</FontString>
 						<FontString name="SA_Combo" inherits="GameFontWhite" justifyH="LEFT">
-							<Size x="20" y="20" />
+							<Size x="50" y="20" />
 							<Anchors>
 								<Anchor point="TOPLEFT" relativeTo="VTimerEnergy" relativePoint="BOTTOMLEFT">
 									<Offset x="2" y="20" />
