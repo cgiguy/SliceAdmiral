@@ -395,9 +395,10 @@ function SA_SetWidth(w)
     VTimerEnergy:SetWidth( w);
 	for k,v in pairs(SA_Data.BARS) do
 		SA_Data.BARS[k]["obj"]:SetWidth(w);
-	end		
-    SA_Spark1:SetPoint("TOPLEFT", VTimerEnergy, "TOPLEFT", (SliceAdmiral_Save.Energy1 / UnitManaMax("player") * w), 0);
-    SA_Spark2:SetPoint("TOPLEFT", VTimerEnergy, "TOPLEFT", (SliceAdmiral_Save.Energy2 / UnitManaMax("player") * w), 0);
+	end
+	local lUnitManaMax = UnitManaMax("player")
+    SA_Spark1:SetPoint("TOPLEFT", VTimerEnergy, "TOPLEFT", (SliceAdmiral_Save.Energy1 / lUnitManaMax * w), 0);
+    SA_Spark2:SetPoint("TOPLEFT", VTimerEnergy, "TOPLEFT", (SliceAdmiral_Save.Energy2 / lUnitManaMax * w), 0);
     SA_UpdateCPWidths();
     SA_UpdateStatWidths();
   end
@@ -454,8 +455,9 @@ function SA_Config_VarsChanged()
 end
 
 function SA_Config_OtherVars()
-  local p1 = SliceAdmiral_Save.Energy1 / UnitManaMax("player") * SliceAdmiral_Save.Width;
-  local p2 = SliceAdmiral_Save.Energy2 / UnitManaMax("player") * SliceAdmiral_Save.Width;
+  local lUnitManaMax = UnitManaMax("player");
+  local p1 = SliceAdmiral_Save.Energy1 / lUnitManaMax * SliceAdmiral_Save.Width;
+  local p2 = SliceAdmiral_Save.Energy2 / lUnitManaMax * SliceAdmiral_Save.Width;
 
   SA_Spark1:SetPoint("TOPLEFT", VTimerEnergy, "TOPLEFT", p1, 0);
   SA_Spark2:SetPoint("TOPLEFT", VTimerEnergy, "TOPLEFT", p2, 0);

@@ -8,19 +8,12 @@ SA_Version = GetAddOnMetadata("SliceAdmiral", "Version")
 SA_Data = {};
 SA_Data.AlertPending = 0;
 SA_Data.BarFont = 0;
-SA_Data.DPExpires = 0;
-SA_Data.EnvExpires = 0;
 SA_Data.GuilExpires = 0;	-- HagTest
 SA_Data.LastEnergy = 0;
 SA_Data.lastSort = 0;	 -- Last time bars were sorted
 SA_Data.maxSortableBars = 5 -- How many sortable non-DP/Envenom timer type bars do we have?
-SA_Data.RecupExpires = 0;
-SA_Data.RevealExpires = 0;	-- HagTest
-SA_Data.RupExpires = 0;	-- Expiration timers based on GetTime() time
-SA_Data.SliceExpires = 0;
 SA_Data.sortPeriod = 0.5; -- Only sort bars every sortPeriod seconds
 SA_Data.tNow = 0;
-SA_Data.VendExpires = 0;
 SA_Data.UpdateInterval = 0.05;
 SA_Data.TimeSinceLastUpdate = 0;
 SA_Data.numStats = 4; --Change to 3 if you don't want Anticipation
@@ -195,7 +188,7 @@ local function SA_ChangeAnchor()
  end --end loop
 
  -- Deadly Poison -- DP always on the outside since it's auto-refreshed for the rogue
- if (SA_Data.DPExpires ~= 0) then
+ if (SA_Data.BARS[SC_SPELL_DP]["Expires"] ~= 0) then
 	SA_Data.BARS[SC_SPELL_DP]["obj"]:ClearAllPoints();
 	if (SliceAdmiral_Save.Barsup) then
 		SA_Data.BARS[SC_SPELL_DP]["obj"]:SetPoint("BOTTOMLEFT", LastAnchor, "TOPLEFT", 0, offSetSize);
@@ -206,7 +199,7 @@ local function SA_ChangeAnchor()
  end
 
  -- Envenom -- Envenom to finish this shiznit out.
- if (SA_Data.EnvExpires ~= 0) then
+ if (SA_Data.BARS[SC_SPELL_ENV]["Expires"] ~= 0) then
 	SA_Data.BARS[SC_SPELL_ENV]["obj"]:ClearAllPoints();
 	if (SliceAdmiral_Save.Barsup) then
 		SA_Data.BARS[SC_SPELL_ENV]["obj"]:SetPoint("BOTTOMLEFT", LastAnchor, "TOPLEFT", 0, offSetSize);
@@ -264,15 +257,12 @@ function SA_OnEvent(self, event, ...)
 				if (type == "SPELL_AURA_REMOVED") then
 					if (UnitAffectingCombat("player")) then
 						SA_Sound("Expire");
-					end
-					SA_Data.SliceExpires = 0;
+					end					
 					SA_Data.BARS[SC_SPELL_SND]["Expires"] = 0;				
 					SA_Data.BARS[SC_SPELL_SND]["obj"]:Hide();				
 				else
-					local name, rank, icon, count, debuffType, duration, expirationTime = UnitAura("player", SC_SPELL_SND);
-					--local timeLeftOnLast = SA_Data.SliceExpires - GetTime();
-					SA_Data.BARS[SC_SPELL_SND]["obj"]:Show();
-					SA_Data.SliceExpires = expirationTime;
+					local name, rank, icon, count, debuffType, duration, expirationTime = UnitAura("player", SC_SPELL_SND);					
+					SA_Data.BARS[SC_SPELL_SND]["obj"]:Show();					
 					SA_Data.BARS[SC_SPELL_SND]["Expires"] = CalcExpireTime(expirationTime);				
 				end
 				SA_ChangeAnchor();
@@ -282,13 +272,11 @@ function SA_OnEvent(self, event, ...)
 				 if (type == "SPELL_AURA_REMOVED") then
 					if (UnitAffectingCombat("player")) then
 						SA_Sound("Recup.Expire");
-					end
-					SA_Data.RecupExpires = 0;
+					end					
 					SA_Data.BARS[SC_SPELL_RECUP]["Expires"] = 0;
 					SA_Data.BARS[SC_SPELL_RECUP]["obj"]:Hide();
 				 else
-					local name, rank, icon, count, debuffType, duration, expirationTime = UnitAura("player", SC_SPELL_RECUP);			
-					SA_Data.RecupExpires = expirationTime;
+					local name, rank, icon, count, debuffType, duration, expirationTime = UnitAura("player", SC_SPELL_RECUP);								
 					SA_Data.BARS[SC_SPELL_RECUP]["Expires"] = CalcExpireTime(expirationTime);
 					SA_Data.BARS[SC_SPELL_RECUP]["obj"]:Show();			
 				 end
@@ -296,13 +284,11 @@ function SA_OnEvent(self, event, ...)
 			end
 			-- ENVENOM EVENT --
 			if (spellId == SC_SPELL_ENV_ID and SliceAdmiral_Save.ShowEnvBar) then
-				 if (type == "SPELL_AURA_REMOVED") then			
-					SA_Data.EnvExpires = 0;
+				 if (type == "SPELL_AURA_REMOVED") then								
 					SA_Data.BARS[SC_SPELL_ENV]["Expires"] = 0;			
 					SA_Data.BARS[SC_SPELL_ENV]["obj"]:Hide();
 				 else
-					local name, rank, icon, count, debuffType, duration, expirationTime = UnitAura("player", SC_SPELL_ENV);			
-					SA_Data.EnvExpires = expirationTime;
+					local name, rank, icon, count, debuffType, duration, expirationTime = UnitAura("player", SC_SPELL_ENV);								
 					SA_Data.BARS[SC_SPELL_ENV]["Expires"] = CalcExpireTime(expirationTime);
 					SA_Data.BARS[SC_SPELL_ENV]["obj"]:Show();
 				 end
@@ -316,13 +302,11 @@ function SA_OnEvent(self, event, ...)
 			if (destName == UnitName("target")) then
 				 -- DEADLY POISON EVENT --		 
 				 if (isMySpell and spellId == SC_SPELL_DP_ID and SliceAdmiral_Save.DPBarShow) then
-					if (type == "SPELL_AURA_REMOVED") then
-						SA_Data.DPExpires = 0;
+					if (type == "SPELL_AURA_REMOVED") then						
 						SA_Data.BARS[SC_SPELL_DP]["Expires"] = 0;
 						SA_Data.BARS[SC_SPELL_DP]["obj"]:Hide();
 					else
-						local name, rank, icon, count, debuffType, duration, expirationTime = UnitDebuff("target", SC_SPELL_DP, nil, "PLAYER");
-						SA_Data.DPExpires = expirationTime;
+						local name, rank, icon, count, debuffType, duration, expirationTime = UnitDebuff("target", SC_SPELL_DP, nil, "PLAYER");						
 						SA_Data.BARS[SC_SPELL_DP]["Expires"] = CalcExpireTime(expirationTime);			
 						SA_Data.BARS[SC_SPELL_DP]["obj"]:Show();
 					end
@@ -333,13 +317,11 @@ function SA_OnEvent(self, event, ...)
 					if (type == "SPELL_AURA_REMOVED") then
 						if (UnitAffectingCombat("player")) then
 							SA_Sound("RuptExpire");
-						end
-						SA_Data.RupExpires = 0;
+						end						
 						SA_Data.BARS[SC_SPELL_RUP]["Expires"] = 0;
 						SA_Data.BARS[SC_SPELL_RUP]["obj"]:Hide();
 					else
-						 local name, rank, icon, count, debuffType, duration, expirationTime = UnitDebuff("target", SC_SPELL_RUP, nil, "PLAYER");
-						SA_Data.RupExpires = expirationTime;
+						 local name, rank, icon, count, debuffType, duration, expirationTime = UnitDebuff("target", SC_SPELL_RUP, nil, "PLAYER");						
 						 SA_Data.BARS[SC_SPELL_RUP]["Expires"] = CalcExpireTime(expirationTime);
 						 SA_Data.BARS[SC_SPELL_RUP]["obj"]:Show();
 					end
@@ -350,13 +332,11 @@ function SA_OnEvent(self, event, ...)
 					if (type == "SPELL_AURA_REMOVED") then
 						 if (UnitAffectingCombat("player")) then
 							SA_Sound("RevealExpire");
-						 end
-						 SA_Data.RevealExpires = 0;
+						 end						 
 						 SA_Data.BARS[SC_SPELL_REVEAL]["Expires"] = 0;
 						 SA_Data.BARS[SC_SPELL_REVEAL]["obj"]:Hide();
 					else
 						 local name, rank, icon, count, debuffType, duration, expirationTime = UnitDebuff("target", SC_SPELL_REVEAL, nil, "PLAYER");
-						 SA_Data.RevealExpires = expirationTime;
 						 SA_Data.BARS[SC_SPELL_REVEAL]["Expires"] = CalcExpireTime(expirationTime);
 						 SA_Data.BARS[SC_SPELL_REVEAL]["obj"]:Show();
 					end
@@ -367,13 +347,11 @@ function SA_OnEvent(self, event, ...)
 					if (type == "SPELL_AURA_REMOVED") then
 						if (UnitAffectingCombat("player")) then
 							SA_Sound("VendExpire");
-						end
-						SA_Data.VendExpires = 0;
+						end						
 						SA_Data.BARS[SC_SPELL_VEND]["Expires"] = 0;
 						SA_Data.BARS[SC_SPELL_VEND]["obj"]:Hide();
 					else
-						local name, rank, icon, coun, debuffType, duration, expirationTime = UnitDebuff("target", SC_SPELL_VEND, nil, "PLAYER");
-						SA_Data.VendExpires = expirationTime;
+						local name, rank, icon, coun, debuffType, duration, expirationTime = UnitDebuff("target", SC_SPELL_VEND, nil, "PLAYER");						
 						SA_Data.BARS[SC_SPELL_VEND]["Expires"] = CalcExpireTime(expirationTime);
 						SA_Data.BARS[SC_SPELL_VEND]["obj"]:Show();
 					end
@@ -431,17 +409,14 @@ end
 function SA_TestTarget() 
  if SliceAdmiral_Save.DPBarShow then
 	local name, rank, icon, count, debuffType, duration, expirationTime, isMine = UnitDebuff("target", SC_SPELL_DP, nil, "PLAYER");
-	 if not name then
-		SA_Data.DPExpires = 0;
+	 if not name then		
 		SA_Data.BARS[SC_SPELL_DP]["Expires"] = 0;
 		SA_Data.BARS[SC_SPELL_DP]["obj"]:Hide();
 	 else
-		if (isMine == "player") then
-			SA_Data.DPExpires = expirationTime;
+		if (isMine == "player") then			
 			SA_Data.BARS[SC_SPELL_DP]["Expires"] = CalcExpireTime(expirationTime);		
 			SA_Data.BARS[SC_SPELL_DP]["obj"]:Show();
-		else
-			SA_Data.DPExpires = 0;
+		else			
 			SA_Data.BARS[SC_SPELL_DP]["Expires"] = 0;
 			SA_Data.BARS[SC_SPELL_DP]["obj"]:Hide();
 		end
@@ -449,17 +424,14 @@ function SA_TestTarget()
  end
  if SliceAdmiral_Save.RupBarShow then
 	 local name, rank, icon, count, debuffType, duration, expirationTime, isMine = UnitDebuff("target", SC_SPELL_RUP, nil, "PLAYER");
-	 if not name then
-		 SA_Data.RupExpires = 0;
+	 if not name then		 
 		 SA_Data.BARS[SC_SPELL_RUP]["Expires"] = 0;
 		 SA_Data.BARS[SC_SPELL_RUP]["obj"]:Hide();
 	else
-		if (isMine == "player") then
-			SA_Data.RupExpires = expirationTime;
+		if (isMine == "player") then			
 			SA_Data.BARS[SC_SPELL_RUP]["Expires"] = CalcExpireTime(expirationTime);
 			SA_Data.BARS[SC_SPELL_RUP]["obj"]:Show();
-		else
-			SA_Data.RupExpires = 0;
+		else			
 			SA_Data.BARS[SC_SPELL_RUP]["Expires"] = 0;
 			SA_Data.BARS[SC_SPELL_RUP]["obj"]:Hide();		
 		end
@@ -467,17 +439,14 @@ function SA_TestTarget()
  end
  if SliceAdmiral_Save.RevealBarShow then
 	 local name, rank, icon, count, debuffType, duration, expirationTime, isMine = UnitDebuff("target", SC_SPELL_REVEAL, nil, "PLAYER");
-	 if not name then
-		 SA_Data.RevealExpires = 0;
+	 if not name then		 
 		 SA_Data.BARS[SC_SPELL_REVEAL]["Expires"] = 0;
 		 SA_Data.BARS[SC_SPELL_REVEAL]["obj"]:Hide();
 	 else
-		if (isMine == "player") then
-			SA_Data.RupExpires = expirationTime;
+		if (isMine == "player") then			
 			SA_Data.BARS[SC_SPELL_REVEAL]["Expires"] = CalcExpireTime(expirationTime);
 			SA_Data.BARS[SC_SPELL_REVEAL]["obj"]:Show();
-		else
-			SA_Data.RupExpires = 0;
+		else			
 			SA_Data.BARS[SC_SPELL_REVEAL]["Expires"] = 0;
 			SA_Data.BARS[SC_SPELL_REVEAL]["obj"]:Hide();
 		end
@@ -485,17 +454,14 @@ function SA_TestTarget()
  end
  if SliceAdmiral_Save.VendBarShow then
 	local name, rank, icon, count, debuffType, duration, expirationTime, isMine = UnitDebuff("target", SC_SPELL_VEND, nil, "PLAYER");
-	 if not name then
-		SA_Data.VendExpires = 0;
+	 if not name then		
 		SA_Data.BARS[SC_SPELL_VEND]["Expires"] = 0;
 		SA_Data.BARS[SC_SPELL_VEND]["obj"]:Hide();
 	else
-		if (isMine == "player") then
-			SA_Data.VendExpires = expirationTime;
+		if (isMine == "player") then			
 			SA_Data.BARS[SC_SPELL_VEND]["Expires"] = CalcExpireTime(expirationTime);
 			SA_Data.BARS[SC_SPELL_VEND]["obj"]:Show();
-		else
-			SA_Data.VendExpires = 0;
+		else			
 			SA_Data.BARS[SC_SPELL_VEND]["Expires"] = 0;
 			SA_Data.BARS[SC_SPELL_VEND]["obj"]:Hide();
 		end
@@ -818,9 +784,6 @@ local function SA_CreateStatBar()
 end
 
 function SA_UpdateStats()
- if not SliceAdmiral_Save.ShowStatBar then
-	return;
- end
 
  local baseAP, buffAP, negAP = UnitAttackPower("player");
  local totalAP = baseAP+buffAP+negAP;
@@ -993,8 +956,8 @@ function SA_OnLoad()
 	SA_Data.BARORDER[5] = SA_Data.BARS[SC_SPELL_REVEAL]; -- 18 sec
 
 	 --SA_OnUpdate();
-	 SA_SetComboPts();
-	 SA_TestTarget();
+	-- SA_SetComboPts();
+	SA_TestTarget();
 
 	print("SliceAdmiral " .. SA_Version .. " loaded!! Options are under the SliceAdmiral tab in the Addons Interface menu")
  else
@@ -1009,22 +972,19 @@ local id, currentSpecName = GetSpecializationInfo(currentSpec);
 print("Your current spec:", currentSpecName);
 end
 
-function CalcExpireTime(expireTime)
-	 if (expireTime == nil) then
-		return 0
-	 end
-	 if ((expireTime > 0) and (SA_Data.tNow < expireTime)) then 
+function CalcExpireTime(expireTime)	 
+	if expireTime and (expireTime > 0) and (SA_Data.tNow < expireTime) then 
 		return expireTime - SA_Data.tNow;
-	 else
+	else
 		return 0;
-	 end
+	end
 end
 
 local Sa_filter = {	["player"] = "PLAYER", 
 					["target"] = "PLAYER HARMFUL", };
 
-local function SA_util_Time(expire, unit, spell)
-	local name, rank, icon, count, debuffType, duration, expirationTime = UnitAura(unit, spell, nil, Sa_filter[unit]);
+local function SA_util_Time(unit, spell)
+	local _, _, _, _, _, _, expirationTime = UnitAura(unit, spell, nil, Sa_filter[unit]);
 	if expirationTime then		
 		return CalcExpireTime(expirationTime);
 	else		
@@ -1032,8 +992,8 @@ local function SA_util_Time(expire, unit, spell)
 	end
 end
 
-local function SA_UpdateBar(expire, unit, spell, sa_sound)
-	local sa_time = SA_util_Time(expire, unit, spell);	
+local function SA_UpdateBar(unit, spell, sa_sound)
+	local sa_time = SA_util_Time(unit, spell);	
 	SA_Data.BARS[spell]["Expires"] = sa_time;
 	
 	if sa_time > 0 then
@@ -1044,36 +1004,35 @@ local function SA_UpdateBar(expire, unit, spell, sa_sound)
 	else
 		SA_Data.BARS[spell]["obj"]:Hide();		
 		SA_Data.BARS[spell]["Expires"] = 0;
-	end
-	 
-	if sa_time > 0 then
-		if sa_time <= 3 then
-			 if (SA_Data.BARS[spell]["AlertPending"] == 3) then
-				SA_Data.BARS[spell]["AlertPending"] = 2;
-				SA_Sound(sa_sound);
-			 else
-				if sa_time <= 2 then
-					 if (SA_Data.BARS[spell]["AlertPending"] == 2) then		 
-						SA_Data.BARS[spell]["AlertPending"] = 1;
-						SA_Sound(sa_sound);
-					 else
-						if sa_time <= 1 then
-							 if (SA_Data.BARS[spell]["AlertPending"] == 1) then
-								SA_Data.BARS[spell]["AlertPending"] = 0;
-								SA_Sound(sa_sound);
-							 end
-						end
-					 end
-				end
-			 end
+	end	 
+	
+	if (sa_time <= 3) and (sa_time > 0) then
+		if (SA_Data.BARS[spell]["AlertPending"] == 3) then
+			SA_Data.BARS[spell]["AlertPending"] = 2;
+			SA_Sound(sa_sound);
 		else
-			SA_Data.BARS[spell]["AlertPending"] = 3;	 
-		end
+			if sa_time <= 2 then
+				 if (SA_Data.BARS[spell]["AlertPending"] == 2) then		 
+					SA_Data.BARS[spell]["AlertPending"] = 1;
+					SA_Sound(sa_sound);
+				 else
+					if sa_time <= 1 then
+						 if (SA_Data.BARS[spell]["AlertPending"] == 1) then
+							SA_Data.BARS[spell]["AlertPending"] = 0;
+							SA_Sound(sa_sound);
+						 end
+					end
+				 end
+			end
+		 end
+	else
+		SA_Data.BARS[spell]["AlertPending"] = 3;	 
 	end
+
 end
 
-local function SA_QuickUpdateBar(expire, unit, spell)
-	local sa_time = SA_util_Time(expire, unit, spell);	
+local function SA_QuickUpdateBar(unit, spell)
+	local sa_time = SA_util_Time(unit, spell);	
 	SA_Data.BARS[spell]["Expires"] = sa_time;
 	
 	if sa_time > 0 then
@@ -1088,23 +1047,25 @@ local function SA_QuickUpdateBar(expire, unit, spell)
 end
 
 function SA_OnUpdate(self, elapsed)
-	SA_Data.TimeSinceLastUpdate = SA_Data.TimeSinceLastUpdate + elapsed;
-	if (SA_Data.TimeSinceLastUpdate > SA_Data.UpdateInterval) then
+SA_Data.TimeSinceLastUpdate = SA_Data.TimeSinceLastUpdate + elapsed;
+if (SA_Data.TimeSinceLastUpdate > SA_Data.UpdateInterval) then
+	local lUnitMana = UnitMana("player");
+	local lUnitManaMax = UnitManaMax("player");
 	SA_Data.tNow = GetTime();
 
-	VTimerEnergy:SetValue(UnitMana("player"));
-	VTimerEnergy:SetMinMaxValues(0,UnitManaMax("player"));
+	VTimerEnergy:SetValue(lUnitMana);
+	VTimerEnergy:SetMinMaxValues(0,lUnitManaMax);
 
-		 if (UnitManaMax("player") == UnitMana("player")) then
+		 if (lUnitManaMax == lUnitMana) then
 			VTimerEnergyTxt:SetText("");
 		 else
-			VTimerEnergyTxt:SetText(UnitMana("player"));
+			VTimerEnergyTxt:SetText(lUnitMana);
 		 end
 
 		SA_Config_OtherVars();
 
-		if (SA_Data.LastEnergy < UnitMana("player")) then
-			 if (UnitManaMax("player") == UnitMana("player")) then
+		if (SA_Data.LastEnergy < lUnitMana) then
+			 if (lUnitManaMax == lUnitMana) then
 				 --VTimerEnergy:Hide();
 				 VTimerEnergy:SetAlpha(SliceAdmiral_Save.EnergyTrans / 100.0);
 			 else
@@ -1113,32 +1074,32 @@ function SA_OnUpdate(self, elapsed)
 			 end
 		 end
 
-		 SA_Data.LastEnergy = UnitMana("player");
+		 SA_Data.LastEnergy = lUnitMana;
 
 		 if SliceAdmiral_Save.ShowSnDBar then
 			 if SliceAdmiral_Save.PadLatency then
 				local down, up, lag = GetNetStats();
 				SA_Data.tNow = SA_Data.tNow + (lag*2/1000);
 			 end
-			SA_UpdateBar("SliceExpires","player",SC_SPELL_SND, "Tick3"); 
+			SA_UpdateBar("player",SC_SPELL_SND, "Tick3"); 
 		 end
 		 if SliceAdmiral_Save.RupBarShow then
-			SA_UpdateBar("RupExpires", "target", SC_SPELL_RUP, "RuptAlert"); 
+			SA_UpdateBar("target", SC_SPELL_RUP, "RuptAlert"); 
 		 end
 		 if SliceAdmiral_Save.RevealBarShow then
-			SA_UpdateBar("RevealExpires", "target", SC_SPELL_REVEAL, "RevealAlert");	
+			SA_UpdateBar("target", SC_SPELL_REVEAL, "RevealAlert");	
 		 end
 		 if SliceAdmiral_Save.ShowEnvBar then 
-			SA_QuickUpdateBar("EnvExpires","player",SC_SPELL_ENV);
+			SA_QuickUpdateBar("player",SC_SPELL_ENV);
 		 end
 		 if SliceAdmiral_Save.VendBarShow then
-			SA_UpdateBar("VendExpires","target",SC_SPELL_VEND, "VendAlert"); 
+			SA_UpdateBar("target",SC_SPELL_VEND, "VendAlert"); 
 		 end
 		 if SliceAdmiral_Save.ShowRecupBar then
-			SA_UpdateBar("RecupExpires", "player", SC_SPELL_RECUP, "Recup.Alert"); 
+			SA_UpdateBar("player", SC_SPELL_RECUP, "Recup.Alert"); 
 		 end
 		 if SliceAdmiral_Save.DPBarShow then 
-			SA_QuickUpdateBar("DPExpires","target",SC_SPELL_DP);
+			SA_QuickUpdateBar("target",SC_SPELL_DP);
 		 end
 
 		-- We need to do this sort here because something could have been
