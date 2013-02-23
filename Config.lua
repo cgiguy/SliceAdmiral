@@ -5,6 +5,7 @@ SliceAdmiral_Save = {
   ["Barsup"] = true,
   ["BarTexture"] = "Smooth",
   ["CPBarShow"] = true,
+  ["AntisCPShow"] = true,
   ["DoTCrits"] = true,
   ["DPBarShow"] = true,
   ["Energy1"] = 25,
@@ -345,6 +346,7 @@ function SA_Config_LoadVars()
   SA_Config_BarMargin:SetText(SliceAdmiral_Save.BarMargin);
 
   SA_Config_ShowCPBar:SetChecked( SliceAdmiral_Save.CPBarShow );
+  SA_Config_ShowAntisiBar:SetChecked( SliceAdmiral_Save.AntisCPShow );
   SA_Config_ShowDoTDmg:SetChecked( SliceAdmiral_Save.ShowDoTDmg );
   SA_Config_ShowDPBar:SetChecked( SliceAdmiral_Save.DPBarShow );
   SA_Config_ShowEnvBar:SetChecked(SliceAdmiral_Save.ShowEnvBar );
@@ -460,16 +462,11 @@ function SA_Config_OtherVars()
 end
 
 function SA_Config_Okay()
-  if (SA_Config_Lock:GetChecked()) then
-    SliceAdmiral_Save.IsLocked = true;
-    SA:EnableMouse(false);
-  else
-    SliceAdmiral_Save.IsLocked = false;
-    SA:EnableMouse(true);
-  end
-
-  SliceAdmiral_Save.Barsup= SA_Config_Barsup:GetChecked();
+  SliceAdmiral_Save.IsLocked = SA_Config_Lock:GetChecked();
+  SA:EnableMouse(not SliceAdmiral_Save.IsLocked);
+  SliceAdmiral_Save.Barsup = SA_Config_Barsup:GetChecked();
   SliceAdmiral_Save.CPBarShow = SA_Config_ShowCPBar:GetChecked();
+  SliceAdmiral_Save.AntisCPShow = SA_Config_ShowAntisiBar:GetChecked();
   SliceAdmiral_Save.DoTCrits= SA_Config_DoTCrits:GetChecked();
   SliceAdmiral_Save.DPBarShow = SA_Config_ShowDPBar:GetChecked();
   SliceAdmiral_Save.HideEnergy = SA_Config_HideE:GetChecked();
@@ -560,6 +557,7 @@ function SA_Config_Default()
   SliceAdmiral_Save.ShowSnDBar = true;
   SliceAdmiral_Save.ShowRecupBar = true;
   SliceAdmiral_Save.CPBarShow = true;
+  SliceAdmiral_Save.AntisCPShow = true;
   SliceAdmiral_Save.Barsup = true;
   SliceAdmiral_Save.SortBars = true;
   SliceAdmiral_Save.ShowStatBar = true;

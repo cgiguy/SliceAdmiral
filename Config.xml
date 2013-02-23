@@ -243,6 +243,19 @@
 			</OnLoad>
 		</Scripts>
       </CheckButton>
+	  <CheckButton name="SA_Config_ShowAntisiBar" inherits="InterfaceOptionsCheckButtonTemplate" text="Show Anticipation Points">
+		<Size x="25" y="25"/>
+		<Anchors>
+		  <Anchor point="TOPLEFT">
+			<Offset x="35" y="-60"/>
+		  </Anchor>
+		</Anchors>
+		<Scripts>
+			<OnLoad>
+				SA_Config_Checkbutton_OnLoad(self)
+			</OnLoad>
+		</Scripts>
+      </CheckButton>
       <CheckButton name="SA_Config_ShowStatBar" inherits="InterfaceOptionsCheckButtonTemplate" text="Show Stat Bar" >
 		<Size x="25" y="25"/>
 		<Anchors>
