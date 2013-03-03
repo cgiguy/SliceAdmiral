@@ -1049,75 +1049,75 @@ end
 function SA_OnUpdate(self, elapsed)
 SA_Data.TimeSinceLastUpdate = SA_Data.TimeSinceLastUpdate + elapsed;
 if (SA_Data.TimeSinceLastUpdate > SA_Data.UpdateInterval) then
-	local lUnitMana = UnitMana("player");
-	local lUnitManaMax = UnitManaMax("player");
 	SA_Data.tNow = GetTime();
+	if not SliceAdmiral_Save.HideEnergy then
+		local lUnitMana = UnitMana("player");
+		local lUnitManaMax = UnitManaMax("player");		
 
-	VTimerEnergy:SetValue(lUnitMana);
-	VTimerEnergy:SetMinMaxValues(0,lUnitManaMax);
+		VTimerEnergy:SetValue(lUnitMana);
+		VTimerEnergy:SetMinMaxValues(0,lUnitManaMax);
 
-		 if (lUnitManaMax == lUnitMana) then
+		if (lUnitManaMax == lUnitMana) then
 			VTimerEnergyTxt:SetText("");
-		 else
+		else
 			VTimerEnergyTxt:SetText(lUnitMana);
-		 end
+		end
 
 		SA_Config_OtherVars();
 
 		if (SA_Data.LastEnergy < lUnitMana) then
-			 if (lUnitManaMax == lUnitMana) then
-				 --VTimerEnergy:Hide();
-				 VTimerEnergy:SetAlpha(SliceAdmiral_Save.EnergyTrans / 100.0);
-			 else
-				 --VTimerEnergy:Show();
-				 VTimerEnergy:SetAlpha(1.0);
-			 end
-		 end
-
-		 SA_Data.LastEnergy = lUnitMana;
-
-		 if SliceAdmiral_Save.ShowSnDBar then
-			 if SliceAdmiral_Save.PadLatency then
-				local down, up, lag = GetNetStats();
-				SA_Data.tNow = SA_Data.tNow + (lag*2/1000);
-			 end
-			SA_UpdateBar("player",SC_SPELL_SND, "Tick3"); 
-		 end
-		 if SliceAdmiral_Save.RupBarShow then
-			SA_UpdateBar("target", SC_SPELL_RUP, "RuptAlert"); 
-		 end
-		 if SliceAdmiral_Save.RevealBarShow then
-			SA_UpdateBar("target", SC_SPELL_REVEAL, "RevealAlert");	
-		 end
-		 if SliceAdmiral_Save.ShowEnvBar then 
-			SA_QuickUpdateBar("player",SC_SPELL_ENV);
-		 end
-		 if SliceAdmiral_Save.VendBarShow then
-			SA_UpdateBar("target",SC_SPELL_VEND, "VendAlert"); 
-		 end
-		 if SliceAdmiral_Save.ShowRecupBar then
-			SA_UpdateBar("player", SC_SPELL_RECUP, "Recup.Alert"); 
-		 end
-		 if SliceAdmiral_Save.DPBarShow then 
-			SA_QuickUpdateBar("target",SC_SPELL_DP);
-		 end
-
-		-- We need to do this sort here because something could have been
-		-- auto refreshed by a proc and we don't get an Update event for that.
-		-- But.. only do it once every SA_Data.sortPeriod seconds AND if we have
-		-- non-zero timers
-		 if SliceAdmiral_Save.SortBars then
-			 for i = 1, SA_Data.maxSortableBars do
-				 if (SA_Data.BARORDER[i]["Expires"] > 0) then
-					MB_SortBarsByTime(i);
-					break;
-				 end
-			 end
-		 end
-
-		 if SliceAdmiral_Save.ShowStatBar then
-			SA_UpdateStats();
-		 end 
-		SA_Data.TimeSinceLastUpdate = 0;
+			if (lUnitManaMax == lUnitMana) then
+				--VTimerEnergy:Hide();
+				VTimerEnergy:SetAlpha(SliceAdmiral_Save.EnergyTrans / 100.0);
+			else
+				--VTimerEnergy:Show();
+				VTimerEnergy:SetAlpha(1.0);
+			end
+		end
+		SA_Data.LastEnergy = lUnitMana;
 	end
+	if SliceAdmiral_Save.ShowSnDBar then
+		if SliceAdmiral_Save.PadLatency then
+			local down, up, lag = GetNetStats();
+			SA_Data.tNow = SA_Data.tNow + (lag*2/1000);
+		 end
+		SA_UpdateBar("player",SC_SPELL_SND, "Tick3"); 
+	end
+	if SliceAdmiral_Save.RupBarShow then
+		SA_UpdateBar("target", SC_SPELL_RUP, "RuptAlert"); 
+	end
+	if SliceAdmiral_Save.RevealBarShow then
+		SA_UpdateBar("target", SC_SPELL_REVEAL, "RevealAlert");	
+	end
+	if SliceAdmiral_Save.ShowEnvBar then 
+		SA_QuickUpdateBar("player",SC_SPELL_ENV);
+	end
+	if SliceAdmiral_Save.VendBarShow then
+		SA_UpdateBar("target",SC_SPELL_VEND, "VendAlert"); 
+	end
+	if SliceAdmiral_Save.ShowRecupBar then
+		SA_UpdateBar("player", SC_SPELL_RECUP, "Recup.Alert"); 
+	end
+	if SliceAdmiral_Save.DPBarShow then 
+		SA_QuickUpdateBar("target",SC_SPELL_DP);
+	end
+
+	-- We need to do this sort here because something could have been
+	-- auto refreshed by a proc and we don't get an Update event for that.
+	-- But.. only do it once every SA_Data.sortPeriod seconds AND if we have
+	-- non-zero timers
+	 if SliceAdmiral_Save.SortBars then
+		 for i = 1, SA_Data.maxSortableBars do
+			 if (SA_Data.BARORDER[i]["Expires"] > 0) then
+				MB_SortBarsByTime(i);
+				break;
+			 end
+		 end
+	 end
+
+	if SliceAdmiral_Save.ShowStatBar then
+		SA_UpdateStats();
+	end 
+	SA_Data.TimeSinceLastUpdate = 0;
+ end
 end
