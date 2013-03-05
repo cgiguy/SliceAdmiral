@@ -1049,6 +1049,7 @@ end
 function SA_OnUpdate(self, elapsed)
 SA_Data.TimeSinceLastUpdate = SA_Data.TimeSinceLastUpdate + elapsed;
 if (SA_Data.TimeSinceLastUpdate > SA_Data.UpdateInterval) then
+	SA_Data.tNow = GetTime()
 	if not SliceAdmiral_Save.HideEnergy then
 		local lUnitMana = UnitMana("player");
 		local lUnitManaMax = UnitManaMax("player");		
