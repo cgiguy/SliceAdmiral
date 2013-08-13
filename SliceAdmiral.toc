@@ -1,6 +1,7 @@
 ## Title: SliceAdmiral
-## Interface: 50100
+## Interface: 50300
 ## Author: Iorrh - Bronzebeard US
+## Modified: Haghala - Shadowsong EU
 ## Version: 1.0.13C
 ## Notes: Info-center for maximizing Rogue DPS. 
 ## DefaultState: Enabled
