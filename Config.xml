@@ -130,11 +130,24 @@
 			</OnLoad>
 		</Scripts>
       </CheckButton>
-	    <CheckButton name="SA_Config_ShowFeintBar" text="Feint" inherits="InterfaceOptionsCheckButtonTemplate">
+	  <CheckButton name="SA_Config_ShowFeintBar" text="Feint" inherits="InterfaceOptionsCheckButtonTemplate">
 		<Size x="25" y="25"/>
 		<Anchors>
 		  <Anchor point="TOPLEFT">
 			<Offset x="15" y="-180"/>
+		  </Anchor>
+		</Anchors>
+		<Scripts>
+			<OnLoad>
+				SA_Config_Checkbutton_OnLoad(self)
+			</OnLoad>
+		</Scripts>
+      </CheckButton>
+	  <CheckButton name="SA_Config_ShowGuileBar" text="Bandit's Guile" inherits="InterfaceOptionsCheckButtonTemplate">
+		<Size x="25" y="25"/>
+		<Anchors>
+		  <Anchor point="TOPLEFT">
+			<Offset x="15" y="-200"/>
 		  </Anchor>
 		</Anchors>
 		<Scripts>

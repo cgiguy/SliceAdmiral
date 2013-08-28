@@ -8,7 +8,6 @@ SA_Version = GetAddOnMetadata("SliceAdmiral", "Version")
 SA_Data = {};
 SA_Data.AlertPending = 0;
 SA_Data.BarFont = 0;
-SA_Data.GuilExpires = 0;	-- HagTest
 SA_Data.LastEnergy = 0;
 SA_Data.lastSort = 0;	 -- Last time bars were sorted
 SA_Data.maxSortableBars = 5 -- How many sortable non-DP/Envenom timer type bars do we have?
@@ -17,6 +16,7 @@ SA_Data.tNow = 0;
 SA_Data.UpdateInterval = 0.05;
 SA_Data.TimeSinceLastUpdate = 0;
 SA_Data.numStats = 4; --Change to 3 if you don't want Anticipation
+SA_Data.Guile = 1;
 
 local barsup = 1 -- bars group up or down
 local flashStats = 1 -- flashes statbar stats when they get mega-buffed
@@ -141,6 +141,7 @@ end
 local function SA_ChangeAnchor()
  local LastAnchor = VTimerEnergy;
  local offSetSize = SliceAdmiral_Save.BarMargin; -- other good values, -1, -2
+ local GuileAnchor = LastAnchor
 
  -- Stat bar goes first, because it's fucking awesome like that
  if SliceAdmiral_Save.ShowStatBar then 
@@ -224,14 +225,32 @@ local function SA_ChangeAnchor()
 	LastAnchor = SA_Data.BARS[SC_SPELL_FEINT]["obj"];
  end
  
- -- HagTest -- Bandits Guile Hackatron
- if (SA_Data.GuilExpires ~= 0 and SA_Data.BARS[SC_SPELL_BAND3]["Expire"] ~= 0) then
-	--Lots of hacky stuff sins its 3
+ -- Bandits Guile
+ if (SA_Data.BARS[SC_SPELL_BAND1]["Expire"] ~= 0)  then
+	SA_Data.BARS[SC_SPELL_BAND1]["obj"]:ClearAllPoints();	
+	if (SliceAdmiral_Save.Barsup) then
+		SA_Data.BARS[SC_SPELL_BAND1]["obj"]:SetPoint("BOTTOMLEFT", LastAnchor, "TOPLEFT", 0, offSetSize);
+	else
+		SA_Data.BARS[SC_SPELL_BAND1]["obj"]:SetPoint("TOPLEFT", LastAnchor, "BOTTOMLEFT", 0, -1 * offSetSize);
+	end
+	GuileAnchor = LastAnchor
+	LastAnchor = SA_Data.BARS[SC_SPELL_BAND1]["obj"];	
+ end 
+ if (SA_Data.BARS[SC_SPELL_BAND2]["Expire"] ~= 0)  then	
+	SA_Data.BARS[SC_SPELL_BAND2]["obj"]:ClearAllPoints();	
+	if (SliceAdmiral_Save.Barsup) then
+		SA_Data.BARS[SC_SPELL_BAND2]["obj"]:SetPoint("BOTTOMLEFT", GuileAnchor, "TOPLEFT", 0, offSetSize);
+	else
+		SA_Data.BARS[SC_SPELL_BAND2]["obj"]:SetPoint("TOPLEFT", GuileAnchor, "BOTTOMLEFT", 0, -1 * offSetSize);
+	end
+	LastAnchor = SA_Data.BARS[SC_SPELL_BAND2]["obj"];
+ end 
+ if (SA_Data.BARS[SC_SPELL_BAND3]["Expire"] ~= 0) then	
 	SA_Data.BARS[SC_SPELL_BAND3]["obj"]:ClearAllPoints();
 	if (SliceAdmiral_Save.Barsup) then
-		SA_Data.BARS[SC_SPELL_BAND3]["obj"]:SetPoint("BOTTOMLEFT", LastAnchor, "TOPLEFT", 0, offSetSize);
+		SA_Data.BARS[SC_SPELL_BAND3]["obj"]:SetPoint("BOTTOMLEFT", GuileAnchor, "TOPLEFT", 0, offSetSize);
 	else
-		SA_Data.BARS[SC_SPELL_BAND3]["obj"]:SetPoint("TOPLEFT", LastAnchor, "BOTTOMLEFT", 0, -1 * offSetSize);
+		SA_Data.BARS[SC_SPELL_BAND3]["obj"]:SetPoint("TOPLEFT", GuileAnchor, "BOTTOMLEFT", 0, -1 * offSetSize);
 	end
 	LastAnchor = SA_Data.BARS[SC_SPELL_BAND3]["obj"];
  end 
@@ -280,6 +299,52 @@ function SA_OnEvent(self, event, ...)
 					local name, rank, icon, count, debuffType, duration, expirationTime = UnitAura("player", SC_SPELL_SND);					
 					SA_Data.BARS[SC_SPELL_SND]["obj"]:Show();					
 					SA_Data.BARS[SC_SPELL_SND]["Expires"] = CalcExpireTime(expirationTime);				
+				end
+				SA_ChangeAnchor();
+			end
+			-- Bandits Guile --
+			if (spellId == SC_SPELL_BAND1_ID and SliceAdmiral_Save.ShowGuileBar) then
+				if (type == "SPELL_AURA_REMOVED") then
+					if (UnitAffectingCombat("player")) then
+						SA_Sound("Expire");
+					end					
+					SA_Data.BARS[SC_SPELL_BAND1]["Expires"] = 0;				
+					SA_Data.BARS[SC_SPELL_BAND1]["obj"]:Hide();				
+				else
+					local name, rank, icon, count, debuffType, duration, expirationTime = UnitAura("player", SC_SPELL_BAND1);					
+					SA_Data.BARS[SC_SPELL_BAND1]["obj"]:Show();					
+					SA_Data.BARS[SC_SPELL_BAND1]["Expires"] = CalcExpireTime(expirationTime);	
+					SA_Data.Guile = 1;
+				end
+				SA_ChangeAnchor();
+			end
+			if (spellId == SC_SPELL_BAND2_ID and SliceAdmiral_Save.ShowGuileBar) then
+				if (type == "SPELL_AURA_REMOVED") then
+					if (UnitAffectingCombat("player")) then
+						SA_Sound("Expire");
+					end					
+					SA_Data.BARS[SC_SPELL_BAND2]["Expires"] = 0;				
+					SA_Data.BARS[SC_SPELL_BAND2]["obj"]:Hide();				
+				else
+					local name, rank, icon, count, debuffType, duration, expirationTime = UnitAura("player", SC_SPELL_BAND2);
+					SA_Data.BARS[SC_SPELL_BAND2]["obj"]:Show();					
+					SA_Data.BARS[SC_SPELL_BAND2]["Expires"] = CalcExpireTime(expirationTime);	
+					SA_Data.Guile = 2;
+				end
+				SA_ChangeAnchor();
+			end
+			if (spellId == SC_SPELL_BAND3_ID and SliceAdmiral_Save.ShowGuileBar) then
+				if (type == "SPELL_AURA_REMOVED") then
+					if (UnitAffectingCombat("player")) then
+						SA_Sound("Expire");
+					end					
+					SA_Data.BARS[SC_SPELL_BAND3]["Expires"] = 0;				
+					SA_Data.BARS[SC_SPELL_BAND3]["obj"]:Hide();				
+				else
+					local name, rank, icon, count, debuffType, duration, expirationTime = UnitAura("player", SC_SPELL_BAND3);					
+					SA_Data.BARS[SC_SPELL_BAND3]["obj"]:Show();					
+					SA_Data.BARS[SC_SPELL_BAND3]["Expires"] = CalcExpireTime(expirationTime);				
+					SA_Data.Guile = 3;
 				end
 				SA_ChangeAnchor();
 			end
@@ -1135,6 +1200,11 @@ if (SA_Data.TimeSinceLastUpdate > SA_Data.UpdateInterval) then
 	end
 	if SliceAdmiral_Save.DPBarShow then 
 		SA_QuickUpdateBar("target",SC_SPELL_DP);
+	end
+	if SliceAdmiral_Save.ShowGuileBar then
+		SA_QuickUpdateBar("player",SC_SPELL_BAND1);
+		SA_QuickUpdateBar("player",SC_SPELL_BAND2);
+		SA_QuickUpdateBar("player",SC_SPELL_BAND3);
 	end
 
 	-- We need to do this sort here because something could have been

@@ -43,7 +43,8 @@ SliceAdmiral_Save = {
   ["ShowRecupBar"] = true,
   ["ShowSnDBar"] = true,
   ["ShowStatBar"] = true,
-  ["SortBars"] = true,
+  ["ShowGuileBar"] = true,
+  ["SortBars"] = true,  
   ["Tick1"] = "Tambourine",
   ["Tick2"] = "Tambourine",
   ["Tick3"] = "Tambourine",
@@ -351,6 +352,7 @@ function SA_Config_LoadVars()
   SA_Config_ShowDoTDmg:SetChecked( SliceAdmiral_Save.ShowDoTDmg );
   SA_Config_ShowDPBar:SetChecked( SliceAdmiral_Save.DPBarShow );
   SA_Config_ShowEnvBar:SetChecked(SliceAdmiral_Save.ShowEnvBar );
+  SA_Config_ShowGuileBar:SetChecked( SliceAdmiral_Save.ShowGuileBar);
   SA_Config_ShowFeintBar:SetChecked( SliceAdmiral_Save.ShowFeintBar );
   SA_Config_ShowRecupBar:SetChecked( SliceAdmiral_Save.ShowRecupBar );
   SA_Config_ShowRevealBar:SetChecked( SliceAdmiral_Save.RevealBarShow );
@@ -485,6 +487,7 @@ function SA_Config_Okay()
   SliceAdmiral_Save.ShowRecupBar = SA_Config_ShowRecupBar:GetChecked();
   SliceAdmiral_Save.ShowSnDBar = SA_Config_ShowSnDBar:GetChecked();
   SliceAdmiral_Save.ShowStatBar = SA_Config_ShowStatBar:GetChecked();
+  SliceAdmiral_Save.ShowGuileBar = SA_Config_ShowGuileBar:GetChecked();
   SliceAdmiral_Save.SortBars = SA_Config_SortBars:GetChecked();
   SliceAdmiral_Save.VendBarShow = SA_Config_ShowVendBar:GetChecked();
   --
@@ -562,6 +565,7 @@ function SA_Config_Default()
   SliceAdmiral_Save.HilightBuffed = false;
   SliceAdmiral_Save.ShowSnDBar = true;
   SliceAdmiral_Save.ShowRecupBar = true;
+  SliceAdmiral_Save.ShowGuileBar = true;
   SliceAdmiral_Save.CPBarShow = true;
   SliceAdmiral_Save.AntisCPShow = true;
   SliceAdmiral_Save.Barsup = true;
