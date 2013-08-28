@@ -73,6 +73,10 @@ SA_Data.BARS = { --TEH BARS
  ["Expires"] = 0, 
 	["AlertPending"] = 0,
  },
+ [SC_SPELL_FEINT] = {
+	["obj"] = 0,
+	["Expires"] = 0,	
+ },
  [SC_SPELL_BAND1] = {
  ["obj"] = 0,
  ["Expires"] = 0, 
@@ -208,6 +212,18 @@ local function SA_ChangeAnchor()
 	end
 	LastAnchor = SA_Data.BARS[SC_SPELL_ENV]["obj"];
  end
+ 
+ -- Feint 
+ if (SA_Data.BARS[SC_SPELL_FEINT]["Expires"] ~= 0) then
+	SA_Data.BARS[SC_SPELL_FEINT]["obj"]:ClearAllPoints();
+	if (SliceAdmiral_Save.Barsup) then
+		SA_Data.BARS[SC_SPELL_FEINT]["obj"]:SetPoint("BOTTOMLEFT", LastAnchor, "TOPLEFT", 0, offSetSize);
+	else
+		SA_Data.BARS[SC_SPELL_FEINT]["obj"]:SetPoint("TOPLEFT", LastAnchor, "BOTTOMLEFT", 0, -1 * offSetSize);
+	end
+	LastAnchor = SA_Data.BARS[SC_SPELL_FEINT]["obj"];
+ end
+ 
  -- HagTest -- Bandits Guile Hackatron
  if (SA_Data.GuilExpires ~= 0 and SA_Data.BARS[SC_SPELL_BAND3]["Expire"] ~= 0) then
 	--Lots of hacky stuff sins its 3
@@ -297,6 +313,18 @@ function SA_OnEvent(self, event, ...)
 			-- Anticipation event --
 			if (spellId == SC_SPELL_ANTICI_ID and SliceAdmiral_Save.CPBarShow and type == "SPELL_AURA_REMOVED") then		
 				SA_SetComboPts();
+			end
+			-- Feint --
+			if (spellId == SC_SPELL_FEINT_ID and SliceAdmiral_Save.ShowFeintBar) then
+				if (type == "SPELL_AURA_REMOVED") then					
+					SA_Data.BARS[SC_SPELL_FEINT]["Expires"] = 0;				
+					SA_Data.BARS[SC_SPELL_FEINT]["obj"]:Hide();				
+				else
+					local name, rank, icon, count, debuffType, duration, expirationTime = UnitAura("player", SC_SPELL_FEINT);
+					SA_Data.BARS[SC_SPELL_FEINT]["obj"]:Show();					
+					SA_Data.BARS[SC_SPELL_FEINT]["Expires"] = CalcExpireTime(expirationTime);				
+				end
+				SA_ChangeAnchor();
 			end
 		else
 			if (destName == UnitName("target")) then
@@ -408,12 +436,12 @@ end
 
 function SA_TestTarget() 
  if SliceAdmiral_Save.DPBarShow then
-	local name, rank, icon, count, debuffType, duration, expirationTime, isMine = UnitDebuff("target", SC_SPELL_DP, nil, "PLAYER");
+	local name, rank, icon, count, debuffType, duration, expirationTime, unitCaster = UnitDebuff("target", SC_SPELL_DP, nil, "PLAYER");
 	 if not name then		
 		SA_Data.BARS[SC_SPELL_DP]["Expires"] = 0;
 		SA_Data.BARS[SC_SPELL_DP]["obj"]:Hide();
 	 else
-		if (isMine == "player") then			
+		if (unitCaster == "player") then			
 			SA_Data.BARS[SC_SPELL_DP]["Expires"] = CalcExpireTime(expirationTime);		
 			SA_Data.BARS[SC_SPELL_DP]["obj"]:Show();
 		else			
@@ -423,12 +451,12 @@ function SA_TestTarget()
 	 end
  end
  if SliceAdmiral_Save.RupBarShow then
-	 local name, rank, icon, count, debuffType, duration, expirationTime, isMine = UnitDebuff("target", SC_SPELL_RUP, nil, "PLAYER");
+	 local name, rank, icon, count, debuffType, duration, expirationTime, unitCaster = UnitDebuff("target", SC_SPELL_RUP, nil, "PLAYER");
 	 if not name then		 
 		 SA_Data.BARS[SC_SPELL_RUP]["Expires"] = 0;
 		 SA_Data.BARS[SC_SPELL_RUP]["obj"]:Hide();
 	else
-		if (isMine == "player") then			
+		if (unitCaster == "player") then			
 			SA_Data.BARS[SC_SPELL_RUP]["Expires"] = CalcExpireTime(expirationTime);
 			SA_Data.BARS[SC_SPELL_RUP]["obj"]:Show();
 		else			
@@ -438,12 +466,12 @@ function SA_TestTarget()
 	 end	
  end
  if SliceAdmiral_Save.RevealBarShow then
-	 local name, rank, icon, count, debuffType, duration, expirationTime, isMine = UnitDebuff("target", SC_SPELL_REVEAL, nil, "PLAYER");
+	 local name, rank, icon, count, debuffType, duration, expirationTime, unitCaster = UnitDebuff("target", SC_SPELL_REVEAL, nil, "PLAYER");
 	 if not name then		 
 		 SA_Data.BARS[SC_SPELL_REVEAL]["Expires"] = 0;
 		 SA_Data.BARS[SC_SPELL_REVEAL]["obj"]:Hide();
 	 else
-		if (isMine == "player") then			
+		if (unitCaster == "player") then			
 			SA_Data.BARS[SC_SPELL_REVEAL]["Expires"] = CalcExpireTime(expirationTime);
 			SA_Data.BARS[SC_SPELL_REVEAL]["obj"]:Show();
 		else			
@@ -453,12 +481,12 @@ function SA_TestTarget()
 	 end	
  end
  if SliceAdmiral_Save.VendBarShow then
-	local name, rank, icon, count, debuffType, duration, expirationTime, isMine = UnitDebuff("target", SC_SPELL_VEND, nil, "PLAYER");
+	local name, rank, icon, count, debuffType, duration, expirationTime, unitCaster = UnitDebuff("target", SC_SPELL_VEND, nil, "PLAYER");
 	 if not name then		
 		SA_Data.BARS[SC_SPELL_VEND]["Expires"] = 0;
 		SA_Data.BARS[SC_SPELL_VEND]["obj"]:Hide();
 	else
-		if (isMine == "player") then			
+		if (unitCaster == "player") then			
 			SA_Data.BARS[SC_SPELL_VEND]["Expires"] = CalcExpireTime(expirationTime);
 			SA_Data.BARS[SC_SPELL_VEND]["obj"]:Show();
 		else			
@@ -475,7 +503,7 @@ local curCombo = 0
 function SA_SetComboPts() 
  local points = GetComboPoints("player"); 
  if SliceAdmiral_Save.CPBarShow then	
-	local name, rank, icon, count, _, duration, expirationTime, _,_,_,_= UnitAura("player", "Anticipation")
+	local name, rank, icon, count = UnitAura("player", "Anticipation")
 	if name and (count > 0) and SliceAdmiral_Save.AntisCPShow then
 		for i = 1, count do
 			SA_Data.BARS["CP"]["obj"].antis[i]:Show();
@@ -784,7 +812,6 @@ local function SA_CreateStatBar()
 end
 
 function SA_UpdateStats()
-
  local baseAP, buffAP, negAP = UnitAttackPower("player");
  local totalAP = baseAP+buffAP+negAP;
  local crit = GetCritChance();
@@ -931,6 +958,11 @@ function SA_OnLoad()
 	SA_Data.BARS[SC_SPELL_ENV]["obj"].text2:SetFontObject(SA_Data.BarFont4);
 	SA_Data.BARS[SC_SPELL_ENV]["obj"].icon:SetTexture("Interface\\Icons\\Ability_Rogue_Disembowel");
 	
+	SA_Data.BARS[SC_SPELL_FEINT]["obj"] = SA_NewFrame();
+	SA_Data.BARS[SC_SPELL_FEINT]["obj"]:SetStatusBarColor(155/255, 155/255, 255/255);
+	SA_Data.BARS[SC_SPELL_FEINT]["obj"].text2:SetFontObject(SA_Data.BarFont4);
+	SA_Data.BARS[SC_SPELL_FEINT]["obj"].icon:SetTexture("Interface\\Icons\\Ability_Rogue_Feint");
+	
 	SA_Data.BARS[SC_SPELL_BAND1]["obj"] = SA_NewFrame();
 	SA_Data.BARS[SC_SPELL_BAND1]["obj"]:SetStatusBarColor(34/255, 189/255, 34/255); 
 	SA_Data.BARS[SC_SPELL_BAND1]["obj"].icon:SetTexture("Interface\\Icons\\Inv_Bijou_Green");
@@ -948,7 +980,7 @@ function SA_OnLoad()
 	SA_Data.BARS[SC_SPELL_REVEAL]["obj"].icon:SetTexture("Interface\\Icons\\Inv_Sword_97");
 
 	SA_Data.BARORDER = {}; -- Initial order puts the longest towards the inside.
-	--SA_Data.BARORDER[] = SA_Data.BARS[""]; --Expose Armor 30sec, Anticipation 15sec, Bandits Guile 15 sec, Hemmorrage 24 sec.
+	--SA_Data.BARORDER[] = SA_Data.BARS[""]; --Expose Armor 30sec, Anticipation 15sec, Bandits Guile 15 sec, Hemmorrage 24 sec, Feint 5-7 sec.	
 	SA_Data.BARORDER[1] = SA_Data.BARS[SC_SPELL_SND]; -- 12-36 sec
 	SA_Data.BARORDER[2] = SA_Data.BARS[SC_SPELL_RECUP]; -- 6 - 30 sec
 	SA_Data.BARORDER[3] = SA_Data.BARS[SC_SPELL_RUP]; -- 8-24 sec
@@ -1091,6 +1123,9 @@ if (SA_Data.TimeSinceLastUpdate > SA_Data.UpdateInterval) then
 	end
 	if SliceAdmiral_Save.ShowEnvBar then 
 		SA_QuickUpdateBar("player",SC_SPELL_ENV);
+	end
+	if SliceAdmiral_Save.ShowFeintBar then
+		SA_QuickUpdateBar("player",SC_SPELL_FEINT);
 	end
 	if SliceAdmiral_Save.VendBarShow then
 		SA_UpdateBar("target",SC_SPELL_VEND, "VendAlert"); 

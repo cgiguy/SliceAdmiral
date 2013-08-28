@@ -37,8 +37,9 @@ SliceAdmiral_Save = {
   ["RuptAlert"] = "Shaker",
   ["RuptExpire"] = "BassDrum",
   ["Scale"] = 130,
-  ["ShowDoTDmg"] = true,
+  ["ShowDoTDmg"] = true,  
   ["ShowEnvBar"] = true,
+  ["ShowFeintBar"] = true,
   ["ShowRecupBar"] = true,
   ["ShowSnDBar"] = true,
   ["ShowStatBar"] = true,
@@ -350,6 +351,7 @@ function SA_Config_LoadVars()
   SA_Config_ShowDoTDmg:SetChecked( SliceAdmiral_Save.ShowDoTDmg );
   SA_Config_ShowDPBar:SetChecked( SliceAdmiral_Save.DPBarShow );
   SA_Config_ShowEnvBar:SetChecked(SliceAdmiral_Save.ShowEnvBar );
+  SA_Config_ShowFeintBar:SetChecked( SliceAdmiral_Save.ShowFeintBar );
   SA_Config_ShowRecupBar:SetChecked( SliceAdmiral_Save.ShowRecupBar );
   SA_Config_ShowRevealBar:SetChecked( SliceAdmiral_Save.RevealBarShow );
   SA_Config_ShowRupBar:SetChecked( SliceAdmiral_Save.RupBarShow );
@@ -479,7 +481,8 @@ function SA_Config_Okay()
   SliceAdmiral_Save.RupBarShow = SA_Config_ShowRupBar:GetChecked();
   SliceAdmiral_Save.ShowDoTDmg = SA_Config_ShowDoTDmg:GetChecked();
   SliceAdmiral_Save.ShowEnvBar = SA_Config_ShowEnvBar:GetChecked();
-  SliceAdmiral_Save.ShowRecupBar = SA_Config_ShowRecupBar:GetChecked()
+  SliceAdmiral_Save.ShowFeintBar = SA_Config_ShowFeintBar:GetChecked();
+  SliceAdmiral_Save.ShowRecupBar = SA_Config_ShowRecupBar:GetChecked();
   SliceAdmiral_Save.ShowSnDBar = SA_Config_ShowSnDBar:GetChecked();
   SliceAdmiral_Save.ShowStatBar = SA_Config_ShowStatBar:GetChecked();
   SliceAdmiral_Save.SortBars = SA_Config_SortBars:GetChecked();
@@ -555,6 +558,7 @@ function SA_Config_Default()
   SliceAdmiral_Save.RevealBarShow = true;
   SliceAdmiral_Save.VendBarShow = true;
   SliceAdmiral_Save.ShowEnvBar = true;
+  SliceAdmiral_Save.ShowFeintBar = true;
   SliceAdmiral_Save.HilightBuffed = false;
   SliceAdmiral_Save.ShowSnDBar = true;
   SliceAdmiral_Save.ShowRecupBar = true;

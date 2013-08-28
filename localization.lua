@@ -8,6 +8,7 @@ SC_SPELL_DP_ID = 2818;
 SC_SPELL_RUP_ID = 1943;
 SC_SPELL_WEAKEN_ID = 113746; --Expose Armor (Same as Druids and Warriors)
 SC_SPELL_ANTICI_ID = 115189; --Anticipation Talent
+SC_SPELL_FEINT_ID = 1966;
 --Assasination Specific
 SC_SPELL_VEND_ID = 79140;
 SC_SPELL_ENV_ID = 32645;
@@ -18,7 +19,6 @@ SC_SPELL_BAND2_ID = 84746;
 SC_SPELL_BAND3_ID = 84747;
 --Subtley Specific
 SC_SPELL_HEMO_ID = 89775; -- Hemorage
-
 
 -- Generate the localized name for each spell
 SC_SPELL_SND = GetSpellInfo(SC_SPELL_SND_ID);
@@ -34,6 +34,7 @@ SC_SPELL_REVEAL = GetSpellInfo(SC_SPELL_REVEAL_ID);
 SC_SPELL_WEAKEN = GetSpellInfo(SC_SPELL_WEAKEN_ID);
 SC_SPELL_ANTICI = GetSpellInfo(SC_SPELL_ANTICI_ID);
 SC_SPELL_HEMO = GetSpellInfo(SC_SPELL_HEMO_ID);
+SC_SPELL_FEINT = GetSpellInfo(SC_SPELL_FEINT_ID);
 
 SC_LANG_CP = "Combo Points";
 SC_LANG_SETTINGS = "Options";
