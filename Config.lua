@@ -44,6 +44,7 @@ SliceAdmiral_Save = {
   ["ShowSnDBar"] = true,
   ["ShowStatBar"] = true,
   ["ShowGuileBar"] = true,
+  ["ShowHemoBar"] = true,
   ["SortBars"] = true,  
   ["Tick1"] = "Tambourine",
   ["Tick2"] = "Tambourine",
@@ -359,6 +360,7 @@ function SA_Config_LoadVars()
   SA_Config_ShowRupBar:SetChecked( SliceAdmiral_Save.RupBarShow );
   SA_Config_ShowSnDBar:SetChecked( SliceAdmiral_Save.ShowSnDBar );
   SA_Config_ShowStatBar:SetChecked( SliceAdmiral_Save.ShowStatBar );
+  SA_Config_ShowHemoBar:SetChecked( SliceAdmiral_Save.ShowHemoBar );
   SA_Config_ShowVendBar:SetChecked( SliceAdmiral_Save.VendBarShow ); 
   SA_Config_MasterVolume:SetChecked( SliceAdmiral_Save.MasterVolume );  
   SA_Config_Barsup:SetChecked( SliceAdmiral_Save.Barsup );
@@ -488,6 +490,7 @@ function SA_Config_Okay()
   SliceAdmiral_Save.ShowSnDBar = SA_Config_ShowSnDBar:GetChecked();
   SliceAdmiral_Save.ShowStatBar = SA_Config_ShowStatBar:GetChecked();
   SliceAdmiral_Save.ShowGuileBar = SA_Config_ShowGuileBar:GetChecked();
+  SliceAdmiral_Save.ShowHemoBar = SA_Config_ShowHemoBar:GetChecked();
   SliceAdmiral_Save.SortBars = SA_Config_SortBars:GetChecked();
   SliceAdmiral_Save.VendBarShow = SA_Config_ShowVendBar:GetChecked();
   --
@@ -566,6 +569,7 @@ function SA_Config_Default()
   SliceAdmiral_Save.ShowSnDBar = true;
   SliceAdmiral_Save.ShowRecupBar = true;
   SliceAdmiral_Save.ShowGuileBar = true;
+  SliceAdmiral_Save.ShowHemoBar = true;
   SliceAdmiral_Save.CPBarShow = true;
   SliceAdmiral_Save.AntisCPShow = true;
   SliceAdmiral_Save.Barsup = true;

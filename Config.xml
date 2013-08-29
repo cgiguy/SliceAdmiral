@@ -156,6 +156,19 @@
 			</OnLoad>
 		</Scripts>
       </CheckButton>
+	  <CheckButton name="SA_Config_ShowHemoBar" text="Hemorrhage" inherits="InterfaceOptionsCheckButtonTemplate">
+		<Size x="25" y="25"/>
+		<Anchors>
+		  <Anchor point="TOPLEFT">
+			<Offset x="15" y="-220"/>
+		  </Anchor>
+		</Anchors>
+		<Scripts>
+			<OnLoad>
+				SA_Config_Checkbutton_OnLoad(self)
+			</OnLoad>
+		</Scripts>
+      </CheckButton>
       <CheckButton name="SA_Config_Barsup" text="Bars grow up" inherits="InterfaceOptionsCheckButtonTemplate">
 		<Size x="25" y="25"/>
 		<Anchors>

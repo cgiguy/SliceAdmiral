@@ -10,7 +10,7 @@ SA_Data.AlertPending = 0;
 SA_Data.BarFont = 0;
 SA_Data.LastEnergy = 0;
 SA_Data.lastSort = 0;	 -- Last time bars were sorted
-SA_Data.maxSortableBars = 5 -- How many sortable non-DP/Envenom timer type bars do we have?
+SA_Data.maxSortableBars = 6 -- How many sortable non-DP/Envenom timer type bars do we have?
 SA_Data.sortPeriod = 0.5; -- Only sort bars every sortPeriod seconds
 SA_Data.tNow = 0;
 SA_Data.UpdateInterval = 0.05;
@@ -72,6 +72,10 @@ SA_Data.BARS = { --TEH BARS
  ["obj"] = 0,
  ["Expires"] = 0, 
 	["AlertPending"] = 0,
+ },
+ [SC_SPELL_HEMO] = {
+	["obj"] = 0,
+	["Expires"] = 0,
  },
  [SC_SPELL_FEINT] = {
 	["obj"] = 0,
@@ -432,6 +436,18 @@ function SA_OnEvent(self, event, ...)
 						 local name, rank, icon, count, debuffType, duration, expirationTime = UnitDebuff("target", SC_SPELL_REVEAL, nil, "PLAYER");
 						 SA_Data.BARS[SC_SPELL_REVEAL]["Expires"] = CalcExpireTime(expirationTime);
 						 SA_Data.BARS[SC_SPELL_REVEAL]["obj"]:Show();
+					end
+					SA_ChangeAnchor();
+				end
+				-- Hemorrhage --
+				if (isMySpell and spellId == SC_SPELL_HEMO_ID and SliceAdmiral_Save.ShowHemoBar) then			
+					if (type == "SPELL_AURA_REMOVED") then
+						 SA_Data.BARS[SC_SPELL_HEMO]["Expires"] = 0;
+						 SA_Data.BARS[SC_SPELL_HEMO]["obj"]:Hide();
+					else
+						 local name, rank, icon, count, debuffType, duration, expirationTime = UnitDebuff("target", SC_SPELL_HEMO, nil, "PLAYER");
+						 SA_Data.BARS[SC_SPELL_HEMO]["Expires"] = CalcExpireTime(expirationTime);
+						 SA_Data.BARS[SC_SPELL_HEMO]["obj"]:Show();
 					end
 					SA_ChangeAnchor();
 				end
@@ -1043,6 +1059,10 @@ function SA_OnLoad()
 	SA_Data.BARS[SC_SPELL_REVEAL]["obj"] = SA_NewFrame();
 	SA_Data.BARS[SC_SPELL_REVEAL]["obj"]:SetStatusBarColor(139/255, 69/255, 19/255); 
 	SA_Data.BARS[SC_SPELL_REVEAL]["obj"].icon:SetTexture("Interface\\Icons\\Inv_Sword_97");
+	
+	SA_Data.BARS[SC_SPELL_HEMO]["obj"] = SA_NewFrame();
+	SA_Data.BARS[SC_SPELL_HEMO]["obj"]:SetStatusBarColor(255/255, 5/255, 5/255); 
+	SA_Data.BARS[SC_SPELL_HEMO]["obj"].icon:SetTexture("Interface\\Icons\\Spell_Shadow_Lifedrain");
 
 	SA_Data.BARORDER = {}; -- Initial order puts the longest towards the inside.
 	--SA_Data.BARORDER[] = SA_Data.BARS[""]; --Expose Armor 30sec, Anticipation 15sec, Bandits Guile 15 sec, Hemmorrage 24 sec, Feint 5-7 sec.	
@@ -1051,6 +1071,7 @@ function SA_OnLoad()
 	SA_Data.BARORDER[3] = SA_Data.BARS[SC_SPELL_RUP]; -- 8-24 sec
 	SA_Data.BARORDER[4] = SA_Data.BARS[SC_SPELL_VEND]; -- 20 sec
 	SA_Data.BARORDER[5] = SA_Data.BARS[SC_SPELL_REVEAL]; -- 18 sec
+	SA_Data.BARORDER[6] = SA_Data.BARS[SC_SPELL_HEMO]; -- 24 sec
 
 	 --SA_OnUpdate();
 	-- SA_SetComboPts();
@@ -1205,6 +1226,9 @@ if (SA_Data.TimeSinceLastUpdate > SA_Data.UpdateInterval) then
 		SA_QuickUpdateBar("player",SC_SPELL_BAND1);
 		SA_QuickUpdateBar("player",SC_SPELL_BAND2);
 		SA_QuickUpdateBar("player",SC_SPELL_BAND3);
+	end
+	if SliceAdmiral_Save.ShowHemoBar then
+		SA_QuickUpdateBar("target",SC_SPELL_HEMO);
 	end
 
 	-- We need to do this sort here because something could have been
