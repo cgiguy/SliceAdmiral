@@ -1041,6 +1041,7 @@ function SA_OnLoad()
 	
 	SA_Data.BARS[SC_SPELL_FEINT]["obj"] = SA_NewFrame();
 	SA_Data.BARS[SC_SPELL_FEINT]["obj"]:SetStatusBarColor(155/255, 155/255, 255/255);
+	SA_Data.BARS[SC_SPELL_FEINT]["obj"]:SetMinMaxValues(0, 5.0);
 	SA_Data.BARS[SC_SPELL_FEINT]["obj"].text2:SetFontObject(SA_Data.BarFont4);
 	SA_Data.BARS[SC_SPELL_FEINT]["obj"].icon:SetTexture("Interface\\Icons\\Ability_Rogue_Feint");
 	
