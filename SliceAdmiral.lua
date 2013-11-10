@@ -308,10 +308,7 @@ function SA_OnEvent(self, event, ...)
 			end
 			-- Bandits Guile --
 			if (spellId == SC_SPELL_BAND1_ID and SliceAdmiral_Save.ShowGuileBar) then
-				if (type == "SPELL_AURA_REMOVED") then
-					if (UnitAffectingCombat("player")) then
-						SA_Sound("Expire");
-					end					
+				if (type == "SPELL_AURA_REMOVED") then									
 					SA_Data.BARS[SC_SPELL_BAND1]["Expires"] = 0;				
 					SA_Data.BARS[SC_SPELL_BAND1]["obj"]:Hide();				
 				else
@@ -323,10 +320,7 @@ function SA_OnEvent(self, event, ...)
 				SA_ChangeAnchor();
 			end
 			if (spellId == SC_SPELL_BAND2_ID and SliceAdmiral_Save.ShowGuileBar) then
-				if (type == "SPELL_AURA_REMOVED") then
-					if (UnitAffectingCombat("player")) then
-						SA_Sound("Expire");
-					end					
+				if (type == "SPELL_AURA_REMOVED") then								
 					SA_Data.BARS[SC_SPELL_BAND2]["Expires"] = 0;				
 					SA_Data.BARS[SC_SPELL_BAND2]["obj"]:Hide();				
 				else
@@ -338,10 +332,7 @@ function SA_OnEvent(self, event, ...)
 				SA_ChangeAnchor();
 			end
 			if (spellId == SC_SPELL_BAND3_ID and SliceAdmiral_Save.ShowGuileBar) then
-				if (type == "SPELL_AURA_REMOVED") then
-					if (UnitAffectingCombat("player")) then
-						SA_Sound("Expire");
-					end					
+				if (type == "SPELL_AURA_REMOVED") then								
 					SA_Data.BARS[SC_SPELL_BAND3]["Expires"] = 0;				
 					SA_Data.BARS[SC_SPELL_BAND3]["obj"]:Hide();				
 				else
