@@ -384,7 +384,7 @@ function SA_OnEvent(self, event, ...)
 				SA_ChangeAnchor();
 			end
 		else
-			if (destName == UnitName("target")) then
+			if (destName == GetUnitName("target",true)) then
 				 -- DEADLY POISON EVENT --		 
 				 if (isMySpell and spellId == SC_SPELL_DP_ID and SliceAdmiral_Save.DPBarShow) then
 					if (type == "SPELL_AURA_REMOVED") then						
@@ -452,7 +452,7 @@ function SA_OnEvent(self, event, ...)
 		end
 	end -- "SPELL_AURA_REFRESH" or ...
 	-- DOT monitors
-	if (SliceAdmiral_Save.ShowDoTDmg and type == "SPELL_PERIODIC_DAMAGE" and destName == UnitName("target") and sourceName == UnitName("player")) then
+	if (SliceAdmiral_Save.ShowDoTDmg and type == "SPELL_PERIODIC_DAMAGE" and destName == GetUnitName("target",true) and sourceName == UnitName("player")) then
 		local spellId, spellName, spellSchool = select(12, ...); 
 		if (spellId == SC_SPELL_RUP_ID and SliceAdmiral_Save.RupBarShow) then
 			local amount, overkill, school, resisted, blocked, absorbed, critical, glancing, crushing = select(15, ...)
