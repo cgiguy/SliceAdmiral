@@ -564,37 +564,47 @@ end
 local curCombo = 0
 
 function SA_SetComboPts() 
- local points = GetComboPoints("player"); 
- if SliceAdmiral_Save.CPBarShow then	
-	local name, rank, icon, count = UnitAura("player", "Anticipation")
-	if name and (count > 0) and SliceAdmiral_Save.AntisCPShow then
-		for i = 1, count do
-			SA_Data.BARS["CP"]["obj"].antis[i]:Show();
-		end	 
+	local points = GetComboPoints("player");
+	local name, rank, icon, count = UnitAura("player", SC_SPELL_ANTICI) 
+	count = count or 0
+	local text = "0(0)"
+	if count > 0 then
+		text = points .. "(" .. count.. ")"
 	else
-		for i = 1, 5 do
-			SA_Data.BARS["CP"]["obj"].antis[i]:Hide();
-		end
-	end 
-	if (points > curCombo) then
-		for i = curCombo + 1, points do
-			SA_Data.BARS["CP"]["obj"].combos[i]:Show();
-		end
-		SA_Combo:SetText(points);
+		text = points
+	end
+	if SliceAdmiral_Save.CPBarShow then	
+		if name and (count > 0) and SliceAdmiral_Save.AntisCPShow then
+			for i = 1, count do
+				SA_Data.BARS["CP"]["obj"].antis[i]:Show();
+			end	 
+		else
+			for i = 1, 5 do
+				SA_Data.BARS["CP"]["obj"].antis[i]:Hide();
+			end
+		end 
+		if (points > curCombo) then
+			for i = curCombo + 1, points do
+				SA_Data.BARS["CP"]["obj"].combos[i]:Show();
+			end		
+			SA_Combo:SetText(text);
+		else
+			for i = points + 1, curCombo do
+				SA_Data.BARS["CP"]["obj"].combos[i]:Hide();
+			end
+			SA_Combo:SetText(text);
+			if (points == count) then
+				SA_Combo:SetText("");
+			end
+		 end 
+		curCombo = points; 
 	else
-		for i = points + 1, curCombo do
-			SA_Data.BARS["CP"]["obj"].combos[i]:Hide();
-		end
-		SA_Combo:SetText("");
-	 end 
-	curCombo = points; 
- else
-	 if (points > curCombo) then
-		SA_Combo:SetText(points);
-	 else
-		SA_Combo:SetText("");
-	 end	
- end
+		if (points == 0 and count == 0) then
+			SA_Combo:SetText("");
+		else
+			SA_Combo:SetText(text);
+		end	
+	end
 end
 
 local function SA_Unload()

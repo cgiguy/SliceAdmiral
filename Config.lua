@@ -25,10 +25,7 @@ SliceAdmiral_Save = {
   ["PadLatency"] = true,
   ["Recup.Alert"] = "Tambourine",
   ["Recup.Expire"] = "Price is WRONG",
-  ["Recup.Fail"] = "Price is WRONG",
-  ["Recup.Refresh1"] = "Tambourine",
-  ["Recup.Refresh2"] = "Tambourine",
-  ["Recup.Refresh3"] = "Tambourine",
+  ["Recup.Fail"] = "Price is WRONG",      
   ["Recup.Tick"] = "Tambourine",
   ["RevealBarShow"] = true,
   ["RevealExpire"] = "BassDrum",
@@ -45,9 +42,7 @@ SliceAdmiral_Save = {
   ["ShowStatBar"] = true,
   ["ShowGuileBar"] = true,
   ["ShowHemoBar"] = true,
-  ["SortBars"] = true,  
-  ["Tick1"] = "Tambourine",
-  ["Tick2"] = "Tambourine",
+  ["SortBars"] = true,      
   ["Tick3"] = "Tambourine",
   ["VendAlert"] = "Ping",
   ["VendBarShow"] = true,
@@ -310,6 +305,7 @@ function SA_Config_LoadVars()
   UIDropDownMenu_SetText(SA_Config_Recup_AlertMenu, SliceAdmiral_Save["Recup.Alert"] );
   UIDropDownMenu_SetSelectedValue(SA_Config_Recup_ExpireMenu, SliceAdmiral_Save["Recup.Expire"] );
   UIDropDownMenu_SetText(SA_Config_Recup_ExpireMenu, SliceAdmiral_Save["Recup.Expire"] );
+  
   UIDropDownMenu_SetSelectedValue(SA_Config_Rupt_ExpireMenu, SliceAdmiral_Save["RuptExpire"]);
   UIDropDownMenu_SetText(SA_Config_Rupt_ExpireMenu, SliceAdmiral_Save["RuptExpire"]);
   UIDropDownMenu_SetSelectedValue(SA_Config_Rupt_AlertMenu, SliceAdmiral_Save["RuptAlert"]);
@@ -544,16 +540,11 @@ function SA_Config_Default()
   SliceAdmiral_Save.Energy2 = 40;
   SliceAdmiral_Save.Fail = "Waaaah";
   SliceAdmiral_Save.Expire = "BassDrum";
-  SliceAdmiral_Save.Tick3 = "Tambourine";
-  SliceAdmiral_Save.Tick2 = "Tambourine";
-  SliceAdmiral_Save.Tick1 = "Tambourine";     
+  SliceAdmiral_Save.Tick3 = "Tambourine";    
   SliceAdmiral_Save.EnergySound1 = "None";
   SliceAdmiral_Save.EnergySound2 = "None";
   SliceAdmiral_Save["Recup.Fail"] = "Waaaah";
-  SliceAdmiral_Save["Recup.Expire"] = "Waaaah";  
-  SliceAdmiral_Save["Recup.Refresh3"] = "None";
-  SliceAdmiral_Save["Recup.Refresh2"] = "None";
-  SliceAdmiral_Save["Recup.Refresh1"] = "None";
+  SliceAdmiral_Save["Recup.Expire"] = "Waaaah";    
   SliceAdmiral_Save["Recup.Alert"] = "None";
   SliceAdmiral_Save["Width"] = 110;
   SliceAdmiral_Save["Scale"] = 140;

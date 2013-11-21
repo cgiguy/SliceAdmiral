@@ -499,15 +499,7 @@
 			  <Offset x="7" y="-93"/>
 			</Anchor>
 		  </Anchors>
-		</FontString>
-		<FontString name="SA_Config_Tick1Str" inherits="GameFontNormalSmall" text="-" justifyH="LEFT">
-		  <Size x="142" y="20"/>
-		  <Anchors>
-			<Anchor point="TOPLEFT">
-			  <Offset x="7" y="-137"/>
-			</Anchor>
-		  </Anchors>
-		</FontString>
+		</FontString>		
 		<FontString name="SA_Config_Tick3Str" inherits="GameFontNormalSmall" text="Alert" justifyH="LEFT">
 		  <Size x="142" y="20"/>
 		  <Anchors>
@@ -531,15 +523,7 @@
 			  <Offset x="211" y="-93" />
 			</Anchor>
 		  </Anchors>
-		</FontString>
-		<FontString name="SA_Config_Recup_FailureStr" inherits="GameFontNormalSmall" text="-" justifyH="LEFT">					
-		  <Size x="142" y="20" />										
-		  <Anchors>
-			<Anchor point="TOPLEFT">
-			  <Offset x="211" y="-138" />
-			</Anchor>
-		  </Anchors>
-		</FontString>                
+		</FontString>	                
 		<FontString name="SA_Config_Recup_AlertStr" inherits="GameFontNormalSmall" text="Alert" justifyH="LEFT">
 		  <Size x="142" y="20" />
 		  <Anchors>
