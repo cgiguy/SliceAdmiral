@@ -362,7 +362,8 @@ function SA_Config_LoadVars()
   SA_Config_ShowStatBar:SetChecked( SliceAdmiral_Save.ShowStatBar );
   SA_Config_ShowHemoBar:SetChecked( SliceAdmiral_Save.ShowHemoBar );
   SA_Config_ShowVendBar:SetChecked( SliceAdmiral_Save.VendBarShow ); 
-  SA_Config_MasterVolume:SetChecked( SliceAdmiral_Save.MasterVolume );  
+  SA_Config_MasterVolume:SetChecked( SliceAdmiral_Save.MasterVolume );
+  SA_Config_NoCombatSound:SetChecked( SliceAdmiral_Save.OutOfCombat );
   SA_Config_Barsup:SetChecked( SliceAdmiral_Save.Barsup );
   SA_Config_SortBars:SetChecked( SliceAdmiral_Save.SortBars );
   SA_Config_DoTCrits:SetChecked( SliceAdmiral_Save.DoTCrits );
@@ -480,6 +481,7 @@ function SA_Config_Okay()
   SliceAdmiral_Save.HideEnergy = SA_Config_HideE:GetChecked();
   SliceAdmiral_Save.HilightBuffed = SA_Config_HilightBuffed:GetChecked();
   SliceAdmiral_Save.MasterVolume = SA_Config_MasterVolume:GetChecked();
+  SliceAdmiral_Save.OutOfCombat = SA_Config_NoCombatSound:GetChecked();
   SliceAdmiral_Save.PadLatency = SA_Config_PadLatency:GetChecked();
   SliceAdmiral_Save.RevealBarShow = SA_Config_ShowRevealBar:GetChecked();
   SliceAdmiral_Save.RupBarShow = SA_Config_ShowRupBar:GetChecked();
@@ -576,6 +578,7 @@ function SA_Config_Default()
   SliceAdmiral_Save.SortBars = true;
   SliceAdmiral_Save.ShowStatBar = true;
   SliceAdmiral_Save.MasterVolume = false;
+  SliceAdmiral_Save.OutOfCombat = false;
   SA_Config_LoadVars();
 end
 

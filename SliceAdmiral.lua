@@ -35,7 +35,7 @@ local SA_UpdateStats
 local SA_flashBuffedStats
 local SA_ResetBaseStats
 local SA_TestTarget
-
+local UnitAffectingCombat = UnitAffectingCombat
 SA_Data.BARS = { --TEH BARS
  ["CP"] = {
  ["obj"] = 0
@@ -131,15 +131,16 @@ function SA_SoundTest(name)
 end
 
 local function SA_Sound(saved)
- if SliceAdmiral_Save[saved] then
-	 if SliceAdmiral_Save.MasterVolume then
-		PlaySoundFile( SA_Sounds[ SliceAdmiral_Save[saved] ], "Master" );
-	 else
-		PlaySoundFile( SA_Sounds[ SliceAdmiral_Save[saved] ] );
-	 end
- else
-	print(string.format("%s%s", "Soundsave not found: ", saved));
- end
+	if not UnitAffectingCombat("player") and not SliceAdmiral_Save.OutOfCombat then return end
+	if SliceAdmiral_Save[saved] then
+		if SliceAdmiral_Save.MasterVolume then
+			PlaySoundFile( SA_Sounds[ SliceAdmiral_Save[saved] ], "Master" );
+		else
+			PlaySoundFile( SA_Sounds[ SliceAdmiral_Save[saved] ] );
+		end
+	else
+		print(string.format("%s%s", "Soundsave not found: ", saved));
+	end
 end
 
 local function SA_ChangeAnchor()
@@ -293,10 +294,8 @@ function SA_OnEvent(self, event, ...)
 		if (destName == UnitName("player")) then
 			--SLICE N DICE EVENT --
 			if (spellId == SC_SPELL_SND_ID and SliceAdmiral_Save.ShowSnDBar) then
-				if (type == "SPELL_AURA_REMOVED") then
-					if (UnitAffectingCombat("player")) then
-						SA_Sound("Expire");
-					end					
+				if (type == "SPELL_AURA_REMOVED") then					
+					SA_Sound("Expire");								
 					SA_Data.BARS[SC_SPELL_SND]["Expires"] = 0;				
 					SA_Data.BARS[SC_SPELL_SND]["obj"]:Hide();				
 				else
@@ -345,10 +344,8 @@ function SA_OnEvent(self, event, ...)
 			end
 			-- RECUPERATE EVENT --
 			if (spellId == SC_SPELL_RECUP_ID and SliceAdmiral_Save.ShowRecupBar) then
-				 if (type == "SPELL_AURA_REMOVED") then
-					if (UnitAffectingCombat("player")) then
-						SA_Sound("Recup.Expire");
-					end					
+				 if (type == "SPELL_AURA_REMOVED") then					
+					SA_Sound("Recup.Expire");					
 					SA_Data.BARS[SC_SPELL_RECUP]["Expires"] = 0;
 					SA_Data.BARS[SC_SPELL_RECUP]["obj"]:Hide();
 				 else
@@ -402,10 +399,8 @@ function SA_OnEvent(self, event, ...)
 				 end
 				-- RUPTURE EVENT --
 				if (isMySpell and spellId == SC_SPELL_RUP_ID and SliceAdmiral_Save.RupBarShow) then			
-					if (type == "SPELL_AURA_REMOVED") then
-						if (UnitAffectingCombat("player")) then
-							SA_Sound("RuptExpire");
-						end						
+					if (type == "SPELL_AURA_REMOVED") then						
+						SA_Sound("RuptExpire");						
 						SA_Data.BARS[SC_SPELL_RUP]["Expires"] = 0;
 						SA_Data.BARS[SC_SPELL_RUP]["obj"]:Hide();
 					else
@@ -418,9 +413,7 @@ function SA_OnEvent(self, event, ...)
 				-- HagTest REVEALING STRIKE EVENT --
 				if (isMySpell and spellId == SC_SPELL_REVEAL_ID and SliceAdmiral_Save.RevealBarShow) then			
 					if (type == "SPELL_AURA_REMOVED") then
-						 if (UnitAffectingCombat("player")) then
-							SA_Sound("RevealExpire");
-						 end						 
+						 SA_Sound("RevealExpire");						  
 						 SA_Data.BARS[SC_SPELL_REVEAL]["Expires"] = 0;
 						 SA_Data.BARS[SC_SPELL_REVEAL]["obj"]:Hide();
 					else
@@ -444,10 +437,8 @@ function SA_OnEvent(self, event, ...)
 				end
 				-- VENDETTA EVENT --
 				if (isMySpell and spellId == SC_SPELL_VEND_ID and SliceAdmiral_Save.VendBarShow) then
-					if (type == "SPELL_AURA_REMOVED") then
-						if (UnitAffectingCombat("player")) then
-							SA_Sound("VendExpire");
-						end						
+					if (type == "SPELL_AURA_REMOVED") then						
+						SA_Sound("VendExpire");										
 						SA_Data.BARS[SC_SPELL_VEND]["Expires"] = 0;
 						SA_Data.BARS[SC_SPELL_VEND]["obj"]:Hide();
 					else
