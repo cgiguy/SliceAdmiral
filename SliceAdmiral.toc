@@ -7,6 +7,10 @@
 ## DefaultState: Enabled
 ## LoadOnDemand: 0
 ## SavedVariables: SliceAdmiral_Save
+
+lib\LibStub\LibStub.lua
+lib\LibSmoothStatusBar-1.0\LibSmoothStatusBar-1.0.lua
+
 localization.lua
 Config.lua
 SliceAdmiral.lua

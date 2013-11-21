@@ -4,11 +4,11 @@
 -- I wish I had the time.
 
 SA_Version = GetAddOnMetadata("SliceAdmiral", "Version") 
+local S = LibStub("LibSmoothStatusBar-1.0")
 
 SA_Data = {};
 SA_Data.AlertPending = 0;
 SA_Data.BarFont = 0;
-SA_Data.LastEnergy = 0;
 SA_Data.lastSort = 0;	 -- Last time bars were sorted
 SA_Data.maxSortableBars = 6 -- How many sortable non-DP/Envenom timer type bars do we have?
 SA_Data.sortPeriod = 0.5; -- Only sort bars every sortPeriod seconds
@@ -978,8 +978,6 @@ function SA_OnLoad()
 	 SA_Data.BarFont4:SetShadowColor(0,0,0, 0.7); 
 	 SA_Data.BarFont4:SetShadowOffset(0.8, -0.8);
 
-	 SA_Data.LastEnergy = UnitMana("player");
-
 	 VTimerEnergyTxt:SetFontObject(SA_Data.BarFont);
 	 SA_Combo:SetFontObject(SA_Data.BarFont3);
 
@@ -999,7 +997,9 @@ function SA_OnLoad()
 
 	scaleUI = VTimerEnergy:GetScale();
 	widthUI = VTimerEnergy:GetWidth();
-
+	
+	S:SmoothBar(VTimerEnergy);
+	
 	SA_Data.BARS["CP"]["obj"] = SA_CPFrame();
 
 	SA_Data.BARS["Stat"]["obj"] = SA_CreateStatBar();
@@ -1159,8 +1159,13 @@ end
 
 function SA_OnUpdate(self, elapsed)
 SA_Data.TimeSinceLastUpdate = SA_Data.TimeSinceLastUpdate + elapsed;
-if (SA_Data.TimeSinceLastUpdate > SA_Data.UpdateInterval) then
-	SA_Data.tNow = GetTime()
+if (SA_Data.TimeSinceLastUpdate > SA_Data.UpdateInterval) then	
+	if SliceAdmiral_Save.PadLatency then
+		local down, up, lag = GetNetStats();
+		SA_Data.tNow = GetTime() + (lag*2/1000);
+	else
+		SA_Data.tNow = GetTime();
+	end
 	if not SliceAdmiral_Save.HideEnergy then
 		local lUnitMana = UnitMana("player");
 		local lUnitManaMax = UnitManaMax("player");		
@@ -1169,29 +1174,20 @@ if (SA_Data.TimeSinceLastUpdate > SA_Data.UpdateInterval) then
 		VTimerEnergy:SetMinMaxValues(0,lUnitManaMax);
 
 		if (lUnitManaMax == lUnitMana) then
-			VTimerEnergyTxt:SetText("");
+			VTimerEnergyTxt:SetText("");			
 		else
-			VTimerEnergyTxt:SetText(lUnitMana);
+			VTimerEnergyTxt:SetText(lUnitMana);			
+		end
+		if  (lUnitManaMax == lUnitMana) and not (VTimerEnergy:GetAlpha() == SliceAdmiral_Save.EnergyTrans / 100.0) then
+			UIFrameFadeOut(VTimerEnergy, 0.4, VTimerEnergy:GetAlpha(), SliceAdmiral_Save.EnergyTrans / 100.0)
+		elseif not (lUnitManaMax == lUnitMana) and not (VTimerEnergy:GetAlpha() == 1.0) then
+			UIFrameFadeIn(VTimerEnergy, 0.4, VTimerEnergy:GetAlpha(), 1.0);
 		end
 
 		SA_Config_OtherVars();
-
-		if (SA_Data.LastEnergy < lUnitMana) then
-			if (lUnitManaMax == lUnitMana) then
-				--VTimerEnergy:Hide();
-				VTimerEnergy:SetAlpha(SliceAdmiral_Save.EnergyTrans / 100.0);
-			else
-				--VTimerEnergy:Show();
-				VTimerEnergy:SetAlpha(1.0);
-			end
-		end
-		SA_Data.LastEnergy = lUnitMana;
 	end
-	if SliceAdmiral_Save.ShowSnDBar then
-		if SliceAdmiral_Save.PadLatency then
-			local down, up, lag = GetNetStats();
-			SA_Data.tNow = SA_Data.tNow + (lag*2/1000);
-		 end
+	
+	if SliceAdmiral_Save.ShowSnDBar then		
 		SA_UpdateBar("player",SC_SPELL_SND, "Tick3"); 
 	end
 	if SliceAdmiral_Save.RupBarShow then
