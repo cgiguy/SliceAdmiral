@@ -15,5 +15,5 @@ localization.lua
 Config.lua
 SliceAdmiral.lua
 Resources.lua
-Config.xml
 SliceAdmiral.xml
+Config.xml

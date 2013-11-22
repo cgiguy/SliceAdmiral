@@ -7,8 +7,6 @@ SA_Version = GetAddOnMetadata("SliceAdmiral", "Version")
 local S = LibStub("LibSmoothStatusBar-1.0")
 
 SA_Data = {};
-SA_Data.AlertPending = 0;
-SA_Data.BarFont = 0;
 SA_Data.lastSort = 0;	 -- Last time bars were sorted
 SA_Data.maxSortableBars = 6 -- How many sortable non-DP/Envenom timer type bars do we have?
 SA_Data.sortPeriod = 0.5; -- Only sort bars every sortPeriod seconds
@@ -16,16 +14,7 @@ SA_Data.tNow = 0;
 SA_Data.UpdateInterval = 0.05;
 SA_Data.TimeSinceLastUpdate = 0;
 SA_Data.numStats = 4; --Change to 3 if you don't want Anticipation
-SA_Data.Guile = 1;
 
-local barsup = 1 -- bars group up or down
-local flashStats = 1 -- flashes statbar stats when they get mega-buffed
-
--- fade
-local fadein = 0.5 -- fade delay for each combo point frame
-local fadeout = 0.5 -- fade delay for each combo point frame
-local framefadein = 0.2 -- fade delay for entering combat
-local framefadeout = 0.2 -- fade delay for leaving combat
 local scaleUI = 0
 local widthUI = 0
 
@@ -313,8 +302,7 @@ function SA_OnEvent(self, event, ...)
 				else
 					local name, rank, icon, count, debuffType, duration, expirationTime = UnitAura("player", SC_SPELL_BAND1);					
 					SA_Data.BARS[SC_SPELL_BAND1]["obj"]:Show();					
-					SA_Data.BARS[SC_SPELL_BAND1]["Expires"] = CalcExpireTime(expirationTime);	
-					SA_Data.Guile = 1;
+					SA_Data.BARS[SC_SPELL_BAND1]["Expires"] = CalcExpireTime(expirationTime);						
 				end
 				SA_ChangeAnchor();
 			end
@@ -325,8 +313,7 @@ function SA_OnEvent(self, event, ...)
 				else
 					local name, rank, icon, count, debuffType, duration, expirationTime = UnitAura("player", SC_SPELL_BAND2);
 					SA_Data.BARS[SC_SPELL_BAND2]["obj"]:Show();					
-					SA_Data.BARS[SC_SPELL_BAND2]["Expires"] = CalcExpireTime(expirationTime);	
-					SA_Data.Guile = 2;
+					SA_Data.BARS[SC_SPELL_BAND2]["Expires"] = CalcExpireTime(expirationTime);						
 				end
 				SA_ChangeAnchor();
 			end
@@ -337,8 +324,7 @@ function SA_OnEvent(self, event, ...)
 				else
 					local name, rank, icon, count, debuffType, duration, expirationTime = UnitAura("player", SC_SPELL_BAND3);					
 					SA_Data.BARS[SC_SPELL_BAND3]["obj"]:Show();					
-					SA_Data.BARS[SC_SPELL_BAND3]["Expires"] = CalcExpireTime(expirationTime);				
-					SA_Data.Guile = 3;
+					SA_Data.BARS[SC_SPELL_BAND3]["Expires"] = CalcExpireTime(expirationTime);									
 				end
 				SA_ChangeAnchor();
 			end
@@ -485,16 +471,22 @@ end -- event == "COMBAT_LOG_EVENT_UNFILTERED"
 		SA_SetComboPts();
 	 end
  end
- if event == "PLAYER_TARGET_CHANGED" then
-	SA_SetComboPts();
-	SA_TestTarget();
- end
-
- if UnitAffectingCombat("player") then
-	SA:SetAlpha(1.0);
- else
-	SA:SetAlpha(SA_Fade:GetValue()/100);
- end
+	if event == "PLAYER_TARGET_CHANGED" then
+		SA_SetComboPts();
+		SA_TestTarget();		
+	end
+	
+	if event == "PLAYER_ENTERING_WORLD" then	
+		SA_TestTarget();	
+		VTimerEnergy:SetScript("OnHide", SA_ChangeAnchor)
+		VTimerEnergy:SetScript("OnShow", SA_ChangeAnchor)
+	end
+	 
+	if not UnitAffectingCombat("player") and not (SA:GetAlpha() == SA_Fade:GetValue()/100) then
+		UIFrameFadeOut(SA, 0.4, SA:GetAlpha(), SA_Fade:GetValue()/100)
+	elseif UnitAffectingCombat("player") and not (SA:GetAlpha() == 1.0) then
+		UIFrameFadeIn(SA, 0.4, SA:GetAlpha(), 1.0);
+	end
 end
 
 function SA_TestTarget() 
@@ -687,17 +679,20 @@ local function SA_NewFrame()
 end
 
 local function SA_CPFrame()
- local f = CreateFrame("StatusBar", nil, SA);
+ local f = CreateFrame("Frame", nil, SA);
  local width = widthUI --SA_Data.BARS["CP"]["obj"]:GetWidth();
 
  f:ClearAllPoints();
  f:SetWidth(width);
  f:SetScale(scaleUI);
  f:SetHeight(10); 
- f:SetPoint("TOPLEFT", VTimerEnergy, "BOTTOMLEFT", 1, 0);
+ f:SetAllPoints(VTimerEnergy)
+ --f:SetPoint("TOPLEFT", VTimerEnergy, "BOTTOMLEFT", 1, 0);
+ 
  
  f.bg = f:CreateTexture(nil, "BACKGROUND");
  f.bg:ClearAllPoints();
+ --f.bg:SetAllPoints(f);
  f.bg:SetPoint("TOPLEFT", f, "TOPLEFT", -1, 1);
  f.bg:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", 1, -2);
  f.bg:SetTexture(SA_BarTexture());
@@ -755,10 +750,9 @@ local function SA_CPFrame()
 	cx = cx + cpwidth + spacing
  end
 
- f.overlay = CreateFrame("Frame", nil, f)
- f.overlay:ClearAllPoints()
- f.overlay:SetAllPoints(f)
- 
+ --f.overlay = CreateFrame("Frame", nil, f)
+ --f.overlay:ClearAllPoints()
+ --f.overlay:SetAllPoints(f)
  f:Hide();
  return f;
 end
@@ -823,7 +817,7 @@ local function SA_CreateStatBar()
 
  f.bg = f:CreateTexture(nil, "BACKGROUND")
  f.bg:ClearAllPoints() 
- f.bg:SetPoint("TOPLEFT", f, "TOPLEFT", -1, 2)
+ f.bg:SetPoint("TOPLEFT", f, "TOPLEFT", -1, 1)
  f.bg:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", 1, -1)
  f.bg:SetTexture(SA_BarTexture())
  f.bg:SetVertexColor(0.3, 0.3, 0.3)
@@ -928,14 +922,14 @@ function SA_flashBuffedStats(totalAP,buffAP,crit,mhSpeed,armor)
 	 SA_Data.BARS["Stat"]["obj"].stats[i].fs:SetTextColor(140/255, 15/255, 0);
 		 if (not UIFrameIsFading(SA_Data.BARS["Stat"]["obj"].stats[i])) then --flash if not already flashing
 			if (SA_Data.BARS["Stat"]["obj"].stats[i]:GetAlpha() > 0.5) then
-				UIFrameFadeOut(SA_Data.BARS["Stat"]["obj"].stats[i], 1, 1, 0.1)
+				UIFrameFadeOut(SA_Data.BARS["Stat"]["obj"].stats[i], 1, SA_Data.BARS["Stat"]["obj"].stats[i]:GetAlpha(), 0.1)
 			else --UIFrameFlash likes to throw execeptions deep in the bliz ui?
-				UIFrameFadeOut(SA_Data.BARS["Stat"]["obj"].stats[i], 1, 0.1, 1)
+				UIFrameFadeOut(SA_Data.BARS["Stat"]["obj"].stats[i], 1, SA_Data.BARS["Stat"]["obj"].stats[i]:GetAlpha(), 1)
 			end
 		 end
 	 else
 		SA_Data.BARS["Stat"]["obj"].stats[i].fs:SetTextColor(1, .82, 0); --default text color
-		SA_Data.BARS["Stat"]["obj"].stats[i]:SetAlpha(1);
+		UIFrameFadeOut(SA_Data.BARS["Stat"]["obj"].stats[i], 1, SA_Data.BARS["Stat"]["obj"].stats[i]:GetAlpha(), 1) --SA_Data.BARS["Stat"]["obj"].stats[i]:SetAlpha(1);
 	 end
  end
 end
@@ -955,6 +949,7 @@ function SA_OnLoad()
  if (englishClass == "ROGUE") then
 	 SA:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED");
 	 SA:RegisterEvent("UNIT_COMBO_POINTS");
+	 SA:RegisterEvent("PLAYER_ENTERING_WORLD")
 	 SA_Data.BarFont = CreateFont("VTimerFont");
 	 SA_Data.BarFont:SetFont("Fonts\\FRIZQT__.TTF", 12);
 	 SA_Data.BarFont:SetShadowColor(0,0,0, 0.7);
@@ -1064,17 +1059,13 @@ function SA_OnLoad()
 	SA_Data.BARORDER[3] = SA_Data.BARS[SC_SPELL_RUP]; -- 8-24 sec
 	SA_Data.BARORDER[4] = SA_Data.BARS[SC_SPELL_VEND]; -- 20 sec
 	SA_Data.BARORDER[5] = SA_Data.BARS[SC_SPELL_REVEAL]; -- 18 sec
-	SA_Data.BARORDER[6] = SA_Data.BARS[SC_SPELL_HEMO]; -- 24 sec
-
-	 --SA_OnUpdate();
-	-- SA_SetComboPts();
-	SA_TestTarget();
+	SA_Data.BARORDER[6] = SA_Data.BARS[SC_SPELL_HEMO]; -- 24 sec	
 
 	print("SliceAdmiral " .. SA_Version .. " loaded!! Options are under the SliceAdmiral tab in the Addons Interface menu")
  else
 	SA_Unload();
 	return;
- end
+ end 
 end
 
 function SA_talent()

@@ -39,7 +39,7 @@
       </EdgeSize>
     </Backdrop>
     <Frames>
-      <CheckButton name="SA_Config_ShowSnDBar" text="Slice and Dice" inherits="InterfaceOptionsCheckButtonTemplate">
+      <CheckButton name="SA_Config_ShowSnDBar" text="SC_SPELL_SND" inherits="InterfaceOptionsCheckButtonTemplate">
 		<Size x="25" y="25"/>
 		<Anchors>
 		  <Anchor point="TOPLEFT">
@@ -52,7 +52,7 @@
 			</OnLoad>
 		</Scripts>
       </CheckButton>
-      <CheckButton name="SA_Config_ShowRupBar" text="Rupture" inherits="InterfaceOptionsCheckButtonTemplate">
+      <CheckButton name="SA_Config_ShowRupBar" text="SC_SPELL_RUP" inherits="InterfaceOptionsCheckButtonTemplate">
 		<Size x="25" y="25"/>
 		<Anchors>
 		  <Anchor point="TOPLEFT">
@@ -65,7 +65,7 @@
 			</OnLoad>
 		</Scripts>
       </CheckButton>
-      <CheckButton name="SA_Config_ShowRecupBar" text="Recuperate" inherits="InterfaceOptionsCheckButtonTemplate">
+      <CheckButton name="SA_Config_ShowRecupBar" text="SC_SPELL_RECUP" inherits="InterfaceOptionsCheckButtonTemplate">
 		<Size x="25" y="25"/>
 		<Anchors>
 		  <Anchor point="TOPLEFT">
@@ -78,7 +78,7 @@
 			</OnLoad>
 		</Scripts>
       </CheckButton>
-      <CheckButton name="SA_Config_ShowDPBar" text="Deadly Poison" inherits="InterfaceOptionsCheckButtonTemplate">
+      <CheckButton name="SA_Config_ShowDPBar" text="SC_SPELL_DP" inherits="InterfaceOptionsCheckButtonTemplate">
 		<Size x="25" y="25"/>
 		<Anchors>
 		  <Anchor point="TOPLEFT">
@@ -91,7 +91,7 @@
 			</OnLoad>
 		</Scripts>
       </CheckButton>
-      <CheckButton name="SA_Config_ShowEnvBar" text="Envenom Buff" inherits="InterfaceOptionsCheckButtonTemplate">
+      <CheckButton name="SA_Config_ShowEnvBar" text="SC_SPELL_ENV" inherits="InterfaceOptionsCheckButtonTemplate">
 		<Size x="25" y="25"/>
 		<Anchors>
 		  <Anchor point="TOPLEFT">
@@ -104,7 +104,7 @@
 			</OnLoad>
 		</Scripts>
       </CheckButton>
-      <CheckButton name="SA_Config_ShowVendBar" text="Vendetta Buff" inherits="InterfaceOptionsCheckButtonTemplate">
+      <CheckButton name="SA_Config_ShowVendBar" text="SC_SPELL_VEND" inherits="InterfaceOptionsCheckButtonTemplate">
 		<Size x="25" y="25"/>
 		<Anchors>
 		  <Anchor point="TOPLEFT">
@@ -117,7 +117,7 @@
 			</OnLoad>
 		</Scripts>
       </CheckButton>
-	  <CheckButton name="SA_Config_ShowRevealBar" text="Revealing Strike" inherits="InterfaceOptionsCheckButtonTemplate">
+	  <CheckButton name="SA_Config_ShowRevealBar" text="SC_SPELL_REVEAL" inherits="InterfaceOptionsCheckButtonTemplate">
 		<Size x="25" y="25"/>
 		<Anchors>
 		  <Anchor point="TOPLEFT">
@@ -130,7 +130,7 @@
 			</OnLoad>
 		</Scripts>
       </CheckButton>
-	  <CheckButton name="SA_Config_ShowFeintBar" text="Feint" inherits="InterfaceOptionsCheckButtonTemplate">
+	  <CheckButton name="SA_Config_ShowFeintBar" text="SC_SPELL_FEINT" inherits="InterfaceOptionsCheckButtonTemplate">
 		<Size x="25" y="25"/>
 		<Anchors>
 		  <Anchor point="TOPLEFT">
@@ -143,7 +143,7 @@
 			</OnLoad>
 		</Scripts>
       </CheckButton>
-	  <CheckButton name="SA_Config_ShowGuileBar" text="Bandit's Guile" inherits="InterfaceOptionsCheckButtonTemplate">
+	  <CheckButton name="SA_Config_ShowGuileBar" text="SC_SPELL_BAND3" inherits="InterfaceOptionsCheckButtonTemplate">
 		<Size x="25" y="25"/>
 		<Anchors>
 		  <Anchor point="TOPLEFT">
@@ -156,7 +156,7 @@
 			</OnLoad>
 		</Scripts>
       </CheckButton>
-	  <CheckButton name="SA_Config_ShowHemoBar" text="Hemorrhage" inherits="InterfaceOptionsCheckButtonTemplate">
+	  <CheckButton name="SA_Config_ShowHemoBar" text="SC_SPELL_HEMO" inherits="InterfaceOptionsCheckButtonTemplate">
 		<Size x="25" y="25"/>
 		<Anchors>
 		  <Anchor point="TOPLEFT">
@@ -169,7 +169,7 @@
 			</OnLoad>
 		</Scripts>
       </CheckButton>
-      <CheckButton name="SA_Config_Barsup" text="Bars grow up" inherits="InterfaceOptionsCheckButtonTemplate">
+      <CheckButton name="SA_Config_Barsup" text="SC_BARS_GROW_UP" inherits="InterfaceOptionsCheckButtonTemplate">
 		<Size x="25" y="25"/>
 		<Anchors>
 		  <Anchor point="TOPLEFT">
@@ -182,7 +182,7 @@
 			</OnLoad>
 		</Scripts>
       </CheckButton>
-      <CheckButton name="SA_Config_SortBars" text="Sort bars by duration" inherits="InterfaceOptionsCheckButtonTemplate">
+      <CheckButton name="SA_Config_SortBars" text="SC_SORT_BY_DURATION" inherits="InterfaceOptionsCheckButtonTemplate">
 		<Size x="25" y="25"/>
 		<Anchors>
 		  <Anchor point="TOPLEFT">
@@ -195,7 +195,7 @@
 			</OnLoad>
 		</Scripts>
       </CheckButton>
-      <CheckButton name="SA_Config_ShowDoTDmg" text="Show DoT ticks"  inherits="InterfaceOptionsCheckButtonTemplate">
+      <CheckButton name="SA_Config_ShowDoTDmg" text="SC_SHOW_DOT_TICK"  inherits="InterfaceOptionsCheckButtonTemplate">
 		<Size x="25" y="25"/>
 		<Anchors>
 		  <Anchor point="TOPLEFT">
@@ -208,7 +208,7 @@
 			</OnLoad>
 		</Scripts>
       </CheckButton>
-      <CheckButton name="SA_Config_DoTCrits" text="Highlight DoT crits" inherits="InterfaceOptionsCheckButtonTemplate">
+      <CheckButton name="SA_Config_DoTCrits" text="SC_HIGHLIGHT_DOT" inherits="InterfaceOptionsCheckButtonTemplate">
 		<Size x="25" y="25"/>
 		<Anchors>
 		  <Anchor point="TOPLEFT">
@@ -269,7 +269,7 @@
       </EdgeSize>
     </Backdrop>
     <Frames>
-      <CheckButton name="SA_Config_ShowCPBar" inherits="InterfaceOptionsCheckButtonTemplate" text="Show Combo Points">
+      <CheckButton name="SA_Config_ShowCPBar" inherits="InterfaceOptionsCheckButtonTemplate" text="SC_SHOW_COMBO_POINTS">
 		<Size x="25" y="25"/>
 		<Anchors>
 		  <Anchor point="TOPLEFT">
@@ -282,7 +282,7 @@
 			</OnLoad>
 		</Scripts>
       </CheckButton>
-	  <CheckButton name="SA_Config_ShowAntisiBar" inherits="InterfaceOptionsCheckButtonTemplate" text="Show Anticipation Points">
+	  <CheckButton name="SA_Config_ShowAntisiBar" inherits="InterfaceOptionsCheckButtonTemplate" text="SC_SHOW_ANTICI_POINTS">
 		<Size x="25" y="25"/>
 		<Anchors>
 		  <Anchor point="TOPLEFT">
@@ -295,7 +295,7 @@
 			</OnLoad>
 		</Scripts>
       </CheckButton>
-      <CheckButton name="SA_Config_ShowStatBar" inherits="InterfaceOptionsCheckButtonTemplate" text="Show Stat Bar" >
+      <CheckButton name="SA_Config_ShowStatBar" inherits="InterfaceOptionsCheckButtonTemplate" text="SC_SHOW_STATS_BAR" >
 		<Size x="25" y="25"/>
 		<Anchors>
 		  <Anchor point="TOPLEFT">
@@ -308,7 +308,7 @@
 			</OnLoad>
 		</Scripts>
       </CheckButton>
-      <CheckButton name="SA_Config_HilightBuffed" inherits="InterfaceOptionsCheckButtonTemplate" text="Hilight when mega-buffed">
+      <CheckButton name="SA_Config_HilightBuffed" inherits="InterfaceOptionsCheckButtonTemplate" text="SC_HIGHLIGHT_MEGA">
 		<Size x="25" y="25"/>
 		<Anchors>
 		  <Anchor point="TOPLEFT">
@@ -602,7 +602,7 @@
       </EdgeSize>
     </Backdrop>
     <Frames>
-      <CheckButton name="SA_Config_MasterVolume" inherits="InterfaceOptionsCheckButtonTemplate" text="Use Master Volume">
+      <CheckButton name="SA_Config_MasterVolume" inherits="InterfaceOptionsCheckButtonTemplate" text="SC_MASTER_VOLUME">
 		<Size x="25" y="25"/>
 		<Anchors>
 		  <Anchor point="TOPLEFT">
@@ -615,7 +615,7 @@
 			</OnLoad>
 		</Scripts>
       </CheckButton>
-	  <CheckButton name="SA_Config_NoCombatSound" inherits="InterfaceOptionsCheckButtonTemplate" text="Sound Outside of combat">
+	  <CheckButton name="SA_Config_NoCombatSound" inherits="InterfaceOptionsCheckButtonTemplate" text="SC_SOUND_OUTSIDE_COMBAT">
 		<Size x="25" y="25"/>
 		<Anchors>
 		  <Anchor point="TOPLEFT">
@@ -721,7 +721,7 @@
 		  <OnTextChanged>local adjust = floor(self:GetText() + 0.5);if ( adjust > 0) then SA_Config_Width:SetValue( adjust );SA_SetWidth( adjust );end</OnTextChanged>
 		</Scripts>
       </EditBox>
-      <CheckButton name="SA_Config_Lock" inherits="InterfaceOptionsCheckButtonTemplate" parent="SA_Config" text="Disable Right Click to Move">
+      <CheckButton name="SA_Config_Lock" inherits="InterfaceOptionsCheckButtonTemplate" parent="SA_Config" text="SC_DISABLE_CLICK_MOVE">
 		<Size x="25" y="25"/>
 		<Anchors>
 		  <Anchor point="TOPLEFT">
@@ -734,7 +734,7 @@
 			</OnLoad>
 		</Scripts>
       </CheckButton>
-      <Slider name="SA_Config_Scale" inherits="OptionsSliderTemplate" minValue="50" maxValue="200" defaultValue="100" valueStep="10">
+      <Slider name="SA_Config_Scale" inherits="OptionsSliderTemplate" minValue="50" maxValue="200" defaultValue="100" valueStep="1">
 		<Size x="130" y="10"/>
 		<Anchors>
 		  <Anchor point="TOPLEFT">
@@ -767,7 +767,7 @@
 		  <OnClick>SA:ClearAllPoints();SA:SetPoint("TOPLEFT", 100, -150);</OnClick>
 		</Scripts>
       </Button>
-      <CheckButton name="SA_Config_PadLatency" inherits="InterfaceOptionsCheckButtonTemplate" text="Pad Alerts with Latency" parent="SA_Config">
+      <CheckButton name="SA_Config_PadLatency" inherits="InterfaceOptionsCheckButtonTemplate" text="SC_PAD_LATENCY" parent="SA_Config">
 		<Size x="25" y="25"/>
 		<Anchors>
 		  <Anchor point="TOPLEFT">
@@ -780,7 +780,7 @@
 			</OnLoad>
 		</Scripts>
       </CheckButton>
-      <EditBox name="SA_Config_BarMargin" font="GameFontNormal" letters="3" numeric="true">
+      <EditBox name="SA_Config_BarMargin" font="GameFontNormal" letters="3" autoFocus="false">
 		<Size x="34" y="20"/>
 		<Anchors>
 		  <Anchor point="TOPLEFT">
@@ -788,7 +788,7 @@
 		  </Anchor>
 		</Anchors>
 	  </EditBox>
-      <EditBox name="SA_Config_ScaleV" font="GameFontNormal" letters="3" blinkSpeed="20" numeric="true" autoFocus="false">
+      <EditBox name="SA_Config_ScaleV" font="GameFontNormal" letters="3" blinkSpeed="20" autoFocus="false">
 		<Size x="36" y="20"/>
 		<Anchors>
 		  <Anchor point="TOPLEFT" relativeTo="SA_FontScaleStr" relativePoint="TOPRIGHT">
@@ -799,7 +799,7 @@
 		  <OnTextChanged>local adjust = floor(self:GetText() + 0.5);if ( adjust > 0) then SA_Config_Scale:SetValue( adjust );SA_SetScale( adjust );end</OnTextChanged>
 		</Scripts>
       </EditBox>
-      <EditBox name="SA_FadeV" font="GameFontNormal" letters="3" blinkSpeed="20" numeric="true" autoFocus="false">
+      <EditBox name="SA_FadeV" font="GameFontNormal" letters="3" blinkSpeed="20" autoFocus="false">
 		<Size x="36" y="20"/>
 		<Anchors>
 		  <Anchor point="TOPLEFT" relativeTo="SA_FadeStr" relativePoint="TOPRIGHT">

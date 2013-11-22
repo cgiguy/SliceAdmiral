@@ -454,7 +454,7 @@ function SA_Config_VarsChanged()
   end
 
   SA_Config_RetextureBars();
-  SA_Config_OtherVars();
+  SA_Config_OtherVars();  
 end
 
 function SA_Config_OtherVars()
