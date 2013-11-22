@@ -602,7 +602,7 @@ end
 local function SA_Unload()
  SA:UnregisterAllEvents();
  SA:Hide();
- SA_Config_CPFrame:Hide();
+ DisableAddOn("SliceAdmiral");
 end
 
 local function SA_NewFrame()
@@ -887,7 +887,9 @@ function SA_UpdateStats()
  local armor = (count or 0)*4; 
 
  if (SA_Data.BARS["Stat"]["obj"].stats[1]) then
-	SA_Data.BARS["Stat"]["obj"].stats[1].fs:SetText(totalAP);
+	local text = totalAP
+	if(totalAP > 99999) then text = string.format("%.1f", totalAP/1000).."k" end
+	SA_Data.BARS["Stat"]["obj"].stats[1].fs:SetText(text);
  end
  if (SA_Data.BARS["Stat"]["obj"].stats[2]) then
 	SA_Data.BARS["Stat"]["obj"].stats[2].fs:SetText(string.format("%.1f%%", crit));
