@@ -65,7 +65,7 @@ SC_HIGHLIGHT_MEGA = "Highlight when mega-buffed";
 SC_MASTER_VOLUME = "Use Master Volume";
 SC_SOUND_OUTSIDE_COMBAT = "Play sound outside of combat";
 
-SC_DISABLE_CLICK_MOVE = "Disable Right Click to Move";
+SC_DISABLE_CLICK_MOVE = "Disable Left Click to Move";
 SC_PAD_LATENCY = "Pad Alerts with Latency";
 
 if (GetLocale() == "deDE") then
