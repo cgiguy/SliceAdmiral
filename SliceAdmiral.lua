@@ -571,7 +571,7 @@ function SA_SetComboPts()
 				SA_Data.BARS["CP"]["obj"].combos[i]:Hide();
 			end
 			SA_Combo:SetText(text);
-			if (points == count) then
+			if (points == count and count == 0) then
 				SA_Combo:SetText("");
 			end
 		 end 
