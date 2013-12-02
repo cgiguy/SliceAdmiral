@@ -59,8 +59,8 @@
 		<Scripts>
 			<OnLoad>SA_OnLoad();</OnLoad>
 			<OnEvent>SA_OnEvent(self, event, ...);</OnEvent>
-			<OnMouseDown>SA_MoveStart(self, button);</OnMouseDown>
-			<OnMouseUp>SA_MoveStop(self, button);</OnMouseUp>
+			<OnMouseDown>if (not SliceAdmiral_Save.IsLocked) then self:StartMoving() end;</OnMouseDown>
+			<OnMouseUp>self:StopMovingOrSizing();</OnMouseUp>
 			<OnUpdate>SA_OnUpdate(self, elapsed);</OnUpdate>  
 		</Scripts>
 	</Frame>

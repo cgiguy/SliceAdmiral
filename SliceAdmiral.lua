@@ -87,20 +87,6 @@ SA_Data.BARS = { --TEH BARS
  },
 };
 
-function SA_MoveStart(self, button) 
- if (button == "LeftButton") and not SliceAdmiral_Save.IsLocked then
-	SA:StartMoving();
- else
-	SA:EnableMouse(false);
- end 
-end
-
-function SA_MoveStop()
-	 if not SliceAdmiral_Save.IsLocked then
-		SA:StopMovingOrSizing();
-	 end
-end
-
 function SA_BarTexture()
 	if SliceAdmiral_Save.BarTexture then
 		return SA_BarTextures[ SliceAdmiral_Save.BarTexture ];

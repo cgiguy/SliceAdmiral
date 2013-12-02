@@ -467,8 +467,7 @@ function SA_Config_OtherVars()
 end
 
 function SA_Config_Okay()
-  SliceAdmiral_Save.IsLocked = SA_Config_Lock:GetChecked();
-  SA:EnableMouse(not SliceAdmiral_Save.IsLocked);
+  SliceAdmiral_Save.IsLocked = SA_Config_Lock:GetChecked();  
   SliceAdmiral_Save.Barsup = SA_Config_Barsup:GetChecked();
   SliceAdmiral_Save.CPBarShow = SA_Config_ShowCPBar:GetChecked();
   SliceAdmiral_Save.AntisCPShow = SA_Config_ShowAntisiBar:GetChecked();
