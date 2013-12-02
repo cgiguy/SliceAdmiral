@@ -56,6 +56,7 @@ SC_BARS_GROW_UP = "Bars grow up";
 SC_SORT_BY_DURATION = "Sort bars by duration";
 SC_SHOW_DOT_TICK = "Show DoT ticks";
 SC_HIGHLIGHT_DOT = "Highlight DoT crits"
+SC_NUM_STATS_BAR = "Show Armor Info"
 
 SC_SHOW_COMBO_POINTS = "Show Combo Points";
 SC_SHOW_ANTICI_POINTS = "Show Anticipation Points";

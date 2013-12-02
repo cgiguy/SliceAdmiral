@@ -321,6 +321,19 @@
 			</OnLoad>
 		</Scripts>
       </CheckButton>
+	  <CheckButton name="SA_Config_NumStatsBar" inherits="InterfaceOptionsCheckButtonTemplate" text="SC_NUM_STATS_BAR" >
+		<Size x="25" y="25"/>
+		<Anchors>
+		  <Anchor point="TOPLEFT">
+			<Offset x="15" y="-291"/>
+		  </Anchor>
+		</Anchors>
+		<Scripts>
+			<OnLoad>
+				SA_Config_Checkbutton_OnLoad(self)
+			</OnLoad>
+		</Scripts>
+      </CheckButton>
     </Frames>
   </Frame>
   <Frame name="SA_Config_EnergyFrame" hidden="true" parent="UIParent"> <!-- Energy Settings -->
@@ -710,7 +723,7 @@
       </EdgeSize>
     </Backdrop>
     <Frames>
-      <EditBox name="SA_Config_WidthV" font="GameFontNormal" letters="3" blinkSpeed="20" numeric="true" autoFocus="false">
+      <EditBox name="SA_Config_WidthV" font="GameFontNormal" letters="3" blinkSpeed="20" autoFocus="false">
 		<Size x="36" y="20"/>
 		<Anchors>
 		  <Anchor point="TOPLEFT">

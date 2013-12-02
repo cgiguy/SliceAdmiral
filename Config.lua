@@ -343,6 +343,7 @@ function SA_Config_LoadVars()
     SliceAdmiral_Save.BarMargin = 0;
   end
   SA_Config_BarMargin:SetText(SliceAdmiral_Save.BarMargin);
+  SA_Config_NumStatsBar:SetChecked((SliceAdmiral_Save.numStats == 4))
 
   SA_Config_ShowCPBar:SetChecked( SliceAdmiral_Save.CPBarShow );
   SA_Config_ShowAntisiBar:SetChecked( SliceAdmiral_Save.AntisCPShow );
@@ -502,6 +503,11 @@ function SA_Config_Okay()
   if (not SliceAdmiral_Save.BarMargin) then
     SliceAdmiral_Save.BarMargin = 0;
   end
+  if SA_Config_NumStatsBar:GetChecked() then
+    SliceAdmiral_Save.numStats = 4
+  else
+	SliceAdmiral_Save.numStats = 3
+  end
 
   SA_SetScale( SliceAdmiral_Save.Scale ); --HP: these are what are on screen
   SA_SetWidth( SliceAdmiral_Save.Width );
@@ -535,6 +541,7 @@ end
 function SA_Config_Default()
   SliceAdmiral_Save.IsLocked = false;
   SliceAdmiral_Save.HideEnergy = true;
+  SliceAdmiral_Save.numStats = 4;
   SliceAdmiral_Save.Energy1 = 25;
   SliceAdmiral_Save.Energy2 = 40;
   SliceAdmiral_Save.Fail = "Waaaah";
@@ -545,12 +552,12 @@ function SA_Config_Default()
   SliceAdmiral_Save["Recup.Fail"] = "Waaaah";
   SliceAdmiral_Save["Recup.Expire"] = "Waaaah";    
   SliceAdmiral_Save["Recup.Alert"] = "None";
-  SliceAdmiral_Save["Width"] = 110;
+  SliceAdmiral_Save["Width"] = 120;
   SliceAdmiral_Save["Scale"] = 140;
   SliceAdmiral_Save["PadLatency"] = true;
   SliceAdmiral_Save["EnergyTrans"] = 50;
   SliceAdmiral_Save["None"] = "None";
-  SliceAdmiral_Save.BarMargin = 3;
+  SliceAdmiral_Save.BarMargin = 0;
   SliceAdmiral_Save.DPBarShow = true;
   SliceAdmiral_Save.RupBarShow = true;
   SliceAdmiral_Save.RevealBarShow = true;
@@ -569,6 +576,7 @@ function SA_Config_Default()
   SliceAdmiral_Save.ShowStatBar = true;
   SliceAdmiral_Save.MasterVolume = false;
   SliceAdmiral_Save.OutOfCombat = false;
+  SliceAdmiral_Save.BarTexture = "Smooth"
   SA_Config_LoadVars();
 end
 

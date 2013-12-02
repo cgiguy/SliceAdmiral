@@ -13,7 +13,6 @@ SA_Data.sortPeriod = 0.5; -- Only sort bars every sortPeriod seconds
 SA_Data.tNow = 0;
 SA_Data.UpdateInterval = 0.05;
 SA_Data.TimeSinceLastUpdate = 0;
-SA_Data.numStats = 4; --Change to 3 if you don't want Anticipation
 
 local scaleUI = 0
 local widthUI = 0
@@ -88,7 +87,7 @@ SA_Data.BARS = { --TEH BARS
 };
 
 function SA_BarTexture()
-	if SliceAdmiral_Save.BarTexture then
+	if SliceAdmiral_Save.BarTexture and (SA_BarTextures[ SliceAdmiral_Save.BarTexture ]) then
 		return SA_BarTextures[ SliceAdmiral_Save.BarTexture ];
 	else
 		return "Interface\\AddOns\\SliceAdmiral\\Images\\Smooth.tga";
@@ -768,14 +767,14 @@ end
 function SA_UpdateStatWidths()
  local width = VTimerEnergy:GetWidth()
 
- local numStats = SA_Data.numStats --HP TODO option for this
+ local numStats = SliceAdmiral_Save.numStats or 4--HP TODO option for this
  local spacing = width/90;
  local cpwidth = ((width-(spacing*3))/(numStats));
  local cur_location = 0; --small initial offset
 
  local f = SA_Data.BARS["Stat"]["obj"];
 
- for i = 1, numStats do
+ for i = 1, 4 do
 	--Create the frame & space it
 	local statText = SA_Data.BARS["Stat"]["obj"].stats[i];
 	local labelFrame = SA_Data.BARS["Stat"]["obj"].stats[i].labelFrame;
@@ -788,6 +787,12 @@ function SA_UpdateStatWidths()
 	labelFrame:SetPoint("BOTTOMRIGHT", f, "BOTTOMLEFT", cur_location + cpwidth, 0)
 
 	cur_location = cur_location + cpwidth + spacing;
+	statText:Show()
+	labelFrame:Show()
+	if numStats < i then
+	  statText:Hide()
+	  labelFrame:Hide()
+	end
  end
 end
 
@@ -811,7 +816,7 @@ local function SA_CreateStatBar()
 
  f.stats = {}
 
- local numStats = SA_Data.numStats; --HP TODO option for this
+ local numStats = SliceAdmiral_Save.numStats or 4; --HP TODO option for this
  local spacing = width/60;
  local cpwidth = ((width-(spacing*3))/(numStats));
  local cur_location = 1; --small initial offset
@@ -829,7 +834,7 @@ local function SA_CreateStatBar()
 					[3] = "Speed",
 					[4] = "Armor" }
  
- for i = 1, numStats do	
+ for i = 1, 4 do	
 	--Create the frame & space it
 	local statText = CreateFrame("Frame", nil, f)
 	statText:ClearAllPoints() 
@@ -893,7 +898,7 @@ function SA_UpdateStats()
 end
 
 function SA_flashBuffedStats(totalAP,buffAP,crit,mhSpeed,armor) 
- local numStats = SA_Data.numStats;
+ local numStats = SliceAdmiral_Save.numStats or 4;
  if (not SA_Data.baseAP or SA_Data.baseAP == 0) then --initialize here since all stats = 0 when OnLoad is called.
 	 SA_ResetBaseStats();
 	 return
