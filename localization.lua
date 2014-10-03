@@ -22,7 +22,6 @@ SC_SPELL_BAND2_ID = 84746;
 SC_SPELL_BAND3_ID = 84747;
 --Subtley Specific
 SC_SPELL_HEMO_ID = 89775; -- Hemorage
-SC_SPELL_FW_ID = 91021;
 
 -- Generate the localized name for each spell
 SC_SPELL_SND = GetSpellInfo(SC_SPELL_SND_ID);
@@ -30,7 +29,6 @@ SC_SPELL_RECUP = GetSpellInfo(SC_SPELL_RECUP_ID);
 SC_SPELL_DP = GetSpellInfo(SC_SPELL_DP_ID);
 SC_SPELL_RUP = GetSpellInfo(SC_SPELL_RUP_ID);
 SC_SPELL_VEND = GetSpellInfo(SC_SPELL_VEND_ID);
-SC_SPELL_FW = GetSpellInfo(SC_SPELL_FW_ID);
 SC_SPELL_ENV = GetSpellInfo(SC_SPELL_ENV_ID);
 SC_SPELL_BAND1 = GetSpellInfo(SC_SPELL_BAND1_ID);
 SC_SPELL_BAND2 = GetSpellInfo(SC_SPELL_BAND2_ID);

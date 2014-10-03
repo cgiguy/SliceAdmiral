@@ -169,19 +169,6 @@
 			</OnLoad>
 		</Scripts>
       </CheckButton>
-	  <CheckButton name="SA_Config_ShowFwBar" text="SC_SPELL_FW" inherits="InterfaceOptionsCheckButtonTemplate">
-		<Size x="25" y="25"/>
-		<Anchors>
-		  <Anchor point="TOPLEFT">
-			<Offset x="15" y="-240"/>
-		  </Anchor>
-		</Anchors>
-		<Scripts>
-			<OnLoad>
-				SA_Config_Checkbutton_OnLoad(self)
-			</OnLoad>
-		</Scripts>
-      </CheckButton>
       <CheckButton name="SA_Config_Barsup" text="SC_BARS_GROW_UP" inherits="InterfaceOptionsCheckButtonTemplate">
 		<Size x="25" y="25"/>
 		<Anchors>
@@ -587,30 +574,6 @@
 		  <Anchors>
 			<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT">
 			  <Offset x="211" y="-310"/>
-			</Anchor>
-		  </Anchors>
-		</FontString>
-		<FontString name="SA_FwSounds_Caption" inherits="GameFontNormalLarge" text="Find Weakness Sounds" justifyH="LEFT">
-		  <Size x="366" y="32"/>
-		  <Anchors>
-			<Anchor point="TOPLEFT">
-			  <Offset x="415" y="-12"/>
-			</Anchor>
-		  </Anchors>
-		</FontString>
-		<FontString name="SA_Config_Fw_AlertStr" inherits="GameFontNormalSmall" text="Alert" justifyH="LEFT">
-		  <Size x="142" y="20"/>
-		  <Anchors>
-			<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT">
-			  <Offset x="415" y="-51"/>
-			</Anchor>
-		  </Anchors>
-		</FontString>
-		<FontString name="SA_Config_Fw_ExpireStr" inherits="GameFontNormalSmall" text="Expire" justifyH="LEFT">
-		  <Size x="142" y="20"/>
-		  <Anchors>
-			<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT">
-			  <Offset x="415" y="-93"/>
 			</Anchor>
 		  </Anchors>
 		</FontString>
