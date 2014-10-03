@@ -214,21 +214,20 @@ function SA_Config_OnLoad(panel)
   InterfaceOptions_AddCategory(panel);
 
 
-  ---  SLICE AND DICE CONFIG ---
+  ---  Alert/Expire Sounds ---
   panel = SA_Config2;
 
-  SA_Config_ExpireMenu = CreateFrame("Frame", "SA_Config_Expire", panel, "UIDropDownMenuTemplate");
-  SA_Config_ExpireMenu:SetPoint("TOPLEFT", ExpireSnD_Str, "TOPLEFT", 0, -20);
-  UIDropDownMenu_SetWidth(SA_Config_ExpireMenu, 142);
-  UIDropDownMenu_SetButtonWidth(SA_Config_ExpireMenu, 20);
-  UIDropDownMenu_Initialize(SA_Config_ExpireMenu, SA_Config_Expire_Initialise);
+  SA_Config_SnD_ExpireMenu = CreateFrame("Frame", "SA_Config_SnD_Expire", panel, "UIDropDownMenuTemplate");
+  SA_Config_SnD_ExpireMenu:SetPoint("TOPLEFT", SA_Config_SnD_ExpireStr, "TOPLEFT", 0, -20);
+  UIDropDownMenu_SetWidth(SA_Config_SnD_ExpireMenu, 142);
+  UIDropDownMenu_SetButtonWidth(SA_Config_SnD_ExpireMenu, 20);
+  UIDropDownMenu_Initialize(SA_Config_SnD_ExpireMenu, SA_Config_Expire_Initialise);
 
-  SA_Config_Tick3Menu = CreateFrame("Frame", "SA_Config_Tick3", panel, "UIDropDownMenuTemplate");
-  SA_Config_Tick3Menu:SetPoint("TOPLEFT", SA_Config_Tick3Str, "TOPLEFT", 0, -20);
-  UIDropDownMenu_SetWidth(SA_Config_Tick3Menu, 142);
-  UIDropDownMenu_SetButtonWidth(SA_Config_Tick3Menu, 20);
-  UIDropDownMenu_Initialize(SA_Config_Tick3Menu, SA_Config_Tick_Initialise);
-
+  SA_Config_SnD_AlertMenu = CreateFrame("Frame", "SA_Config_SnD_Alert", panel, "UIDropDownMenuTemplate");
+  SA_Config_SnD_AlertMenu:SetPoint("TOPLEFT", SA_Config_SnD_AlertStr, "TOPLEFT", 0, -20);
+  UIDropDownMenu_SetWidth(SA_Config_SnD_AlertMenu, 142);
+  UIDropDownMenu_SetButtonWidth(SA_Config_SnD_AlertMenu, 20);
+  UIDropDownMenu_Initialize(SA_Config_SnD_AlertMenu, SA_Config_Tick_Initialise);
 
   SA_Config_Recup_ExpireMenu = CreateFrame("Frame", "SA_Config_Recup_Expire", panel, "UIDropDownMenuTemplate");
   SA_Config_Recup_ExpireMenu:SetPoint("TOPLEFT", SA_Config_Recup_ExpireStr, "TOPLEFT", 0, -20);
@@ -241,9 +240,6 @@ function SA_Config_OnLoad(panel)
   UIDropDownMenu_SetWidth(SA_Config_Recup_AlertMenu, 142);
   UIDropDownMenu_SetButtonWidth(SA_Config_Recup_AlertMenu, 20);
   UIDropDownMenu_Initialize(SA_Config_Recup_AlertMenu, SA_Config_Tick_Initialise);
-
-  ------------------------Recup sounds end
-
 
   SA_Config_Rupt_ExpireMenu = CreateFrame("Frame", "SA_Config_Rupt_ExpireMenu", panel, "UIDropDownMenuTemplate");
   SA_Config_Rupt_ExpireMenu:SetPoint("TOPLEFT", SA_Config_Rupt_ExpireStr, "TOPLEFT", 0, -20);
@@ -301,8 +297,12 @@ function SA_Config_OnLoad(panel)
   InterfaceOptions_AddCategory(SA_Config2);
 
   --Text at top of frames
-  SA_Config3_Caption:SetText( SC_SPELL_RECUP .. " " .. SC_LANG_SOUNDS);
-  SA_Config2_Caption:SetText( SC_SPELL_SND .. " " .. SC_LANG_SOUNDS);
+  SA_SnDSounds_Caption:SetText( SC_SPELL_SND .. " " .. SC_LANG_SOUNDS);
+  SA_RuptSounds_Caption:SetText( SC_SPELL_RUP .. " " .. SC_LANG_SOUNDS);
+  SA_RecupSounds_Caption:SetText( SC_SPELL_RECUP .. " " .. SC_LANG_SOUNDS);
+  SA_VendSounds_Caption:SetText( SC_SPELL_VEND .. " " .. SC_LANG_SOUNDS);
+  SA_RevStrikeSounds_Caption:SetText( SC_SPELL_REVSTRIKE .. " " .. SC_LANG_SOUNDS);
+
 --  SA_MB:SetText("Header Text");
 
   SA_Config_LoadVars();
@@ -318,7 +318,7 @@ function SA_Config_LoadVars()
   UIDropDownMenu_SetSelectedValue(SA_Config_Energy1Menu, SliceAdmiral_Save.EnergySound1 );
   UIDropDownMenu_SetText(SA_Config_Energy1Menu, SliceAdmiral_Save.EnergySound1 );
 
-  -- hunger for blood --
+  -- Timer Bars --
   UIDropDownMenu_SetSelectedValue(SA_Config_Recup_AlertMenu, SliceAdmiral_Save["Recup.Alert"] );
   UIDropDownMenu_SetText(SA_Config_Recup_AlertMenu, SliceAdmiral_Save["Recup.Alert"] );
   UIDropDownMenu_SetSelectedValue(SA_Config_Recup_ExpireMenu, SliceAdmiral_Save["Recup.Expire"] );
