@@ -24,6 +24,7 @@ local SA_flashBuffedStats
 local SA_ResetBaseStats
 local SA_TestTarget
 local UnitAffectingCombat = UnitAffectingCombat
+SA_OnEvent = {}
 SA_Data.BARS = { --TEH BARS
  ["CP"] = {
  ["obj"] = 0
@@ -260,8 +261,13 @@ local function MB_SortBarsByTime(startIndex)
  end
 end
 
-function SA_OnEvent(self, event, ...)
- if (event == "COMBAT_LOG_EVENT_UNFILTERED") then
+function SA_OnEvent:PLAYER_REGEN_DISABLED()	
+		UIFrameFadeIn(SA, 0.4, SA:GetAlpha(), 1.0);
+end
+function SA_OnEvent:PLAYER_REGEN_ENABLED()	
+		UIFrameFadeOut(SA, 0.4, SA:GetAlpha(), SA_Fade:GetValue()/100)	
+end
+function SA_OnEvent:COMBAT_LOG_EVENT_UNFILTERED(...)
 	local timestamp, type, hideCaster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName = ...;
 	if (type == "SPELL_AURA_REFRESH" or type == "SPELL_AURA_APPLIED" or type == "SPELL_AURA_REMOVED" or type == "SPELL_AURA_APPLIED_DOSE" or type == "SPELL_PERIODIC_AURA_REMOVED" or type == "SPELL_PERIODIC_AURA_APPLIED" or type == "SPELL_PERIODIC_AURA_APPLIED_DOSE" or type == "SPELL_PERIODIC_AURA_REFRESH") then
 		local spellId, spellName, spellSchool = select(12, ...);
@@ -466,32 +472,22 @@ function SA_OnEvent(self, event, ...)
 			end
 		end
 	end
-end -- event == "COMBAT_LOG_EVENT_UNFILTERED"
-
- if (event == "UNIT_COMBO_POINTS") then
-	 local unit = ...;
-	 if (unit and unit == "player") then
+end
+function SA_OnEvent:UNIT_COMBO_POINTS(...)
+	local unit = ...;
+	if (unit and unit == "player") then
 		SA_SetComboPts();
-	 end
- end
-	if event == "PLAYER_TARGET_CHANGED" then
-		SA_SetComboPts();
-		SA_TestTarget();		
-	end
-	
-	if event == "PLAYER_ENTERING_WORLD" then	
-		SA_TestTarget();	
-		VTimerEnergy:SetScript("OnHide", SA_ChangeAnchor)
-		VTimerEnergy:SetScript("OnShow", SA_ChangeAnchor)
-	end
-	 
-	if not UnitAffectingCombat("player") and not (SA:GetAlpha() == SA_Fade:GetValue()/100) then
-		UIFrameFadeOut(SA, 0.4, SA:GetAlpha(), SA_Fade:GetValue()/100)
-	elseif UnitAffectingCombat("player") and not (SA:GetAlpha() == 1.0) then
-		UIFrameFadeIn(SA, 0.4, SA:GetAlpha(), 1.0);
 	end
 end
-
+function SA_OnEvent:PLAYER_TARGET_CHANGED()
+	SA_SetComboPts();
+	SA_TestTarget();	
+end
+function SA_OnEvent:PLAYER_ENTERING_WORLD()
+	SA_TestTarget();	
+	VTimerEnergy:SetScript("OnHide", SA_ChangeAnchor)
+	VTimerEnergy:SetScript("OnShow", SA_ChangeAnchor)
+end
 function SA_TestTarget() 
  if SliceAdmiral_Save.DPBarShow then
 	local name, rank, icon, count, debuffType, duration, expirationTime, unitCaster = UnitDebuff("target", SC_SPELL_DP, nil, "PLAYER");
@@ -976,6 +972,8 @@ function SA_OnLoad()
 	 SA:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED");
 	 SA:RegisterEvent("UNIT_COMBO_POINTS");
 	 SA:RegisterEvent("PLAYER_ENTERING_WORLD")
+	 SA:RegisterEvent("PLAYER_REGEN_ENABLED")
+	 SA:RegisterEvent("PLAYER_REGEN_DISABLED")
 	 SA_Data.BarFont = CreateFont("VTimerFont");
 	 SA_Data.BarFont:SetFont("Fonts\\FRIZQT__.TTF", 12);
 	 SA_Data.BarFont:SetShadowColor(0,0,0, 0.7);
@@ -1206,7 +1204,6 @@ if (SA_Data.TimeSinceLastUpdate > SA_Data.UpdateInterval) then
 		elseif not (lUnitManaMax == lUnitMana) and not (VTimerEnergy:GetAlpha() == 1.0) then
 			UIFrameFadeIn(VTimerEnergy, 0.4, VTimerEnergy:GetAlpha(), 1.0);
 		end
-
 		SA_Config_OtherVars();
 	end
 	

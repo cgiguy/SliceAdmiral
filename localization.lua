@@ -13,7 +13,6 @@ SC_SPELL_GARROTE_ID = 703;
 SC_SPELL_SHADOW_ID = 121471;
 --Assasination Specific
 SC_SPELL_VEND_ID = 79140;
-SC_SPELL_FW_ID = 91021;
 SC_SPELL_ENV_ID = 32645;
 --Combat Specific
 SC_SPELL_REVEAL_ID = 84617; --Revealing Strike
@@ -23,6 +22,7 @@ SC_SPELL_BAND2_ID = 84746;
 SC_SPELL_BAND3_ID = 84747;
 --Subtley Specific
 SC_SPELL_HEMO_ID = 89775; -- Hemorage
+SC_SPELL_FW_ID = 91021;
 
 -- Generate the localized name for each spell
 SC_SPELL_SND = GetSpellInfo(SC_SPELL_SND_ID);

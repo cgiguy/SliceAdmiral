@@ -393,8 +393,7 @@ function SA_Config_LoadVars()
   if ( not SliceAdmiral_Save.EnergyTrans) then
     SliceAdmiral_Save.EnergyTrans = 20;
   end
-  SA_Config_TransFull:SetValue(SliceAdmiral_Save.EnergyTrans);
-  SA_Config_TransFullV:SetText(SliceAdmiral_Save.EnergyTrans);
+  SA_Config_TransFull:SetValue(SliceAdmiral_Save.EnergyTrans);  
   if ( not SliceAdmiral_Save.Width ) then
     SliceAdmiral_Save.Width = 200;
   end
@@ -607,20 +606,6 @@ function SA_Config_Default()
   SliceAdmiral_Save.OutOfCombat = false;
   SliceAdmiral_Save.BarTexture = "Smooth"
   SA_Config_LoadVars();
-end
-
-function SA_Config_TransFull_OnValueChanged(self)
-  if (SA_Config_TransFullV) then
-    SA_Config_TransFullV:SetText(self:GetValue());
-  end
-end
-
-function SA_Config_TransFullV_OnTextChanged(self)
-  local adjust = floor(self:GetText() + 0.5);
-  if ( adjust > 0) then
-    SA_Config_TransFull:SetValue( adjust );    
-    VTimerEnergy:SetAlpha( adjust / 100.0 );
-  end
 end
 
 function SA_Config_Energy2_OnValueChanged(self)

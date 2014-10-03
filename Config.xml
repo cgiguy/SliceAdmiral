@@ -412,19 +412,16 @@
 		  </Anchor>
 		</Anchors>
 		<Scripts>
-		  <OnValueChanged>if (SA_Config_Energy1V) then	                    SA_Config_Energy1V:SetText(self:GetValue());                    end</OnValueChanged>
+		  <OnValueChanged>if (SA_Config_Energy1V) then SA_Config_Energy1V:SetText(self:GetValue()); SliceAdmiral_Save.Energy1 = self:GetValue();  end</OnValueChanged>
 		</Scripts>
       </Slider>
-      <EditBox name="SA_Config_Energy1V" protected="true" font="GameFontNormal" letters="3" blinkSpeed="20" numeric="true" autoFocus="false">
+      <EditBox name="SA_Config_Energy1V" protected="true" font="GameFontNormal" letters="3" blinkSpeed="20" autoFocus="false">
 		<Size x="36" y="20"/>
 		<Anchors>
 		  <Anchor point="TOPLEFT">
 			<Offset x="147" y="-73"/>
 		  </Anchor>
-		</Anchors>
-		<Scripts>
-		  <OnTextChanged>SA_Config_Energy1:SetValue(self:GetText());</OnTextChanged>
-		</Scripts>
+		</Anchors>		
       </EditBox>
       <Slider name="SA_Config_Energy2" inherits="OptionsSliderTemplate" minValue="0" maxValue="120" defaultValue="40" valueStep="1">
 		<Size x="130" y="10"/>
@@ -434,19 +431,16 @@
 		  </Anchor>
 		</Anchors>
 		<Scripts>
-		  <OnValueChanged>SA_Config_Energy2_OnValueChanged(self);</OnValueChanged>
+		  <OnValueChanged>if (SA_Config_Energy2V) then SA_Config_Energy2V:SetText(self:GetValue()); SliceAdmiral_Save.Energy2 = self:GetValue(); end;</OnValueChanged>
 		</Scripts>
       </Slider>
-      <EditBox name="SA_Config_Energy2V" font="GameFontNormal" letters="3" blinkSpeed="20" numeric="true" autoFocus="false">
+      <EditBox name="SA_Config_Energy2V" font="GameFontNormal" letters="3" blinkSpeed="20" autoFocus="false">
 		<Size x="36" y="20"/>
 		<Anchors>
 		  <Anchor point="TOPLEFT">
 			<Offset x="334" y="-73"/>
 		  </Anchor>
-		</Anchors>
-		<Scripts>
-		  <OnTextChanged>SA_Config_Energy2V_OnTextChanged(self);</OnTextChanged>
-		</Scripts>
+		</Anchors>		
       </EditBox>
       <CheckButton name="SA_Config_HideE" inherits="InterfaceOptionsCheckButtonTemplate" parent="SA_Config_EnergyFrame" text="Hide Energy Bar">
 		<Size x="25" y="25"/>
@@ -460,19 +454,8 @@
 				SA_Config_Checkbutton_OnLoad(self)
 			</OnLoad>
 		</Scripts>
-      </CheckButton>
-      <EditBox name="SA_Config_TransFullV" font="GameFontNormal" blinkSpeed="20" autoFocus="false">
-		<Size x="36" y="20"/>
-		<Anchors>
-		  <Anchor point="TOPRIGHT" relativeTo="SA_Config_TransFullStr">
-			<Offset x="36" y="1"/>
-		  </Anchor>
-		</Anchors>
-		<Scripts>
-		  <OnTextChanged>SA_Config_TransFullV_OnTextChanged(self);</OnTextChanged>
-		</Scripts>
-      </EditBox>
-      <Slider name="SA_Config_TransFull" inherits="OptionsSliderTemplate" minValue="0" maxValue="100" valueStep="1">
+      </CheckButton>      
+      <Slider name="SA_Config_TransFull" inherits="OptionsSliderTemplate" minValue="0" maxValue="100" defaultValue="75" valueStep="1">
 		<Size x="130" y="10"/>
 		<Anchors>
 		  <Anchor point="TOPLEFT" relativeTo="SA_Config_TransFullStr">
@@ -480,7 +463,7 @@
 		  </Anchor>
 		</Anchors>
 		<Scripts>
-		  <OnValueChanged>SA_Config_TransFull_OnValueChanged(self);</OnValueChanged>
+		  <OnValueChanged>SliceAdmiral_Save.EnergyTrans = self:GetValue();</OnValueChanged>
 		</Scripts>
       </Slider>
     </Frames>
@@ -803,7 +786,7 @@
 		  </Anchor>
 		</Anchors>
 		<Scripts>
-		  <OnValueChanged>if (SA_FadeV) then	SA_FadeV:SetText(self:GetValue());end</OnValueChanged>
+		  <OnValueChanged>if (SA_FadeV) then	SA_FadeV:SetText(self:GetValue()); SA:SetAlpha(self:GetValue()/100); end</OnValueChanged>
 		</Scripts>
       </Slider>
       <Button name="SA_ResetPos" inherits="UIPanelButtonTemplate" text="Reset Position">
@@ -855,10 +838,7 @@
 		  <Anchor point="TOPLEFT" relativeTo="SA_FadeStr" relativePoint="TOPRIGHT">
 			<Offset x="0" y="0"/>
 		  </Anchor>
-		</Anchors>
-		<Scripts>
-		  <OnTextChanged>local adjust = floor(self:GetText() + 0.5); if ( adjust >= 0) then SA_Fade:SetValue( adjust ); SA:SetAlpha(adjust);end</OnTextChanged>
-		</Scripts>
+		</Anchors>		
       </EditBox>
       <Slider name="SA_Config_Width" inherits="OptionsSliderTemplate" minValue="25" maxValue="300" valueStep="5">
 		<Size x="130" y="10"/>
