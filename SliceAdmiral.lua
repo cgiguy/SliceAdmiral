@@ -8,7 +8,7 @@ local S = LibStub("LibSmoothStatusBar-1.0")
 
 SA_Data = {};
 SA_Data.lastSort = 0;	 -- Last time bars were sorted
-SA_Data.maxSortableBars = 6 -- How many sortable non-DP/Envenom timer type bars do we have?
+SA_Data.maxSortableBars = 7 -- How many sortable non-DP/Envenom timer type bars do we have?
 SA_Data.sortPeriod = 0.5; -- Only sort bars every sortPeriod seconds
 SA_Data.tNow = 0;
 SA_Data.UpdateInterval = 0.05;
@@ -51,6 +51,11 @@ SA_Data.BARS = { --TEH BARS
  ["obj"] = 0,
  ["Expires"] = 0, 
 	["AlertPending"] = 0,
+ },
+  [SC_SPELL_FW] = {
+ ["obj"] = 0,
+ ["Expires"] = 0, 
+ ["AlertPending"] = 0,
  },
  [SC_SPELL_ENV] = {
  ["obj"] = 0,
@@ -419,6 +424,19 @@ function SA_OnEvent(self, event, ...)
 					end
 					SA_ChangeAnchor();
 				end
+				-- FIND WEAKNESS EVENT --
+				if (isMySpell and spellId == SC_SPELL_FW_ID and SliceAdmiral_Save.FwBarShow) then
+					if (type == "SPELL_AURA_REMOVED") then						
+						SA_Sound("FwExpire");										
+						SA_Data.BARS[SC_SPELL_FW]["Expires"] = 0;
+						SA_Data.BARS[SC_SPELL_FW]["obj"]:Hide();
+					else
+						local name, rank, icon, coun, debuffType, duration, expirationTime = UnitDebuff("target", SC_SPELL_FW, nil, "PLAYER");						
+						SA_Data.BARS[SC_SPELL_FW]["Expires"] = CalcExpireTime(expirationTime);
+						SA_Data.BARS[SC_SPELL_FW]["obj"]:Show();
+					end
+					SA_ChangeAnchor();
+				end
 			end
 		end
 	end -- "SPELL_AURA_REFRESH" or ...
@@ -532,6 +550,21 @@ function SA_TestTarget()
 		else			
 			SA_Data.BARS[SC_SPELL_VEND]["Expires"] = 0;
 			SA_Data.BARS[SC_SPELL_VEND]["obj"]:Hide();
+		end
+	end	
+ end
+  if SliceAdmiral_Save.FwBarShow then
+	local name, rank, icon, count, debuffType, duration, expirationTime, unitCaster = UnitDebuff("target", SC_SPELL_FW, nil, "PLAYER");
+	 if not name then		
+		SA_Data.BARS[SC_SPELL_FW]["Expires"] = 0;
+		SA_Data.BARS[SC_SPELL_FW]["obj"]:Hide();
+	else
+		if (unitCaster == "player") then			
+			SA_Data.BARS[SC_SPELL_FW]["Expires"] = CalcExpireTime(expirationTime);
+			SA_Data.BARS[SC_SPELL_FW]["obj"]:Show();
+		else			
+			SA_Data.BARS[SC_SPELL_FW]["Expires"] = 0;
+			SA_Data.BARS[SC_SPELL_FW]["obj"]:Hide();
 		end
 	end	
  end
@@ -1005,6 +1038,11 @@ function SA_OnLoad()
 	SA_Data.BARS[SC_SPELL_VEND]["obj"]:SetStatusBarColor(130/255, 130/255, 0);
 	SA_Data.BARS[SC_SPELL_VEND]["obj"].text2:SetFontObject(SA_Data.BarFont4);
 	SA_Data.BARS[SC_SPELL_VEND]["obj"].icon:SetTexture("Interface\\Icons\\Ability_Rogue_Deadliness");
+	
+	SA_Data.BARS[SC_SPELL_FW]["obj"] = SA_NewFrame();
+	SA_Data.BARS[SC_SPELL_FW]["obj"]:SetStatusBarColor(130/255, 130/255, 0);
+	SA_Data.BARS[SC_SPELL_FW]["obj"].text2:SetFontObject(SA_Data.BarFont4);
+	SA_Data.BARS[SC_SPELL_FW]["obj"].icon:SetTexture("Interface\\Icons\\Ability_Rogue_FindWeakness");
 
 	SA_Data.BARS[SC_SPELL_RECUP]["obj"] = SA_NewFrame();
 	SA_Data.BARS[SC_SPELL_RECUP]["obj"]:SetStatusBarColor(10/255, 10/255, 150/255);
@@ -1052,7 +1090,8 @@ function SA_OnLoad()
 	SA_Data.BARORDER[3] = SA_Data.BARS[SC_SPELL_RUP]; -- 8-24 sec
 	SA_Data.BARORDER[4] = SA_Data.BARS[SC_SPELL_VEND]; -- 20 sec
 	SA_Data.BARORDER[5] = SA_Data.BARS[SC_SPELL_REVEAL]; -- 18 sec
-	SA_Data.BARORDER[6] = SA_Data.BARS[SC_SPELL_HEMO]; -- 24 sec	
+	SA_Data.BARORDER[6] = SA_Data.BARS[SC_SPELL_HEMO]; -- 24 sec
+    SA_Data.BARORDER[7] = SA_Data.BARS[SC_SPELL_FW]; -- 10 sec	
 
 	print("SliceAdmiral " .. SA_Version .. " loaded!! Options are under the SliceAdmiral tab in the Addons Interface menu")
  else
@@ -1188,6 +1227,9 @@ if (SA_Data.TimeSinceLastUpdate > SA_Data.UpdateInterval) then
 	end
 	if SliceAdmiral_Save.VendBarShow then
 		SA_UpdateBar("target",SC_SPELL_VEND, "VendAlert"); 
+	end
+	if SliceAdmiral_Save.FwBarShow then
+		SA_UpdateBar("target",SC_SPELL_FW, "FwAlert"); 
 	end
 	if SliceAdmiral_Save.ShowRecupBar then
 		SA_UpdateBar("player", SC_SPELL_RECUP, "Recup.Alert"); 
