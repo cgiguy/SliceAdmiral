@@ -598,6 +598,7 @@ end
 function addon:UpdateMaxValue(spellId,duration)
 	if not SA_Spells[spellId] or not SA_Spells[spellId].dynamic then return end;
 	local spelld = SA_Spells[spellId].duration
+	if not duration then duration = spelld end;
 	local dynvalue = duration*0.3
 	
 	if duration > spelld then
