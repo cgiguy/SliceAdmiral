@@ -2,11 +2,6 @@
 	
 	<Frame name="SA" parent="UIParent" toplevel="true" movable="true" enableMouse="true">
 		<Size x="140" y="30" />
-		<Anchors>
-			<Anchor point="TOPLEFT">
-				<Offset x="164" y="-181" />
-			</Anchor>
-		</Anchors>
 		<Frames>
 			<StatusBar name="VTimerEnergy" minValue="0" maxValue="100" defaultValue="100">
 				<Size x="200" y="20" />

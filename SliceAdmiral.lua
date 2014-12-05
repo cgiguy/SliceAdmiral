@@ -32,6 +32,9 @@ SADefault = {
 		Main = {
 			IsLocked = false,
 			PadLatency = true,
+			point = "TOPLEFT",
+			xOfs = 100,
+			yOfs = -150,
 			Scale = 130,
 			Width = 130,
 			BarMargin = 1,
@@ -1364,6 +1367,7 @@ function addon:OnInitialize()
 							addon:Print(ERR_NOT_IN_COMBAT);
 						else
 							SA:ClearAllPoints();SA:SetPoint("TOPLEFT", 100, -150);
+							SAMod.Main.point, _l, _l, SAMod.Main.xOfs, SAMod.Main.yOfs = SA:GetPoint()
 						end
 					end
 				},
@@ -1434,6 +1438,7 @@ function addon:OnEnable()
     if addon:GetModule("Energy", true) then addon:AddOption("Energy Bar", addon.opt.Energy, L["EnergyBar"]) end    
 	--addon:AddOption("Profiles", addon.opt.profile, "Profiles"); --Localization Needed
 	local localizedClass, englishClass = UnitClass("player");
+	local point, xOfs, yOfs = SAMod.Main.point, SAMod.Main.xOfs, SAMod.Main.yOfs
 	if (englishClass == "ROGUE") then
 			for k in pairs(SA_Spells) do
 			if not (k == 115189) then
@@ -1445,13 +1450,14 @@ function addon:OnEnable()
 			end
 		end
 		addon:SA_OnLoad()
+		SA:ClearAllPoints(); SA:SetPoint(point, xOfs, yOfs);
 		SA:SetScript("OnUpdate", addon.OnUpdate);
 		SA:SetScript("OnMouseDown", function(self) if (not SAMod.Main.IsLocked) then self:StartMoving() end end)
-		SA:SetScript("OnMouseUp", function(self) self:StopMovingOrSizing() end )
+		SA:SetScript("OnMouseUp", function(self) self:StopMovingOrSizing(); SAMod.Main.point, _l, _l, SAMod.Main.xOfs, SAMod.Main.yOfs = SA:GetPoint(); end )
 		SA:EnableMouse(not SAMod.Main.IsLocked);
 		VTimerEnergy:EnableMouse(not SAMod.Main.IsLocked);
 		VTimerEnergy:SetScript("OnMouseDown", function(self) if (not SAMod.Main.IsLocked) then SA:StartMoving() end end)
-		VTimerEnergy:SetScript("OnMouseUp", function(self) SA:StopMovingOrSizing() end )	
+		VTimerEnergy:SetScript("OnMouseUp", function(self) SA:StopMovingOrSizing(); SAMod.Main.point, _l, _l, SAMod.Main.xOfs, SAMod.Main.yOfs = SA:GetPoint(); end )	
 		addon:SA_SetScale(SAMod.Main.Scale)
 		addon:SA_SetWidth(SAMod.Main.Width)
 		
