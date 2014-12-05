@@ -27,10 +27,10 @@ options.args = {
 				get = function(info) return SAMod.ShowTimer.Options.DoTCrits; end,
 				set = function(info,val) SAMod.ShowTimer.Options.DoTCrits = val; end
 			},
-			barTex = {name=L["Main/Texture"], type="select",order=6,
-				values = SA_Text,
-				get = function(info) return SAMod.ShowTimer.Options.BarTexture; end,
-				set = function(info,val) SAMod.ShowTimer.Options.BarTexture = val, sliceadmiral:RetextureBars(val, "spells") end, 
+			barTex = {name=L["Main/Texture"], type="select",order=6,dialogControl = 'LSM30_Statusbar',
+				values = SA_BarTextures,
+				get = function(info) return SA_Text[SAMod.ShowTimer.Options.BarTexture]; end,
+				set = function(info,val) SAMod.ShowTimer.Options.BarTexture = SA_BarTextures[val], sliceadmiral:RetextureBars(SA_BarTextures[val], "spells") end, 
 			},
 			MasterVolume = {name=L["Sound/MasterVolume"],desc=L["Sound/MasterDesc"],type="toggle",order=7,width="full",		
 				get = function(info) return SAMod.Sound.MasterVolume; end,
@@ -39,11 +39,7 @@ options.args = {
 			OutOfCombat = {name=L["Sound/OutOfCombat"],type="toggle",order=8,width="double",		
 				get = function(info) return SAMod.Sound.OutOfCombat; end,
 				set = function(info,val) SAMod.Sound.OutOfCombat = val; end
-			},
-			preview = {name=L["Sound/Preview"],type="toggle",order=9,width="full",			
-				get = function(info) return SAMod.Sound.Preview; end,
-				set = function(info,val) SAMod.Sound.Preview = val; end
-			},
+			},			
 			Shared = {name=L["SharedAbilites"],type="group",order=20,childGroups="tree",args={},},
 			Assassination = {name=L["Assassination"],type="group",order=30,childGroups="tree",args={},},
 			Combat = {name=L["Combat"],type="group",order=40,childGroups="tree",args={},},
@@ -87,20 +83,15 @@ options.args = {
 					set = function(info, r,g,b,a) SA_Data.BARS[SA_Spells[k].name]["obj"]:SetStatusBarColor(r, g, b); col[k].r = r; col[k].g = g; col[k].b = b; end,
 				},
 				bar1 = {name=L["SoundSettings"],type="header",order=5},				
-				tick = {name=L["TickSound"],type="select",order=12,
-					values = SA_ASounds,
-					get = function(info) return SAMod.Sound[k].tick; end,
-					set = function(info,val)
-						SAMod.Sound[k].tick = val;
-						sliceadmiral:SA_SoundTest(val);
-					end
+				tick = {name=L["TickSound"],type="select",order=12, dialogControl = 'LSM30_Sound',
+					values = SA_Sounds,
+					get = function(info) return SA_ASounds[SAMod.Sound[k].tick]; end,
+					set = function(info,val) SAMod.Sound[k].tick = SA_Sounds[val]; end,
 				},
-				alert = {name=L["AlertSound"],type="select",order=13,
-					values = SA_ASounds,
-					get = function(info) return SAMod.Sound[k].alert; end,
-					set = function(info,val) SAMod.Sound[k].alert = val;
-					sliceadmiral:SA_SoundTest(val);				
-					end
+				alert = {name=L["AlertSound"],type="select",order=13, dialogControl = 'LSM30_Sound',
+					values = SA_Sounds,
+					get = function(info) return SA_ASounds[SAMod.Sound[k].alert]; end,
+					set = function(info,val) SAMod.Sound[k].alert = SA_Sounds[val]; end,
 				},
 			},
 		}
@@ -153,52 +144,37 @@ options.args = {
 			},
 			bar1 = {name=L["SoundSettings"],type="header",order=9},	
 			bar2 = {name=SA_Spells[84745].name,type="description",order=10,},
-			tick = {name=L["TickSound"],type="select",order=11,
-				values = SA_ASounds,
-				get = function(info) return SAMod.Sound[84745].tick; end,
-				set = function(info,val)
-					SAMod.Sound[84745].tick = val;					
-					sliceadmiral:SA_SoundTest(val);
-				end
+			tick = {name=L["TickSound"],type="select",order=11, dialogControl = 'LSM30_Sound',
+				values = SA_Sounds,
+				get = function(info) return SA_ASounds[SAMod.Sound[84745].tick]; end,
+				set = function(info,val) SAMod.Sound[84745].tick = SA_Sounds[val];	end,
 			},
-			alert = {name=L["AlertSound"],type="select",order=12,
-				values = SA_ASounds,
-				get = function(info) return SAMod.Sound[84745].alert; end,
-				set = function(info,val) SAMod.Sound[84745].alert = val;				
-				sliceadmiral:SA_SoundTest(val);
-				end
+			alert = {name=L["AlertSound"],type="select",order=12,dialogControl = 'LSM30_Sound',
+				values = SA_Sounds,
+				get = function(info) return SA_ASounds[SAMod.Sound[84745].alert]; end,
+				set = function(info,val) SAMod.Sound[84745].alert = SA_Sounds[val]; end,
 			},
 			bar3 = {name=SA_Spells[84746].name,type="description",order=13,width="double",},	
-			tick1 = {name=L["TickSound"],type="select",order=14,
-				values = SA_ASounds,
-				get = function(info) return SAMod.Sound[84746].tick; end,
-				set = function(info,val)
-					SAMod.Sound[84746].tick = val;					
-					sliceadmiral:SA_SoundTest(val);
-				end
+			tick1 = {name=L["TickSound"],type="select",order=14,dialogControl = 'LSM30_Sound',
+				values = SA_Sounds,
+				get = function(info) return SA_ASounds[SAMod.Sound[84746].tick]; end,
+				set = function(info,val) SAMod.Sound[84746].tick = SA_Sounds[val]; end,
 			},
-			alert1 = {name=L["AlertSound"],type="select",order=15,
-				values = SA_ASounds,
-				get = function(info) return SAMod.Sound[84746].alert; end,
-				set = function(info,val) SAMod.Sound[84746].alert = val;				
-				sliceadmiral:SA_SoundTest(val);
-				end
+			alert1 = {name=L["AlertSound"],type="select",order=15,dialogControl = 'LSM30_Sound',
+				values = SA_Sounds,
+				get = function(info) return SA_ASounds[SAMod.Sound[84746].alert]; end,
+				set = function(info,val) SAMod.Sound[84746].alert = SA_Sounds[val]; end,
 			},
 			bar4 = {name=SA_Spells[84747].name,type="description",order=16,width="double",},	
-			tick2 = {name=L["TickSound"],type="select",order=17,
-				values = SA_ASounds,
-				get = function(info) return SAMod.Sound[84747].tick; end,
-				set = function(info,val)
-					SAMod.Sound[84747].tick = val;					
-					sliceadmiral:SA_SoundTest(val);
-				end
+			tick2 = {name=L["TickSound"],type="select",order=17,dialogControl = 'LSM30_Sound',
+				values = SA_Sounds,
+				get = function(info) return SA_ASounds[SAMod.Sound[84747].tick]; end,
+				set = function(info,val) SAMod.Sound[84747].tick = SA_Sounds[val];	end,
 			},
-			alert2 = {name=L["AlertSound"],type="select",order=18,
-				values = SA_ASounds,
-				get = function(info) return SAMod.Sound[84747].alert; end,
-				set = function(info,val) SAMod.Sound[84747].alert = val;				
-				sliceadmiral:SA_SoundTest(val);
-				end
+			alert2 = {name=L["AlertSound"],type="select",order=18,dialogControl = 'LSM30_Sound',
+				values = SA_Sounds,
+				get = function(info) return SA_ASounds[SAMod.Sound[84747].alert]; end,
+				set = function(info,val) SAMod.Sound[84747].alert = SA_Sounds[val]; end,
 			},
 			
 		},
