@@ -5,6 +5,7 @@ local AceConfig = LibStub("AceConfig-3.0");
 local AceConfigDialog = LibStub("AceConfigDialog-3.0");
 local L = LibStub("AceLocale-3.0"):GetLocale("SliceAdmiral", true)
 local S = LibStub("LibSmoothStatusBar-1.0")
+local LSM = LibStub("LibSharedMedia-3.0")
 SliceAdmiralVer = GetAddOnMetadata("SliceAdmiral", "Version")
 ----------------------------------------------------------------------------------------------------
 
@@ -36,10 +37,10 @@ SADefault = {
 			xOfs = 100,
 			yOfs = -150,
 			Scale = 130,
-			Width = 130,
+			Width = 140,
 			BarMargin = 1,
 			Fade = 75,
-			BarTexture = "Interface\\AddOns\\SliceAdmiral\\Images\\LiteStep.tga",
+			BarTexture = "LiteStep",
 		},
 		ShowTimer = {
 			Options = {
@@ -48,7 +49,7 @@ SADefault = {
 				Dynamic = false,
 				ShowDoTDmg = true,
 				DoTCrits = true,
-				BarTexture = "Interface\\AddOns\\SliceAdmiral\\Images\\Smooth.tga",
+				BarTexture = "Smooth",
 				guileCount = false,
 				BladeFlurry = false,
 			},
@@ -71,8 +72,10 @@ SADefault = {
 				[84747] = {r=200/255, g=34/255, b=34/255,},
 				[16511] = {r=255/255, g=5/255, b=5/255,},
 				[122233] = {r=192/255,g=192/255,b=192/255},
+				[157562] = {r=192/255,g=192/255,b=192/255},
 				[51713] = {r=0/255, g=0/255, b=128/255,},
 				[91021] = {r=130/255, g=130/255, b=0,},
+				[31665] = {r=99/255, g=26/255, b=151/255,},
 			},
 			Timers = {
 				[5171] = 6.0, --Slice and Dice
@@ -92,8 +95,10 @@ SADefault = {
 				[13750] = 6.0, --Adrenaline Rush
 				[154953] = 6.0, --InteralBleeding
 				[122233] = 6.0, -- Crimson Tempest
+				[157562] = 6.0, -- Crimson Poison
 				[51713] = 6.0, -- ShadowDance
 				[91021] = 6.0, --FindWeaknes
+				[31665]= 5.0, --Master of Subtlety
 			},
 			[5171] = true, --Slice and Dice
 			[84745] = true, -- BanditsGuile
@@ -113,7 +118,9 @@ SADefault = {
 			[13750] = false, --Adrenaline Rush
 			[154953] = false, --InteralBleeding
 			[122233] = true, -- Crimson Tempest
+			[157562] = true, -- Crimson Poison
 			[51713] = false, -- ShadowDance
+			[31665] = true, -- master of Subtlety
 		},
 		Combo = {
 			PointShow = true,
@@ -129,32 +136,34 @@ SADefault = {
 			AnticpationText = true,
 			Energy1 = 25,
 			Energy2 = 40,
-			BarTexture = "Interface\\AddOns\\SliceAdmiral\\Images\\Runes.tga",
+			BarTexture = "Runes",
 			EnergySound1 = "",
 			EnergySound2 = "",
 			EnergyTrans = 75,
 			Color = { r=1.0, g=0.96, b=0.41, a=1.0}
 		},
 		Sound = {
-			[5171] = {enabled=true, tick = "Interface\\AddOns\\SliceAdmiral\\Audio\\tambourine.ogg", alert = "Interface\\AddOns\\SliceAdmiral\\Audio\\Old Trumpet A 01.ogg",}, --Slice and Dice
-			[73651] = {enabled=true, tick = "Interface\\AddOns\\SliceAdmiral\\Audio\\tambourine.ogg", alert = "",}, -- Recuperate
-			[1943] = {enabled=true, tick = "Interface\\AddOns\\SliceAdmiral\\Audio\\shaker.ogg", alert = "Interface\\AddOns\\SliceAdmiral\\Audio\\6OP00084.ogg", }, --Rupture
-			[79140] = {enabled=true, tick = "Interface\\AddOns\\SliceAdmiral\\Audio\\pingit.ogg", alert = "", }, --Vendetta
-			[84617] = {enabled=true, tick = "Interface\\AddOns\\SliceAdmiral\\Audio\\6OP00084.ogg", alert = "Interface\\AddOns\\SliceAdmiral\\Audio\\shaker.ogg", },--RevealingStrike
-			[16511] = {enabled=true, tick = "Interface\\AddOns\\SliceAdmiral\\Audio\\pingit.ogg", alert = "", }, --Hemorrhage
-			[84745] = {enabled=false, tick = "", alert="", },
-			[84746] = {enabled=false, tick = "", alert="", },
-			[84747] = {enabled=false, tick = "", alert="", },
-			[32645] = {enabled=false, tick = "", alert="", },
-			[1966] = {enabled=false, tick = "", alert="", },
-			[137573] = {enabled=false, tick = "", alert="", },
-			[2818] = {enabled=false, tick = "", alert="", },
-			[703] = {enabled=false, tick = "", alert="", },
-			[13750] = {enabled=false, tick = "", alert="", },
-			[154953] = {enabled=false, tick = "", alert="", },
-			[122233] = {enabled=false, tick = "", alert="", },
-			[51713] = {enabled=false, tick = "", alert="", },
-			[91021] = {enabled=false, tick = "", alert="", },
+			[5171] = {enabled=true, tick = "Tambourine", alert = "Waaaah",}, --Slice and Dice
+			[73651] = {enabled=true, tick = "Tambourine", alert = "None",}, -- Recuperate
+			[1943] = {enabled=true, tick = "Shaker", alert = "BassDrum", }, --Rupture
+			[79140] = {enabled=true, tick = "Ping", alert = "None", }, --Vendetta
+			[84617] = {enabled=true, tick = "BassDrum", alert = "Shaker", },--RevealingStrike
+			[16511] = {enabled=true, tick = "Ping", alert = "None", }, --Hemorrhage
+			[84745] = {enabled=false, tick = "None", alert="None", },
+			[157562] = {enabled=false, tick = "None", alert="None", },
+			[84746] = {enabled=false, tick = "None", alert="None", },
+			[84747] = {enabled=false, tick = "None", alert="None", },
+			[32645] = {enabled=false, tick = "None", alert="None", },
+			[1966] = {enabled=false, tick = "None", alert="None", },
+			[137573] = {enabled=false, tick = "None", alert="None", },
+			[2818] = {enabled=false, tick = "None", alert="None", },
+			[703] = {enabled=false, tick = "None", alert="None", },
+			[13750] = {enabled=false, tick = "None", alert="None", },
+			[154953] = {enabled=false, tick = "None", alert="None", },
+			[122233] = {enabled=false, tick = "None", alert="None", },
+			[51713] = {enabled=false, tick = "None", alert="None", },
+			[91021] = {enabled=false, tick = "None", alert="None", },
+			[31665] = {enabled=false, tick = "None", alert="None", },
 			MasterVolume = false,
 			OutOfCombat = false,			
 			none = "none",
@@ -276,13 +285,13 @@ end
 
 function addon:SA_BarTexture(object)
 	if object == "Energy" then
-		return SAMod.Energy.BarTexture
+		return LSM:Fetch("statusbar",SAMod.Energy.BarTexture)
 	elseif object == "stats" then
-		return SAMod.Main.BarTexture
+		return LSM:Fetch("statusbar",SAMod.Main.BarTexture)
 	elseif object == "spells" then
-		return SAMod.ShowTimer.Options.BarTexture
+		return LSM:Fetch("statusbar",SAMod.ShowTimer.Options.BarTexture)
 	else
-		return SAMod.Main.BarTexture ;
+		return LSM:Fetch("statusbar",SAMod.Main.BarTexture) ;
 	end
 end
 
@@ -490,6 +499,12 @@ function addon:UNIT_MAXPOWER(...)
 	end
 end
 
+local function MasterOfSubtley()					
+	local name, rank, icon, count, debuffType, duration, expirationTime = UnitAura("player", SA_Spells[31665].name);					
+	SABars[SA_Spells[31665].name]["Expires"] = addon:CalcExpireTime(expirationTime);
+	SABars[SA_Spells[31665].name]["obj"]:Show();
+end
+
 function addon:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
 	local timestamp, type, hideCaster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName = ...;
 	local saTimerOp = SAMod.ShowTimer.Options
@@ -500,6 +515,7 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
 	if type =="UNIT_DIED" then
 		soundBuffer = {}
 	end
+	
 	if (type == "SPELL_AURA_REFRESH" or type == "SPELL_AURA_APPLIED" or type == "SPELL_AURA_REMOVED" or type == "SPELL_AURA_APPLIED_DOSE" or type == "SPELL_PERIODIC_AURA_REMOVED" or type == "SPELL_PERIODIC_AURA_APPLIED" or type == "SPELL_PERIODIC_AURA_APPLIED_DOSE" or type == "SPELL_PERIODIC_AURA_REFRESH") then
 		local spellId, spellName, spellSchool = select(12, ...);
 		local isMySpell;
@@ -509,12 +525,12 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
 			if SAMod.ShowTimer[spellId] then
 				if (type == "SPELL_AURA_REMOVED") then 
 					if SAMod.Sound[spellId].enabled then
-						addon:SA_Sound(SAMod.Sound[spellId].alert,true)
+						addon:SA_Sound(LSM:Fetch("sound",SAMod.Sound[spellId].alert),true)
 					end
 					SABars[SA_Spells[spellId].name]["Expires"] = 0;
 					SABars[SA_Spells[spellId].name]["obj"]:Hide();
 				else
-					local name, rank, icon, count, debuffType, duration, expirationTime = UnitAura("player", SA_Spells[spellId].name);
+					local name, rank, icon, count, debuffType, duration, expirationTime = UnitAura("player", SA_Spells[spellId].name);					
 					SABars[SA_Spells[spellId].name]["Expires"] = addon:CalcExpireTime(expirationTime);
 					SABars[SA_Spells[spellId].name]["obj"]:Show();
 					if saTimerOp.Dynamic then addon:UpdateMaxValue(spellId,duration) end
@@ -537,12 +553,16 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
 				bfticker:Cancel()
 				bfticker = C_Timer.NewTicker(2,addon.UpdateBFText)
 			end
+			-- Master of Subtlety Work around-- 
+			if type == "SPELL_AURA_REMOVED" and spellId == 1784 and SAMod.ShowTimer[31665] then
+				C_Timer.After(0.1, MasterOfSubtley);
+			end
 		else
 			if (destName == GetUnitName("target",true)) then
 				if isMySpell and SAMod.ShowTimer[spellId] then
 					if (type == "SPELL_AURA_REMOVED") then 
 						if SAMod.Sound[spellId].enabled then
-							addon:SA_Sound(SAMod.Sound[spellId].alert,true)
+							addon:SA_Sound(LSM:Fetch("sound",SAMod.Sound[spellId].alert),true)
 						end
 						SABars[SA_Spells[spellId].name]["Expires"] = 0;
 						SABars[SA_Spells[spellId].name]["obj"]:Hide();
@@ -1257,7 +1277,7 @@ if (SA2.TimeSinceLastUpdate > SA2.UpdateInterval) then
 		local spell = SA_Spells[k]
 		local sound = SAMod.Sound[k]
 		if v and sound and sound.enabled then
-			SA_UpdateBar(spell.target,spell.name, sound.tick);
+			SA_UpdateBar(spell.target,spell.name, LSM:Fetch("sound",sound.tick));
 		elseif v and spell then
 			SA_QuickUpdateBar(spell.target,spell.name);
 		end
@@ -1389,9 +1409,9 @@ function addon:OnInitialize()
 					set = function(info,val) SAMod.Main.Fade = val; SA:SetAlpha(val/100); end
 				},
 				barTexture = {name=L["Main/Texture"],type="select",order=15, dialogControl = 'LSM30_Statusbar',
-					values = SA_BarTextures,
-					get = function(info) return SA_Text[SAMod.Main.BarTexture]; end,
-					set = function(info,val) SAMod.Main.BarTexture = SA_BarTextures[val]; addon:RetextureBars(SA_BarTextures[val],"stats"); end
+					values = LSM:HashTable("statusbar"),
+					get = function(info) return SAMod.Main.BarTexture; end,
+					set = function(info,val) SAMod.Main.BarTexture = val; addon:RetextureBars(LSM:Fetch("statusbar",val),"stats"); end
 				},
 				reset = {name = L["ResetDatabase"],type = "execute",order=100,width="full",
 					desc = L["ResetDatabaseDesc"],
