@@ -1,5 +1,6 @@
 local sliceadmiral = LibStub("AceAddon-3.0"):GetAddon("SliceAdmiral");
 local L = LibStub("AceLocale-3.0"):GetLocale("SliceAdmiral", true);
+local LSM  = LibStub("LibSharedMedia-3.0")
 local addon = sliceadmiral:NewModule("Energy");
 local lUnitManaMax = UnitManaMax("player")
 
@@ -58,13 +59,13 @@ function addon:OnInitialize()
 			},
 			empty1 = {name="",type="description",order=6,},
 			ealert1 = {name=L["AlertSound"],type="select",order=13,disabled=true,
-				values = SA_ASounds,
+				values = LSM:HashTable("sound"),
 				get = function(info) return SAMod.Energy.EnergySound1; end,
 				set = function(info,val) SAMod.Energy.EnergySound1 = val;			
 				end
 			},
 			ealert2 = {name=L["AlertSound"],type="select",order=14,disabled=true,
-				values = SA_ASounds,
+				values = LSM:HashTable("sound"),
 				get = function(info) return SAMod.Energy.EnergySound2; end,
 				set = function(info,val) SAMod.Energy.EnergySound2 = val;			
 				end
@@ -76,9 +77,9 @@ function addon:OnInitialize()
 				set = function(info,val) SAMod.Energy.EnergyTrans = val; end,
 			},
 			texture = {name=L["Main/Texture"],type="select",order=17, dialogControl = 'LSM30_Statusbar',
-				values = SA_BarTextures,				
-				get = function(info) return SA_Text[SAMod.Energy.BarTexture]; end,				
-				set = function(info,val) SAMod.Energy.BarTexture = SA_BarTextures[val]; sliceadmiral:RetextureBars(SA_BarTextures[val],"Energy") end,
+				values = LSM:HashTable("statusbar"),				
+				get = function(info) return SAMod.Energy.BarTexture; end,				
+				set = function(info,val) SAMod.Energy.BarTexture = val; sliceadmiral:RetextureBars(LSM:Fetch("statusbar",val),"Energy") end,
 			},
 			texColor = { name=L["energy/Color"], type="color", order=2,width="double",
 				get = function(info) return Co.r, Co.g,Co.b,Co.a; end,

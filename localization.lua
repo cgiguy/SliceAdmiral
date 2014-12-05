@@ -21,7 +21,7 @@ SA_Spells = { [5171] = { target = "player", sort = true,duration=36, dynamic=tru
 	[122233] = { target="target",sort=true, duration=12,dynamic=false,}, --CrimsonTempest
 	[51713] = { target = "player",sort=false,duration=8,dynamic=false,}, --ShadowDance
 	[91021] = { target = "target",sort=true, duration=10,dynamic=false, }, -- FindWeaknes
-	[157562] = { target = "target",sort=true, duration=6,dynamic=false, }, -- Crimson Poison
+	[157562] = { target = "player",sort=true, duration=6,dynamic=false, }, -- Crimson Poison
 	[31665] = { target = "player",sort=true, duration=5,dynamic=false, }, -- Master of Subtlety
 	};
 

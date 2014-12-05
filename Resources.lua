@@ -1,19 +1,20 @@
 -- Author      : Administrator
 -- Create Date : 9/13/2008 10:16:36 AM
-SA_BarTextures = {
-  ["Aluminum"] = "Interface\\AddOns\\SliceAdmiral\\Images\\Aluminium.tga",
+local LSM = LibStub("LibSharedMedia-3.0")
+local SA_BarTextures = {
+  ["Aluminium"] = "Interface\\AddOns\\SliceAdmiral\\Images\\Aluminium.tga",
   ["BantoBar"] = "Interface\\AddOns\\SliceAdmiral\\Images\\BantoBar.tga",
   ["Gloss"] = "Interface\\AddOns\\SliceAdmiral\\Images\\Gloss.tga",
-  ["HealBot"] = "Interface\\AddOns\\SliceAdmiral\\Images\\HealBot.tga",
+  ["Healbot"] = "Interface\\AddOns\\SliceAdmiral\\Images\\HealBot.tga",
   ["LiteStep"] = "Interface\\AddOns\\SliceAdmiral\\Images\\LiteStep.tga",
   ["Runes"] = "Interface\\AddOns\\SliceAdmiral\\Images\\Runes.tga",
   ["Smooth"] = "Interface\\AddOns\\SliceAdmiral\\Images\\Smooth.tga",
 };
-SA_Text = {}
-for k,v in pairs(SA_BarTextures) do
- SA_Text[v]=k
+for k,v in pairs(SA_BarTextures) do 
+	LSM:Register("STATUSBAR", k, v)	
 end
-SA_Sounds = {
+
+local SA_Sounds = {
   ["Price is WRONG"] = "Interface\\AddOns\\SliceAdmiral\\Audio\\PriceIsWrong.ogg",
   ["Waaaah"] = "Interface\\AddOns\\SliceAdmiral\\Audio\\Old Trumpet A 01.ogg",
   ["BassDrum"] = "Interface\\AddOns\\SliceAdmiral\\Audio\\6OP00084.ogg",
@@ -44,16 +45,9 @@ SA_Sounds = {
   ["Switch On/Off"] = "Interface\\AddOns\\SliceAdmiral\\Audio\\switch-on-off.ogg",
   ["Eth Perc Short"] = "Interface\\AddOns\\SliceAdmiral\\Audio\\perc-short.ogg",
   ["Eth Perc Long"] = "Interface\\AddOns\\SliceAdmiral\\Audio\\perc-long.ogg",
-  ["None"] = "",
+  ["None"] = "Interface\Quiet.ogg",
 };
-SA_ASounds = {};
-for k,v in pairs(SA_Sounds) do
- SA_ASounds[v]=k
-end
 
-SA_SoundMenu = { --these are what populate the drop down menus ?
-  ["Fail"] = { "None", "Waaaah", "BassDrum", "Price is WRONG", "Growl", "Drum Rattle", "Shaker"  },
-  ["Tick"] = { "None", "Ping", "Drum Rattle", "Pop", "Shaker", "Tambourine",  "Growl" },
-  ["Apply"] = { "None", "Drum Rattle", "SliceClick", "BoomBoomClap", "Marching Band", "BoomBoomThak",  "You Spin Me"},
-  ["Energy"] = { "None","Switch On/Off", "Ping", "Drum Rattle", "Pop", "Shaker",  "DNBLoop2" },
-}
+for k,v in pairs(SA_Sounds) do
+	LSM:Register("SOUND", k,v)	
+end
