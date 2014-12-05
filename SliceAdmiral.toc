@@ -2,7 +2,7 @@
 ## Interface: 60000
 ## Author: Iorrh - Bronzebeard US
 ## Modified: Haghala - Shadowsong EU
-## Version: 1.1.12
+## Version: 1.1.13
 ## Notes: Info-center for maximizing Rogue DPS. 
 ## DefaultState: Enabled
 ## LoadOnDemand: 0
@@ -22,6 +22,7 @@ lib\AceGUI-3.0\AceGUI-3.0.xml
 lib\AceConfig-3.0\AceConfig-3.0.xml
 lib\LibDualSpec-1.0\LibDualSpec-1.0.lua
 lib\AceLocale-3.0\AceLocale-3.0.xml
+lib\AceGUI-3.0-SharedMediaWidgets\widget.xml
 
 localization.lua
 Resources.lua

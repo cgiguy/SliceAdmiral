@@ -153,8 +153,7 @@ SADefault = {
 			[51713] = {enabled=false, tick = "", alert="", },
 			[91021] = {enabled=false, tick = "", alert="", },
 			MasterVolume = false,
-			OutOfCombat = false,
-			Preview = true,
+			OutOfCombat = false,			
 			none = "none",
 		},
 	},  
@@ -282,15 +281,6 @@ function addon:SA_BarTexture(object)
 	else
 		return SAMod.Main.BarTexture ;
 	end
-end
-
-function addon:SA_SoundTest(name)
-	if not SAMod.Sound.Preview then return end
-	if SAMod.Sound.MasterVolume then
-		PlaySoundFile(name, "Master" );
-	else
-		PlaySoundFile(name);
-	end	 
 end
 
 function addon:SA_Sound(saved,bufferd)
@@ -1394,10 +1384,10 @@ function addon:OnInitialize()
 					get = function(info) return SAMod.Main.Fade; end,
 					set = function(info,val) SAMod.Main.Fade = val; SA:SetAlpha(val/100); end
 				},
-				barTexture = {name=L["Main/Texture"],type="select",order=15,
-					values = SA_Text,
-					get = function(info) return SAMod.Main.BarTexture; end,
-					set = function(info,val) SAMod.Main.BarTexture = val; addon:RetextureBars(val,"stats"); end
+				barTexture = {name=L["Main/Texture"],type="select",order=15, dialogControl = 'LSM30_Statusbar',
+					values = SA_BarTextures,
+					get = function(info) return SA_Text[SAMod.Main.BarTexture]; end,
+					set = function(info,val) SAMod.Main.BarTexture = SA_BarTextures[val]; addon:RetextureBars(SA_BarTextures[val],"stats"); end
 				},
 				reset = {name = L["ResetDatabase"],type = "execute",order=100,width="full",
 					desc = L["ResetDatabaseDesc"],
