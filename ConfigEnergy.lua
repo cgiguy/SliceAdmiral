@@ -7,6 +7,8 @@ local lUnitManaMax = UnitManaMax("player")
 function addon:OnInitialize()
 	local energy = lUnitManaMax
 	local Co = SAMod.Energy.Color;
+	local tCo = SAMod.Energy.TextColor;
+	local cCo = SAMod.Energy.ComboTextColor
 	if (energy < 50) then
 		energy = 100
 	end
@@ -21,7 +23,7 @@ function addon:OnInitialize()
 							end
 						end,
 			},
-			showcp = {name=L["energy/ShowCombo"],type="toggle",order=2,width="full",
+			showcp = {name=L["energy/ShowCombo"],type="toggle",order=4,
 					get = function(info) return SAMod.Energy.ShowComboText; end, 
 					set = function(info,val) SAMod.Energy.ShowComboText=val;
 						if not (SAMod.Energy.ShowComboText) and not (SAMod.Energy.AnticpationText) then
@@ -31,7 +33,7 @@ function addon:OnInitialize()
 						end
 					end,
 				},
-			showanti = {name=L["energy/ShowAnti"],type="toggle",order=3,width="full",
+			showanti = {name=L["energy/ShowAnti"],type="toggle",order=7,width="full",
 					get = function(info) return SAMod.Energy.AnticpationText; end, 
 					set = function(info,val) SAMod.Energy.AnticpationText=val;
 						if not (SAMod.Energy.ShowComboText) and not (SAMod.Energy.AnticpationText) then
@@ -41,7 +43,7 @@ function addon:OnInitialize()
 						end
 					end,
 				},
-			marker1 = {name=L["energy/mark1"],type="range",order=4,
+			marker1 = {name=L["energy/mark1"],type="range",order=8,
 				min=1,max=energy,step=1,
 				get = function(info) return SAMod.Energy.Energy1; end,
 				set = function(info,val) SAMod.Energy.Energy1 = val; 
@@ -49,7 +51,7 @@ function addon:OnInitialize()
 						SA_Spark1:SetPoint("TOPLEFT", VTimerEnergy, "TOPLEFT", p1, 0);
 					end,
 			},
-			marker2 = {name=L["energy/mark2"],type="range",order=5,
+			marker2 = {name=L["energy/mark2"],type="range",order=9,
 				min=1,max=energy,step=1,
 				get = function(info) return SAMod.Energy.Energy2; end,
 				set = function(info,val) SAMod.Energy.Energy2 = val; 
@@ -81,9 +83,18 @@ function addon:OnInitialize()
 				get = function(info) return SAMod.Energy.BarTexture; end,				
 				set = function(info,val) SAMod.Energy.BarTexture = val; sliceadmiral:RetextureBars(LSM:Fetch("statusbar",val),"Energy") end,
 			},
-			texColor = { name=L["energy/Color"], type="color", order=2,width="double",
+			texColor = { name=L["energy/Color"], type="color", order=2,
 				get = function(info) return Co.r, Co.g,Co.b,Co.a; end,
 				set = function(info, r,g,b,a) VTimerEnergy:SetStatusBarColor(r,g,b); Co.r = r; Co.g = g; Co.b = b; end,
-			},			
+			},
+			textColor = { name=L["energy/TextColor"], type="color", order=3,
+				get = function(info) return tCo.r, tCo.g,tCo.b,tCo.a; end,
+				set = function(info, r,g,b,a) VTimerEnergyTxt:SetTextColor(r,g,b,a); tCo.r = r; tCo.g = g; tCo.b = b;tCo.a = a; end,
+			},
+			combotextColor = { name=L["energy/CoTextColor"], type="color", order=5,
+				get = function(info) return cCo.r, cCo.g,cCo.b,cCo.a; end,
+				set = function(info, r,g,b,a) SA_Combo:SetTextColor(r,g,b,a); cCo.r = r; cCo.g = g; cCo.b = b;cCo.a = a; end,
+			},
+			
 		};
 end

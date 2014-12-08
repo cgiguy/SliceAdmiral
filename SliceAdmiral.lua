@@ -140,7 +140,9 @@ SADefault = {
 			EnergySound1 = "",
 			EnergySound2 = "",
 			EnergyTrans = 75,
-			Color = { r=1.0, g=0.96, b=0.41, a=1.0}
+			Color = { r=1.0, g=0.96, b=0.41, a=1.0},
+			TextColor = { r=1.0, g=1.0, b=1.0, a=0.9},
+			ComboTextColor = { r=1.0, g=1.0, b=1.0, a=0.8},
 		},
 		Sound = {
 			[5171] = {enabled=true, tick = "Tambourine", alert = "Waaaah",tickStart=3.0, }, --Slice and Dice
@@ -1115,9 +1117,13 @@ function addon:SA_OnLoad()
 	SA_Data.BarFont4:SetFont("Fonts\\FRIZQT__.TTF", 8)
 	SA_Data.BarFont4:SetShadowColor(0,0,0, 0.7); 
 	SA_Data.BarFont4:SetShadowOffset(0.8, -0.8);
-
+	
+	local tCo = SAMod.Energy.TextColor
+	local Co = SAMod.Energy.ComboTextColor
 	VTimerEnergyTxt:SetFontObject(SA_Data.BarFont);
+	VTimerEnergyTxt:SetTextColor(tCo.r,tCo.g,tCo.b,tCo.a)
 	SA_Combo:SetFontObject(SA_Data.BarFont3);
+	SA_Combo:SetTextColor(Co.r,Co.g,Co.b,Co.a)
 
 	VTimerEnergy:SetMinMaxValues(0,UnitManaMax("player"));
 	VTimerEnergy:SetBackdrop({
