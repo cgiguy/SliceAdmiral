@@ -74,6 +74,7 @@ L["Bars/Sort"] = "Sort bars by duration"
 L["Bars/ShowDoT"] = "Show DoT ticks"
 L["Bars/DoTCrit"] = "Highlight DoT crits"
 L["bars/color"] = "Bar Color"
+L["bars/tickCd"] = "Tick Countdown"
 
 L["Sound/MasterVolume"] = "Use Master Volume."
 L["Sound/MasterDesc"] = "Play sound when sound effects are disabled."

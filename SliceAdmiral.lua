@@ -143,27 +143,27 @@ SADefault = {
 			Color = { r=1.0, g=0.96, b=0.41, a=1.0}
 		},
 		Sound = {
-			[5171] = {enabled=true, tick = "Tambourine", alert = "Waaaah",}, --Slice and Dice
-			[73651] = {enabled=true, tick = "Tambourine", alert = "None",}, -- Recuperate
-			[1943] = {enabled=true, tick = "Shaker", alert = "BassDrum", }, --Rupture
-			[79140] = {enabled=true, tick = "Ping", alert = "None", }, --Vendetta
-			[84617] = {enabled=true, tick = "BassDrum", alert = "Shaker", },--RevealingStrike
-			[16511] = {enabled=true, tick = "Ping", alert = "None", }, --Hemorrhage
-			[84745] = {enabled=false, tick = "None", alert="None", },
-			[157562] = {enabled=false, tick = "None", alert="None", },
-			[84746] = {enabled=false, tick = "None", alert="None", },
-			[84747] = {enabled=false, tick = "None", alert="None", },
-			[32645] = {enabled=false, tick = "None", alert="None", },
-			[1966] = {enabled=false, tick = "None", alert="None", },
-			[137573] = {enabled=false, tick = "None", alert="None", },
-			[2818] = {enabled=false, tick = "None", alert="None", },
-			[703] = {enabled=false, tick = "None", alert="None", },
-			[13750] = {enabled=false, tick = "None", alert="None", },
-			[154953] = {enabled=false, tick = "None", alert="None", },
-			[122233] = {enabled=false, tick = "None", alert="None", },
-			[51713] = {enabled=false, tick = "None", alert="None", },
-			[91021] = {enabled=false, tick = "None", alert="None", },
-			[31665] = {enabled=false, tick = "None", alert="None", },
+			[5171] = {enabled=true, tick = "Tambourine", alert = "Waaaah",tickStart=3.0, }, --Slice and Dice
+			[73651] = {enabled=true, tick = "Tambourine", alert = "None",tickStart=3.0, }, -- Recuperate
+			[1943] = {enabled=true, tick = "Shaker", alert = "BassDrum", tickStart=3.0, }, --Rupture
+			[79140] = {enabled=true, tick = "Ping", alert = "None", tickStart=3.0, }, --Vendetta
+			[84617] = {enabled=true, tick = "BassDrum", alert = "Shaker", tickStart=3.0, },--RevealingStrike
+			[16511] = {enabled=true, tick = "Ping", alert = "None", tickStart=3.0, }, --Hemorrhage
+			[84745] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
+			[157562] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
+			[84746] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
+			[84747] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
+			[32645] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
+			[1966] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
+			[137573] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
+			[2818] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
+			[703] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
+			[13750] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
+			[154953] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
+			[122233] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
+			[51713] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
+			[91021] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
+			[31665] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
 			MasterVolume = false,
 			OutOfCombat = false,			
 			none = "none",
@@ -298,7 +298,7 @@ end
 function addon:SA_Sound(saved,bufferd)
 	if not UnitAffectingCombat("player") and not SAMod.Sound.OutOfCombat then return end
 	if not saved then return end
-	table.insert(soundBuffer,saved)
+	soundBuffer[#soundBuffer+1] = saved;	
 	if bufferd then
 		C_Timer.After(0.3,addon.PlayBuffer)
 	else
@@ -332,7 +332,7 @@ function addon:SA_ChangeAnchor()
  end
 
  --anchor CPs on stat bar if energy bar is hidden.
- if  not SAMod.Energy.ShowEnergy then
+ if not SAMod.Energy.ShowEnergy then
 	LastAnchor = statsBar;
  end
 
@@ -500,9 +500,13 @@ function addon:UNIT_MAXPOWER(...)
 end
 
 local function MasterOfSubtley()					
-	local name, rank, icon, count, debuffType, duration, expirationTime = UnitAura("player", SA_Spells[31665].name);					
-	SABars[SA_Spells[31665].name]["Expires"] = addon:CalcExpireTime(expirationTime);
-	SABars[SA_Spells[31665].name]["obj"]:Show();
+	local name, rank, icon, count, debuffType, duration, expirationTime = UnitAura("player", SA_Spells[31665].name);
+	if name then		
+		SABars[SA_Spells[31665].name]["Expires"] = expirationTime;		
+		SABars[SA_Spells[31665].name]["tickStart"] = (expirationTime or 0) - SAMod.Sound[31665].tickStart;					
+		SABars[SA_Spells[31665].name]["LastTick"] = SABars[SA_Spells[31665].name]["tickStart"] - 1.0
+		SABars[SA_Spells[31665].name]["obj"]:Show();
+	end
 end
 
 function addon:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
@@ -531,7 +535,9 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
 					SABars[SA_Spells[spellId].name]["obj"]:Hide();
 				else
 					local name, rank, icon, count, debuffType, duration, expirationTime = UnitAura("player", SA_Spells[spellId].name);					
-					SABars[SA_Spells[spellId].name]["Expires"] = addon:CalcExpireTime(expirationTime);
+					SABars[SA_Spells[spellId].name]["Expires"] = expirationTime or 0;
+					SABars[SA_Spells[spellId].name]["tickStart"] = (expirationTime or 0) - SAMod.Sound[spellId].tickStart;					
+					SABars[SA_Spells[spellId].name]["LastTick"] = SABars[SA_Spells[spellId].name]["tickStart"] - 1.0
 					SABars[SA_Spells[spellId].name]["obj"]:Show();
 					if saTimerOp.Dynamic then addon:UpdateMaxValue(spellId,duration) end
 				end
@@ -568,7 +574,9 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
 						SABars[SA_Spells[spellId].name]["obj"]:Hide();
 					else
 						local name, rank, icon, count, debuffType, duration, expirationTime = UnitDebuff("target", SA_Spells[spellId].name, nil, "PLAYER");
-						SABars[SA_Spells[spellId].name]["Expires"] = addon:CalcExpireTime(expirationTime);
+						SABars[SA_Spells[spellId].name]["Expires"] = expirationTime or 0;
+						SABars[SA_Spells[spellId].name]["tickStart"] = (expirationTime or 0) - SAMod.Sound[spellId].tickStart;					
+						SABars[SA_Spells[spellId].name]["LastTick"] = SABars[SA_Spells[spellId].name]["tickStart"] - 1.0
 						SABars[SA_Spells[spellId].name]["obj"]:Show();
 						if saTimerOp.Dynamic then addon:UpdateMaxValue(spellId,duration) end
 					end
@@ -658,7 +666,7 @@ function addon:SA_TestTarget()
 				saBars[spell.name]["Expires"] = 0;
 				saBars[spell.name]["obj"]:Hide();
 			else
-				saBars[spell.name]["Expires"] = addon:CalcExpireTime(expirationTime);
+				saBars[spell.name]["Expires"] = expirationTime or 0;
 				saBars[spell.name]["obj"]:Show();
 			end
 		end
@@ -736,42 +744,36 @@ function addon:SA_SetComboPts(event)
 end
 
 function addon:SA_CPFrame()
-	 local f = CreateFrame("Frame", nil, SA);
-	 local width = widthUI --SA_Data.BARS["CP"]["obj"]:GetWidth();
+	local f = CreateFrame("Frame", nil, SA);
+	local width = widthUI --SA_Data.BARS["CP"]["obj"]:GetWidth();
 
-	 f:ClearAllPoints();
-	 f:SetWidth(width);
-	 f:SetScale(scaleUI);
-	 f:SetHeight(10); 
-	 f:SetAllPoints(VTimerEnergy)
-	 --f:SetPoint("TOPLEFT", VTimerEnergy, "BOTTOMLEFT", 1, 0);
+	f:ClearAllPoints();
+	f:SetSize(width, 10);
+	f:SetScale(scaleUI);	
+	f:SetAllPoints(VTimerEnergy)
+	--f:SetPoint("TOPLEFT", VTimerEnergy, "BOTTOMLEFT", 1, 0);	 
 	 
-	 
-	 f.bg = f:CreateTexture(nil, "BACKGROUND");
-	 f.bg:ClearAllPoints();
+	f.bg = f:CreateTexture(nil, "BACKGROUND");
+	f.bg:ClearAllPoints();
 	 --f.bg:SetAllPoints(f);
-	 f.bg:SetPoint("TOPLEFT", f, "TOPLEFT", 0, 0);
-	 f.bg:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", 0, 0);
-	 f.bg:SetTexture(addon:SA_BarTexture("stats"));
-	 f.bg:SetVertexColor(0.3, 0.3, 0.3);
-	 f.bg:SetAlpha(0.7);
+	f.bg:SetPoint("TOPLEFT", f, "TOPLEFT", 0, 0);
+	f.bg:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", 0, 0);
+	f.bg:SetTexture(addon:SA_BarTexture("stats"));
+	f.bg:SetVertexColor(0.3, 0.3, 0.3);
+	f.bg:SetAlpha(0.7);
 
-	 f.combos = {};
-	 f.antis = {};
+	f.combos = {true, true, true, true, true};
+	f.antis = {true, true, true, true, true};
 
-	 local cx = 0;
-	 local spacing = width/30; --orig:= 3
-	 local cpwidth = ((width-(spacing*4))/9.2);
+	local cx = 0;
+	local spacing = width/30; --orig:= 3
+	local cpwidth = ((width-(spacing*4))/9.2);
 
-	 -- text
-	 local font = "Fonts\\FRIZQT__.TTF";
-	 local fontsize = 12;
-	 local fontstyle = "OUTLINE";
-	 local cpC = SAMod.Combo.CPColor
-	 local cpA = SAMod.Combo.AnColor
-	 local flvl = f:GetFrameLevel()
+	local cpC = SAMod.Combo.CPColor
+	local cpA = SAMod.Combo.AnColor
+	local flvl = f:GetFrameLevel()
 	 
-	 for i = 1, 5 do
+	for i = 1, 5 do
 		local combo = CreateFrame("Frame", nil, f);
 		combo:SetFrameLevel(flvl+1)
 		combo:ClearAllPoints()
@@ -789,9 +791,9 @@ function addon:SA_CPFrame()
 		f.combos[i] = combo;
 		
 		cx = cx + cpwidth + spacing
-	 end
-	 cx = 0;
-	 for i = 1, 5 do
+	end
+	cx = 0;
+	for i = 1, 5 do
 		local anti = CreateFrame("Frame", nil, f);
 		anti:SetFrameLevel(flvl+2); -- Better than f.combo[i] as parrent due to visibility
 		anti:ClearAllPoints()
@@ -809,13 +811,10 @@ function addon:SA_CPFrame()
 		f.antis[i] = anti;
 		
 		cx = cx + cpwidth + spacing
-	 end
+	end
 
-	 --f.overlay = CreateFrame("Frame", nil, f)
-	 --f.overlay:ClearAllPoints()
-	 --f.overlay:SetAllPoints(f)
-	 f:Hide();
-	 return f;
+	f:Hide();
+	return f;
 end
 
 function addon:SA_UpdateCPWidths()
@@ -877,9 +876,8 @@ function addon:SA_CreateStatBar()
 	local width = widthUI;
 
 	f:ClearAllPoints();
-	f:SetWidth(width);
-	f:SetScale(scaleUI);
-	f:SetHeight(15)
+	f:SetSize(width,15);
+	f:SetScale(scaleUI);	
 	f:SetPoint("BOTTOMLEFT", VTimerEnergy, "TOPLEFT", 0, 0) 
 
 	f.bg = f:CreateTexture(nil, "BACKGROUND")
@@ -890,7 +888,7 @@ function addon:SA_CreateStatBar()
 	f.bg:SetVertexColor(0.3, 0.3, 0.3)
 	f.bg:SetAlpha(0.7)
 
-	f.stats = {}
+	f.stats = {true, true, true, true,}
 
 	local numStats = SA2.numStats or 4; --HP TODO option for this
 	local spacing = width/60;
@@ -983,7 +981,7 @@ function addon:SA_flashBuffedStats(totalAP,buffAP,crit,mhSpeed,guile)
 		return
 	end
 
-	local statCheck = {};
+	local statCheck = {true, true, true, true,};
 	statCheck[1] = ( (SA_Data.baseAP*2) < (totalAP - buffAP));
 	statCheck[2] = (crit > (SA_Data.baseCrit * 1.5)) ;
 	statCheck[3] = (mhSpeed < (SA_Data.baseSpeed / 1.5));
@@ -1012,9 +1010,8 @@ end
 function addon:SA_NewFrame()
 	 local f = CreateFrame("StatusBar", nil, SA);
 
-	 f:SetWidth(widthUI);
-	 f:SetScale(scaleUI);
-	 f:SetHeight(12);
+	 f:SetSize(widthUI, 12);
+	 f:SetScale(scaleUI); 
 	 
 	 f:SetPoint("BOTTOMLEFT", VTimerEnergy, "TOPLEFT", 2, 0);
 	 
@@ -1040,8 +1037,7 @@ function addon:SA_NewFrame()
 		f.text = f:CreateFontString(nil, nil, "GameFontWhite")
 	 end
 	 f.text:SetFontObject(SA_Data.BarFont2);
-	 f.text:SetHeight(10)
-	 f.text:SetWidth(30);
+	 f.text:SetSize(30,10);	 
 	 f.text:SetPoint("TOPRIGHT", f, "TOPRIGHT", -2,0);
 	 f.text:SetJustifyH("RIGHT") 
 	 f.text:SetText("");
@@ -1061,8 +1057,7 @@ function addon:SA_NewFrame()
 		f.DoTtext = f:CreateFontString(nil, nil, nil)
 	 end
 	 f.DoTtext:SetFontObject(SA_Data.BarFont2);
-	 f.DoTtext:SetHeight(10)
-	 f.DoTtext:SetWidth(60);
+	 f.DoTtext:SetSize(60,10)	 
 	 f.DoTtext:SetPoint("CENTER", f, "CENTER", 0 , 0);
 	 f.DoTtext:SetJustifyH("CENTER")
 	 f.DoTtext:SetText("");
@@ -1167,90 +1162,51 @@ function addon:SA_OnLoad()
 	SA_Data.TOPORDER = {};
 	for k,v in pairs(SA_Spells) do
 		if SA_Spells[k].sort then
-			table.insert(SA_Data.BARORDER, SA_Data.BARS[SA_Spells[k].name])
+			SA_Data.BARORDER[#SA_Data.BARORDER+1] = SA_Data.BARS[SA_Spells[k].name];		
 		else
-			table.insert(SA_Data.TOPORDER, SA_Data.BARS[SA_Spells[k].name])
+			SA_Data.TOPORDER[#SA_Data.TOPORDER+1] = SA_Data.BARS[SA_Spells[k].name];
 		end
 	end 
 	
-	SA2.maxSortableBars = tablelength(SA_Data.BARORDER)
-	SA2.topSortableBars = tablelength(SA_Data.TOPORDER)
+	SA2.maxSortableBars = #SA_Data.BARORDER;
+	SA2.topSortableBars = #SA_Data.TOPORDER;
 	if SAMod.Combo.ShowStatBar then
 		addon:SA_UpdateStats();
 	end
 	print(string.format(L["SALoaded"], SliceAdmiralVer))
 	if (SA) then
-		addon:SA_Config_VarsChanged();
-		addon:SA_Config_OtherVars();
+		addon:SA_Config_VarsChanged();		
 		SA:SetAlpha(SAMod.Main.Fade/100);
 	end
 end
 
-function addon:CalcExpireTime(expireTime)
-	if expireTime and (expireTime > 0) and (SA_Data.tNow < expireTime) then 
-		return expireTime - SA_Data.tNow;
-	else
-		return 0;
-	end
-end
-
-function addon:SA_util_Time(unit, spell)
-	local _, _, _, _, _, _, expirationTime = UnitAura(unit, spell, nil, Sa_filter[unit]);
-	if expirationTime then
-		return addon:CalcExpireTime(expirationTime);
-	else
-		return 0;
-	end
-end
-
 local function SA_UpdateBar(unit, spell, sa_sound)
-	local sa_time = addon:SA_util_Time(unit, spell);
+	local GetTime = GetTime
 	local sabars = SA_Data.BARS[spell]
-	sabars["Expires"] = sa_time;
+	local sa_time = sabars["Expires"] - GetTime();
+	local tickStart = sabars["tickStart"] - GetTime();
+	local lastTick = sabars["LastTick"]
 	
-	if sa_time > 0 then
-		if sabars then
-			sabars["obj"]:SetValue(sa_time);
-			sabars["obj"].text:SetText(string.format("%0.1f", sa_time));
-		end
+	if sa_time > 0 and sabars then
+		sabars["obj"]:SetValue(sa_time);
+		sabars["obj"].text:SetText(string.format("%0.1f", sa_time));		
 	else
-		sabars["obj"]:Hide();	
+		sabars["obj"]:Hide();
 		sabars["Expires"] = 0;
 	end
-	if (sa_time <= 3) and (sa_time > 0) then
-		if (sabars["AlertPending"] == 3) then
-			sabars["AlertPending"] = 2;
-			addon:SA_Sound(sa_sound,false);
-		else
-			if sa_time <= 2 then
-				 if (sabars["AlertPending"] == 2) then
-					sabars["AlertPending"] = 1;
-					addon:SA_Sound(sa_sound,false);
-				 else
-					if sa_time <= 1 then
-						 if (sabars["AlertPending"] == 1) then
-							sabars["AlertPending"] = 0;
-							addon:SA_Sound(sa_sound,false);
-						 end
-					end
-				 end
-			end
-		 end
-	else
-		sabars["AlertPending"] = 3;
+	if (sa_time > tickStart) and ((lastTick + 1.0) < GetTime()) then
+		addon:SA_Sound(sa_sound,false);
+		sabars["LastTick"] = GetTime();
 	end
 end
 
 local function SA_QuickUpdateBar(unit, spell)
-	local sa_time = addon:SA_util_Time(unit, spell);
-	local sabars = SA_Data.BARS[spell]
-	sabars["Expires"] = sa_time;
+	local sabars = SA_Data.BARS[spell];
+	local sa_time = sabars["Expires"] - GetTime();
 	
-	if sa_time > 0 then
-		if sabars then
-			sabars["obj"]:SetValue(sa_time);
-			sabars["obj"].text:SetText(string.format("%0.1f", sa_time));
-		end
+	if sa_time > 0 and sabars then		
+		sabars["obj"]:SetValue(sa_time);
+		sabars["obj"].text:SetText(string.format("%0.1f", sa_time));
 	else
 		sabars["obj"]:Hide();
 		sabars["Expires"] = 0;
@@ -1318,10 +1274,19 @@ function addon:SA_Config_VarsChanged()
 	end;		
 	
 	if SAMod.Energy.ShowEnergy then
-		VTimerEnergy:Show();		
+		VTimerEnergy:Show();
 	else
 		VTimerEnergy:Hide();    
 	end
+	
+	local lManaMax = UnitManaMax("player");
+	if (lManaMax == 0) then
+		lManaMax = 100
+	end
+	local p1 = SAMod.Energy.Energy1 / lManaMax * SAMod.Main.Width;
+	local p2 = SAMod.Energy.Energy2 / lManaMax * SAMod.Main.Width;
+	SA_Spark1:SetPoint("TOPLEFT", VTimerEnergy, "TOPLEFT", p1, 0);
+	SA_Spark2:SetPoint("TOPLEFT", VTimerEnergy, "TOPLEFT", p2, 0);
 
 	if not SACombo.PointShow and not SACombo.AnticipationShow  then   
 		SA_Data.BARS["CP"]["obj"]:Hide();		
@@ -1343,19 +1308,7 @@ function addon:SA_Config_VarsChanged()
 	addon:RetextureBars(addon:SA_BarTexture("spells"),"spells");
 	addon:RetextureBars(addon:SA_BarTexture("Energy"),"Energy");
 	addon:RetextureBars(addon:SA_BarTexture("stats"),"stats");
-	addon:SA_Config_OtherVars();
-end
-
-function addon:SA_Config_OtherVars()
-	local lManaMax = UnitManaMax("player");
-	if (lManaMax == 0) then
-		lManaMax = 100
-	end
-	local p1 = SAMod.Energy.Energy1 / lManaMax * SAMod.Main.Width;
-	local p2 = SAMod.Energy.Energy2 / lManaMax * SAMod.Main.Width;
-
-	SA_Spark1:SetPoint("TOPLEFT", VTimerEnergy, "TOPLEFT", p1, 0);
-	SA_Spark2:SetPoint("TOPLEFT", VTimerEnergy, "TOPLEFT", p2, 0);
+	
 end
 
 function addon:ResetConfig()
@@ -1464,8 +1417,9 @@ function addon:OnEnable()
 			if not (k == 115189) then
 				SA_Data.BARS[SA_Spells[k].name] = {	
 						["obj"] = 0,
-						["Expires"] = 0,		-- Actual time left to expire in seconds
-						["AlertPending"] = 0, 		
+						["Expires"] = 0,		-- Actual time left to expire in seconds												
+						["LastTick"] = 0,
+						["tickStart"] = 0, 
 				}
 			end
 		end
