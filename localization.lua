@@ -43,6 +43,7 @@ L["Main/Scale"] = "AddOn Scale"
 L["Main/Width"] =  "Bar Width"
 L["Main/oocFade"] = "Out of Combat Fade"
 L["Main/Texture"] = "Bar Texture"
+L["Main/Hide"] = "Hide outside combat"
 
 L["Version"] = "Version"
 L["TimerBars"] = "Timer Bars"
