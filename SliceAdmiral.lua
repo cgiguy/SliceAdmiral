@@ -350,26 +350,24 @@ function addon:SA_ChangeAnchor()
 	else
 		if SAMod.Energy.ShowEnergy then
 			LastAnchor = VTimerEnergy;
-			
 		else
 			LastAnchor = cpBar;
 		end
 	end
  else
-	 if SAMod.Combo.PointShow then
+	if SAMod.Combo.PointShow then
 		LastAnchor = cpBar;
-	 else
-		 if SAMod.Energy.ShowEnergy then
-		 LastAnchor = VTimerEnergy;
-			
-		 else
+	else
+		if SAMod.Energy.ShowEnergy then
+			LastAnchor = VTimerEnergy;
+		else
 			LastAnchor = statsBar;
-		 end
-	 end
- end	 
-	 for i = 1, SA2.maxSortableBars do 
+		end
+	end
+ end
+	for i = 1, SA2.maxSortableBars do 
 		local SortBar = SA_Data.BARORDER[i]
-		 if (SortBar["Expires"] > 0) then
+		if (SortBar["Expires"] > 0) then
 			SortBar["obj"]:ClearAllPoints();
 			if opt.Barsup then
 				SortBar["obj"]:SetPoint("BOTTOMLEFT", LastAnchor, "TOPLEFT", 0, offSetSize); --bar on top
@@ -377,8 +375,8 @@ function addon:SA_ChangeAnchor()
 				SortBar["obj"]:SetPoint("TOPLEFT", LastAnchor, "BOTTOMLEFT", 0, -1 * offSetSize);
 			end
 			LastAnchor = SortBar["obj"];
-		 end
-	 end 
+		end
+	end
 	for i = 1, SA2.topSortableBars do
 		local SortBar = SA_Data.TOPORDER[i]
 		if (SortBar["Expires"] > 0) then
