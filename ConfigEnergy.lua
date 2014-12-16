@@ -18,7 +18,7 @@ function addon:OnInitialize()
 				set = function(info,val) SAMod.Energy.ShowEnergy = val;
 							if val then 
 								VTimerEnergy:Show();
-							else 
+							else
 								VTimerEnergy:Hide();
 							end
 						end,
