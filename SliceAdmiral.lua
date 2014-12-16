@@ -525,6 +525,7 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
 	local saTimerOp = SAMod.ShowTimer.Options
 	local GetUnitName = GetUnitName
 	local UnitName = UnitName
+	local select = select
 	local SA_Spells = SA_Spells
 	local SABars = SA_Data.BARS
 	if type =="UNIT_DIED" then
@@ -543,6 +544,7 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
 						addon:SA_Sound(LSM:Fetch("sound",SAMod.Sound[spellId].alert),true)
 					end
 					SABars[SA_Spells[spellId].name]["Expires"] = 0;
+					SABars[SA_Spells[spellId].name]["tickStart"] = 0;
 					SABars[SA_Spells[spellId].name]["obj"]:Hide();
 				else
 					local name, rank, icon, count, debuffType, duration, expirationTime = UnitAura("player", SA_Spells[spellId].name);					
@@ -582,6 +584,7 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
 							addon:SA_Sound(LSM:Fetch("sound",SAMod.Sound[spellId].alert),true)
 						end
 						SABars[SA_Spells[spellId].name]["Expires"] = 0;
+						SABars[SA_Spells[spellId].name]["tickStart"] = 0; 
 						SABars[SA_Spells[spellId].name]["obj"]:Hide();
 					else
 						local name, rank, icon, count, debuffType, duration, expirationTime = UnitDebuff("target", SA_Spells[spellId].name, nil, "PLAYER");
@@ -624,6 +627,10 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
 	end
 	if type=="SPELL_DAMAGE" and saTimerOp.BladeFlurry and (select(12,...) == 22482) then
 		bfhits[destGUID] = true
+	end	
+	-- Sinister Calling fix 
+	if type=="SPELL_DAMAGE" and (select(12,...) == 53 or select(12,...) == 8676) and select(25,...) then		
+		C_Timer.After(0.1, addon.SA_TestTarget); -- For some reason there must be a delay or it won't notice the new expiretime
 	end
 end
 
@@ -668,6 +675,7 @@ end
 function addon:SA_TestTarget()
 	local showT = SAMod.ShowTimer
 	local saBars = SA_Data.BARS
+	local saTimerOp = SAMod.ShowTimer.Options
 	
 	for k,v in pairs(showT) do
 		local spell = SA_Spells[k]
@@ -675,10 +683,14 @@ function addon:SA_TestTarget()
 			local name, _, _, _, _, _, expirationTime, _ = UnitAura(spell.target, spell.name, nil, Sa_filter[spell.target]);
 			if not (name) then
 				saBars[spell.name]["Expires"] = 0;
+				saBars[spell.name]["tickStart"] = 0;
 				saBars[spell.name]["obj"]:Hide();
-			else
+			else				
 				saBars[spell.name]["Expires"] = expirationTime or 0;
+				saBars[spell.name]["tickStart"] = (expirationTime or 0) - SAMod.Sound[spell.id].tickStart;					
+				saBars[spell.name]["LastTick"] = saBars[spell.name]["tickStart"] - 1.0
 				saBars[spell.name]["obj"]:Show();
+				if saTimerOp.Dynamic then addon:UpdateMaxValue(spell.id,duration) end				
 			end
 		end
 	end
@@ -1208,6 +1220,8 @@ local function SA_UpdateBar(unit, spell, sa_sound)
 	else
 		sabars["obj"]:Hide();
 		sabars["Expires"] = 0;
+		sabars["LastTick"] = 0;
+		return
 	end
 	if (sa_time > tickStart) and ((lastTick + 1.0) < GetTime()) then
 		addon:SA_Sound(sa_sound,false);
