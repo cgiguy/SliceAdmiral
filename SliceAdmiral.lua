@@ -530,9 +530,13 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
 	local SABars = SA_Data.BARS
 	if type =="UNIT_DIED" then
 		soundBuffer = {}
+	end	
+	local spell = select(12,...)
+	if 2818 == spell then 
+		addon.SA_TestTarget() --Work around for blizzard bugg.
 	end
-	
-	if (type == "SPELL_AURA_REFRESH" or type == "SPELL_AURA_APPLIED" or type == "SPELL_AURA_REMOVED" or type == "SPELL_AURA_APPLIED_DOSE" or type == "SPELL_PERIODIC_AURA_REMOVED" or type == "SPELL_PERIODIC_AURA_APPLIED" or type == "SPELL_PERIODIC_AURA_APPLIED_DOSE" or type == "SPELL_PERIODIC_AURA_REFRESH") then
+
+	if type == "SPELL_AURA_REFRESH" or type == "SPELL_AURA_APPLIED" or type == "SPELL_AURA_REMOVED" or type == "SPELL_AURA_APPLIED_DOSE" or type == "SPELL_PERIODIC_AURA_REMOVED" or type == "SPELL_PERIODIC_AURA_APPLIED" or type == "SPELL_PERIODIC_AURA_APPLIED_DOSE" or type == "SPELL_PERIODIC_AURA_REFRESH" then
 		local spellId, spellName, spellSchool = select(12, ...);
 		local isMySpell;
 		isMySpell = (sourceName == UnitName("player")); 
@@ -589,7 +593,7 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
 					else
 						local name, rank, icon, count, debuffType, duration, expirationTime = UnitDebuff("target", SA_Spells[spellId].name, nil, "PLAYER");
 						SABars[SA_Spells[spellId].name]["Expires"] = expirationTime or 0;
-						SABars[SA_Spells[spellId].name]["tickStart"] = (expirationTime or 0) - SAMod.Sound[spellId].tickStart;					
+						SABars[SA_Spells[spellId].name]["tickStart"] = (expirationTime or 0) - SAMod.Sound[spellId].tickStart;
 						SABars[SA_Spells[spellId].name]["LastTick"] = SABars[SA_Spells[spellId].name]["tickStart"] - 1.0
 						SABars[SA_Spells[spellId].name]["obj"]:Show();
 						if saTimerOp.Dynamic then addon:UpdateMaxValue(spellId,duration) end
