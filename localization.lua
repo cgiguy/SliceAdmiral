@@ -1,28 +1,28 @@
 -- Author      : cgiguy
 -- Create Date : 7/19/2011
 
-SA_Spells = { [5171] = { target = "player", sort = true,duration=36, dynamic=true,}, --Slice and Dice
-	[73651] = { target = "player", sort = true, duration=30,dynamic=true, }, -- Recuperate
-	[2818] = { target = "target", sort = false, duration=12,dynamic=true,}, --DeadlyPoison
-	[1943] = { target = "target", sort = true,duration=24, dynamic=true, },  --Rupture
-	[1966]  = { target = "player", sort = false,duration=5,dynamic=false, }, --Feint
-	[703] = { target = "target", sort = true,duration=18, dynamic=true, }, --Garrote
-	[115189] = { target = "player",sort = true,duration=15,dynamic=false, }, --Anticipation
-	[137573] = { target = "player",sort = true,duration=4,dynamic=false, }, --BurstOfSpeed
-	[154953] = { target = "target", sort = true,duration=12,dynamic=false, }, --InternalBleeding
-	[79140] = { target = "target", sort=false,duration=20,dynamic=false, }, --Vendetta
-	[32645] = { target = "player",sort = true,duration=6,dynamic=false,}, --Envenom
-	[84617] = { target = "target", sort=true,duration=24,dynamic=true,}, --RevealingStrike
-	[13750] = { target = "player",sort=true,duration=15,dynamic=false,}, --Adrenaline Rush
-	[84745] = { target = "player",sort=false,duration=15,dynamic=false, }, --Guile Rank 1
-	[84746] = { target = "player",sort=false,duration=15,dynamic=false,}, --Guile Rank 2
-	[84747] = { target = "player",sort=false,duration=15,dynamic=false,}, --Guile Rank 3
-	[16511] = { target = "target",sort=true,duration=24,dynamic=true, }, -- Hemorrhage	
-	[122233] = { target="target",sort=true, duration=12,dynamic=false,}, --CrimsonTempest
-	[51713] = { target = "player",sort=false,duration=8,dynamic=false,}, --ShadowDance
-	[91021] = { target = "target",sort=true, duration=10,dynamic=false, }, -- FindWeaknes
-	[157562] = { target = "player",sort=true, duration=6,dynamic=false, }, -- Crimson Poison
-	[31665] = { target = "player",sort=true, duration=5,dynamic=false, }, -- Master of Subtlety
+SA_Spells = { [5171] = { target = "player", sort = true,duration=36, pandemic=true,}, --Slice and Dice
+	[73651] = { target = "player", sort = true, duration=30,pandemic=true, }, -- Recuperate
+	[2818] = { target = "target", sort = false, duration=12,pandemic=true,}, --DeadlyPoison
+	[1943] = { target = "target", sort = true,duration=24, pandemic=true, },  --Rupture
+	[1966]  = { target = "player", sort = false,duration=5,pandemic=false, }, --Feint
+	[703] = { target = "target", sort = true,duration=18, pandemic=true, }, --Garrote
+	[115189] = { target = "player",sort = true,duration=15,pandemic=false, }, --Anticipation
+	[137573] = { target = "player",sort = true,duration=4,pandemic=false, }, --BurstOfSpeed
+	[154953] = { target = "target", sort = true,duration=12,pandemic=false, }, --InternalBleeding
+	[79140] = { target = "target", sort=false,duration=20,pandemic=false, }, --Vendetta
+	[32645] = { target = "player",sort = true,duration=6,pandemic=false,}, --Envenom
+	[84617] = { target = "target", sort=true,duration=24,pandemic=true,}, --RevealingStrike
+	[13750] = { target = "player",sort=true,duration=15,pandemic=false,}, --Adrenaline Rush
+	[84745] = { target = "player",sort=false,duration=15,pandemic=false, }, --Guile Rank 1
+	[84746] = { target = "player",sort=false,duration=15,pandemic=false,}, --Guile Rank 2
+	[84747] = { target = "player",sort=false,duration=15,pandemic=false,}, --Guile Rank 3
+	[16511] = { target = "target",sort=true,duration=24,pandemic=true, }, -- Hemorrhage	
+	[122233] = { target="target",sort=true, duration=12,pandemic=false,}, --CrimsonTempest
+	[51713] = { target = "player",sort=false,duration=8,pandemic=false,}, --ShadowDance
+	[91021] = { target = "target",sort=true, duration=10,pandemic=false, }, -- FindWeaknes
+	[157562] = { target = "player",sort=true, duration=6,pandemic=false, }, -- Crimson Poison
+	[31665] = { target = "player",sort=true, duration=5,pandemic=false, }, -- Master of Subtlety
 	};
 
 for k in pairs(SA_Spells) do
@@ -53,7 +53,7 @@ L["SoundEffects"] = "Sound Effects"
 L["ResetDatabase"] = "Reset Database"
 L["ResetDatabaseDesc"] = "Will Reset the Entire Database. This Should Fix most problems."
 
-L["timer/dynamic"] = "Dynamic Timers"
+L["timer/dynamic"] = "Pandemic Timers"
 L["timers/dynamic/desc"] = "Timers will start to decrease at 30% of their full duration. Does not work for certain abilities."
 L["bar/prep"] = "Statusbar Countdown." --need new name
 L["SoundSettings"] = "Sound Settings"
