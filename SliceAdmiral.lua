@@ -414,7 +414,9 @@ function addon:PET_BATTLE_OPENING_START()
 end
 
 function addon:PET_BATTLE_CLOSE()
-	SA:Show();
+	if not SAMod.Main.HideOutOfCombat then
+		SA:Show();
+	end
 end
 
 function addon:PLAYER_ENTERING_WORLD(...)
@@ -560,7 +562,7 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
 				addon:SA_SetComboPts("SPELL_AURA_REMOVED");
 			end
 			-- BladeFlurry Switch --
-			if spellId == 13877 and type == "SPELL_AURA_REMOVED" and saTimerOp.BladeFlurry then 
+			if spellId == 13877 and type == "SPELL_AURA_REMOVED" then 
 				SA_Data.BARS["Stat"]["obj"].stats[3].labelFrame.fs:SetText("Speed")
 				SA_Data.BFActive = false
 				bfticker:Cancel()
@@ -614,26 +616,22 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
 			end
 		end
 	end
-	if (type == "SPELL_DAMAGE") or (type == "SPELL_AURA_APPLIED") or (type == "SPELL_AURA_REMOVED") or (type == "SPELL_AURA_REFRESH") and saTimerOp.guileCount and (sourceName == UnitName("player")) then
-	-- bandits guile--
+	if (type=="SPELL_DAMAGE") or (type == "SPELL_AURA_APPLIED") or (type == "SPELL_AURA_REMOVED") or (type == "SPELL_AURA_REFRESH") and (sourceName == UnitName("player"))  then
 		local spellId, spellName = select(12,...)
 		local multistrike = select(25,...)
-		if (spellId == 84745) or (spellId == 84746) or (spellId == 84747) or (spellId == 1752) and not (multistrike) then
+		if spellId == 22482 and saTimerOp.BladeFlurry then
+			bfhits[destGUID] = true
+		elseif spellId == 53 or spellId == 8676 and multistrike then -- Sinister Calling fix 
+			C_Timer.After(0.1, addon.SA_TestTarget); -- For some reason there must be a delay or it won't notice the new expiretime
+		elseif saTimerOp.guileCount and (spellId == 84745) or (spellId == 84746) or (spellId == 84747) or (spellId == 1752) and not (multistrike) then
+			-- bandits guile--
 			addon:GuileAdvance(spellId,type);
 		end
-		
-	end
-	if type=="SPELL_DAMAGE" and saTimerOp.BladeFlurry and (select(12,...) == 22482) then
-		bfhits[destGUID] = true
-	end	
-	-- Sinister Calling fix 
-	if type=="SPELL_DAMAGE" and (select(12,...) == 53 or select(12,...) == 8676) and select(25,...) then		
-		C_Timer.After(0.1, addon.SA_TestTarget); -- For some reason there must be a delay or it won't notice the new expiretime
-	end
+	end		
 end
 
 function addon:UpdateMaxValue(spellId,duration)
-	if not SA_Spells[spellId] or not SA_Spells[spellId].dynamic then return end;
+	if not SA_Spells[spellId] or not SA_Spells[spellId].pandemic then return end;
 	local spelld = SA_Spells[spellId].duration
 	if not duration then duration = spelld end;
 	local dynvalue = duration*0.3
@@ -678,7 +676,7 @@ function addon:SA_TestTarget()
 	for k,v in pairs(showT) do
 		local spell = SA_Spells[k]
 		if v and spell then
-			local name, _, _, _, _, _, expirationTime, _ = UnitAura(spell.target, spell.name, nil, Sa_filter[spell.target]);
+			local name, _, _, _, _, duration, expirationTime, _ = UnitAura(spell.target, spell.name, nil, Sa_filter[spell.target]);
 			if not (name) then
 				saBars[spell.name]["Expires"] = 0;
 				saBars[spell.name]["tickStart"] = 0;
@@ -1427,7 +1425,7 @@ function addon:InitializeProfile()
 end
 
 function addon:UpdateModuleConfigs()
-	self.db:RegisterDefaults(SADefaults)	
+	self.db:RegisterDefaults(SADefaults)
 end
 
 function addon:AddOption(name, Table, displayName)
@@ -1445,11 +1443,11 @@ function addon:OnEnable()
 	local localizedClass, englishClass = UnitClass("player");
 	local point, xOfs, yOfs = SAMod.Main.point, SAMod.Main.xOfs, SAMod.Main.yOfs
 	if (englishClass == "ROGUE") then
-			for k in pairs(SA_Spells) do
+		for k in pairs(SA_Spells) do
 			if not (k == 115189) then
 				SA_Data.BARS[SA_Spells[k].name] = {	
 						["obj"] = 0,
-						["Expires"] = 0,		-- Actual time left to expire in seconds												
+						["Expires"] = 0,		-- expire time until GetTime()
 						["LastTick"] = 0,
 						["tickStart"] = 0, 
 				}
@@ -1464,7 +1462,7 @@ function addon:OnEnable()
 		if SAMod.Main.HideOutOfCombat and not UnitAffectingCombat("player") then	SA:Hide()	end
 		VTimerEnergy:EnableMouse(not SAMod.Main.IsLocked);
 		VTimerEnergy:SetScript("OnMouseDown", function(self) if (not SAMod.Main.IsLocked) then SA:StartMoving() end end)
-		VTimerEnergy:SetScript("OnMouseUp", function(self) SA:StopMovingOrSizing(); SAMod.Main.point, _l, _l, SAMod.Main.xOfs, SAMod.Main.yOfs = SA:GetPoint(); end )	
+		VTimerEnergy:SetScript("OnMouseUp", function(self) SA:StopMovingOrSizing(); SAMod.Main.point, _l, _l, SAMod.Main.xOfs, SAMod.Main.yOfs = SA:GetPoint(); end )
 		addon:SA_SetScale(SAMod.Main.Scale)
 		addon:SA_SetWidth(SAMod.Main.Width)
 		
