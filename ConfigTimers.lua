@@ -3,6 +3,32 @@ local L = LibStub("AceLocale-3.0"):GetLocale("SliceAdmiral", true);
 local addon = sliceadmiral:NewModule("ShowTimer");
 local LSM = LibStub("LibSharedMedia-3.0")
 
+local SA_talents = {[5171] = "Shared", [73651]= "Shared", [154953]= "Shared", [137573]= "Shared", [1966]= "Shared", [703]= "Shared", [122233]= "Shared",
+			[1943] = "Assassination", [79140]="Assassination", [32645]="Assassination", [2818]="Assassination", [157562]="Assassination",
+			[84617] = "Combat" ,[13750] = "Combat", 
+			[91021]= "Subtlety", [16511]= "Subtlety",[51713]= "Subtlety", [31665] = "Subtlety",
+	};	
+
+local function pandemic(val)
+	local options = sliceadmiral.opt.ShowTimer 
+	for k,v in pairs(SA_talents) do		
+		if v == "Shared" then
+			opt = options.args.Shared.args
+		elseif v == "Assassination" then
+			opt = options.args.Assassination.args
+		elseif v == "Combat" then
+			opt = options.args.Combat.args
+		elseif v == "Subtlety" then 
+			opt = options.args.Subtlety.args
+		end	
+		if val then
+			opt[SA_Spells[k].name].args.valuses.disabled = SA_Spells[k].pandemic
+		else
+			opt[SA_Spells[k].name].args.valuses.disabled = false			
+		end
+	end
+end
+
 function addon:OnInitialize()
 local options = sliceadmiral.opt.ShowTimer 
 local col = SAMod.ShowTimer.Colours
@@ -18,7 +44,7 @@ options.args = {
 			},
 			Dynamic = {name=L["timer/dynamic"],desc=L["timers/dynamic/desc"], type="toggle",order=3,
 				get = function(info) return SAMod.ShowTimer.Options.Dynamic; end,
-				set = function(info,val) SAMod.ShowTimer.Options.Dynamic = val; end, 
+				set = function(info,val) SAMod.ShowTimer.Options.Dynamic = val; pandemic(val); end, 
 			},
 			ShowDoT = {name=L["Bars/ShowDoT"],type="toggle",order=4,		
 				get = function(info) return SAMod.ShowTimer.Options.ShowDoTDmg; end,
@@ -46,12 +72,7 @@ options.args = {
 			Combat = {name=L["Combat"],type="group",order=40,childGroups="tree",args={},},
 			Subtlety ={name=L["Subtlety"],type="group",order=50,childGroups="tree",args={},},			
 		}
-	local SA_talents = {[5171] = "Shared", [73651]= "Shared", [154953]= "Shared", [137573]= "Shared", [1966]= "Shared", [703]= "Shared", [122233]= "Shared",
-			[1943] = "Assassination", [79140]="Assassination", [32645]="Assassination", [2818]="Assassination", [157562]="Assassination",
-			[84617] = "Combat" ,[13750] = "Combat", 
-			[91021]= "Subtlety", [16511]= "Subtlety",[51713]= "Subtlety", [31665] = "Subtlety",
-	};	
-	
+
 	for k,v in pairs(SA_talents) do		
 		if v == "Shared" then
 			opt = options.args.Shared.args
@@ -202,4 +223,6 @@ options.args = {
 	options.args.Subtlety.args[SA_Spells[1943].name] = options.args.Assassination.args[SA_Spells[1943].name];
 	options.args.Subtlety.args[SA_Spells[2818].name] = options.args.Assassination.args[SA_Spells[2818].name];
 
+	pandemic(SAMod.ShowTimer.Options.Dynamic)
+	
 end
