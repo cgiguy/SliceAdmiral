@@ -34,7 +34,6 @@ SADefault = {
 			IsLocked = false,
 			PadLatency = true,
 			point = "TOPLEFT",
-			HideOutOfCombat = false,
 			xOfs = 100,
 			yOfs = -150,
 			Scale = 130,
@@ -414,9 +413,7 @@ function addon:PET_BATTLE_OPENING_START()
 end
 
 function addon:PET_BATTLE_CLOSE()
-	if not SAMod.Main.HideOutOfCombat then
-		SA:Show();
-	end
+	SA:Show();
 end
 
 function addon:PLAYER_ENTERING_WORLD(...)
@@ -436,9 +433,6 @@ function addon:PLAYER_REGEN_DISABLED(...) --enter combat
 	if guileZero then
 		guileZero:Cancel()
 	end
-	if SAMod.Main.HideOutOfCombat then
-		SA:Show()
-	end
 end
 
 function addon:resetGuile()	
@@ -450,9 +444,6 @@ function addon:PLAYER_REGEN_ENABLED(...) --exit combat
 	UIFrameFadeOut(SA, 0.4, SA:GetAlpha(), SAMod.Main.Fade/100)
 	if SAMod.ShowTimer.Options.guileCount then
 		guileZero = C_Timer.NewTimer(120,addon.resetGuile) --two minutes outsidecombat
-	end
-	if SAMod.Main.HideOutOfCombat then
-		SA:Hide()
 	end
 end
 
@@ -1395,10 +1386,6 @@ function addon:OnInitialize()
 					get = function(info) return SAMod.Main.BarTexture; end,
 					set = function(info,val) SAMod.Main.BarTexture = val; addon:RetextureBars(LSM:Fetch("statusbar",val),"stats"); end
 				},
-				hideoutcombat = {name=L["Main/Hide"],type="toggle",order=16, width="full",		
-					get = function(info) return SAMod.Main.HideOutOfCombat; end,
-					set = function(info,val) SAMod.Main.HideOutOfCombat = val; if val then SA:Hide() else SA:Show() end; end
-				},
 				
 				reset = {name = L["ResetDatabase"],type = "execute",order=100,width="full",
 					desc = L["ResetDatabaseDesc"],
@@ -1463,7 +1450,6 @@ function addon:OnEnable()
 		SA:SetScript("OnMouseDown", function(self) if (not SAMod.Main.IsLocked) then self:StartMoving() end end)
 		SA:SetScript("OnMouseUp", function(self) self:StopMovingOrSizing(); SAMod.Main.point, _l, _l, SAMod.Main.xOfs, SAMod.Main.yOfs = SA:GetPoint(); end )
 		SA:EnableMouse(not SAMod.Main.IsLocked);
-		if SAMod.Main.HideOutOfCombat and not UnitAffectingCombat("player") then	SA:Hide()	end
 		VTimerEnergy:EnableMouse(not SAMod.Main.IsLocked);
 		VTimerEnergy:SetScript("OnMouseDown", function(self) if (not SAMod.Main.IsLocked) then SA:StartMoving() end end)
 		VTimerEnergy:SetScript("OnMouseUp", function(self) SA:StopMovingOrSizing(); SAMod.Main.point, _l, _l, SAMod.Main.xOfs, SAMod.Main.yOfs = SA:GetPoint(); end )
