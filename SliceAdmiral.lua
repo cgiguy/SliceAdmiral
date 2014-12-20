@@ -682,7 +682,9 @@ function addon:SA_TestTarget()
 				saBars[spell.name]["Expires"] = expirationTime or 0;
 				saBars[spell.name]["tickStart"] = (expirationTime or 0) - SAMod.Sound[spell.id].tickStart;					
 				saBars[spell.name]["LastTick"] = saBars[spell.name]["tickStart"] - 1.0
-				saBars[spell.name]["obj"]:Show();
+				if expirationTime > 0 then
+					saBars[spell.name]["obj"]:Show();
+				end
 				if saTimerOp.Dynamic then addon:UpdateMaxValue(spell.id,duration) end				
 			end
 		end
