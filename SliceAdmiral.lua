@@ -521,12 +521,8 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
 	local SABars = SA_Data.BARS
 	if type =="UNIT_DIED" then
 		soundBuffer = {}
-	end	
-	local spell = select(12,...)
-	if 2818 == spell then 
-		addon.SA_TestTarget() --Work around for blizzard bugg.
 	end
-
+	
 	if type == "SPELL_AURA_REFRESH" or type == "SPELL_AURA_APPLIED" or type == "SPELL_AURA_REMOVED" or type == "SPELL_AURA_APPLIED_DOSE" or type == "SPELL_PERIODIC_AURA_REMOVED" or type == "SPELL_PERIODIC_AURA_APPLIED" or type == "SPELL_PERIODIC_AURA_APPLIED_DOSE" or type == "SPELL_PERIODIC_AURA_REFRESH" then
 		local spellId, spellName, spellSchool = select(12, ...);
 		local isMySpell;
@@ -614,7 +610,13 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
 	if (type=="SPELL_DAMAGE") or (type == "SPELL_AURA_APPLIED") or (type == "SPELL_AURA_REMOVED") or (type == "SPELL_AURA_REFRESH") and (sourceName == UnitName("player"))  then
 		local spellId, spellName = select(12,...)
 		local multistrike = select(25,...)
-		if spellId == 22482 and saTimerOp.BladeFlurry then
+		if 113780 == spellId then
+			local eventDeadlyPoison = SA_Spells[2818].name
+			local name, rank, icon, count, debuffType, duration, expirationTime = UnitDebuff("target", eventDeadlyPoison, nil, "PLAYER");					
+			SABars[eventDeadlyPoison]["Expires"] = expirationTime or 0;
+			SABars[eventDeadlyPoison]["tickStart"] = (expirationTime or 0) - SAMod.Sound[2818].tickStart;					
+			SABars[eventDeadlyPoison]["LastTick"] = SABars[eventDeadlyPoison]["tickStart"] - 1.0		
+		elseif spellId == 22482 and saTimerOp.BladeFlurry then
 			bfhits[destGUID] = true
 		elseif spellId == 53 or spellId == 8676 and multistrike then -- Sinister Calling fix 
 			C_Timer.After(0.1, addon.SA_TestTarget); -- For some reason there must be a delay or it won't notice the new expiretime
