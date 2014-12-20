@@ -695,13 +695,12 @@ function addon:GetComboPointsBufferd(event)
 	local points = GetComboPoints("player")
 	local buffer = SA_Data.buffer or 0
 	local cpTarget = UnitCanAttack("player","target")
-	local gotCP = IsUsableSpell(5171)
-	local gotTarget = UnitCanAttack("player","target")
+	local gotCP = IsUsableSpell(5171)	
 
 	if cpTarget then
 		SA_Data.buffer = points
 		return points
-	elseif ("UNIT_COMBO_POINTS" == event) and not cpTarget and not (buffer == 0) then
+	elseif ("UNIT_COMBO_POINTS" == event) and not UnitAffectingCombat("player") and not (buffer == 0) then
 		SA_Data.buffer = buffer - 1 --should be every 10 sec outside combat
 		return SA_Data.buffer
 	elseif event == "PLAYER_TARGET_CHANGED" or event == "UNIT_AURA" then
@@ -711,7 +710,7 @@ function addon:GetComboPointsBufferd(event)
 		   SA_Data.buffer = points
 		   return points
 		end
-	end	
+	end		
 	return buffer or 0
 end
 
