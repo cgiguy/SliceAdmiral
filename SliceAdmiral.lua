@@ -420,14 +420,14 @@ function addon:PET_BATTLE_CLOSE()
 end
 
 function addon:PLAYER_ENTERING_WORLD(...)
-	addon:SA_TestTarget();
+	addon:UpdateTarget();
 	VTimerEnergy:SetScript("OnHide", addon.SA_ChangeAnchor)
 	VTimerEnergy:SetScript("OnShow", addon.SA_ChangeAnchor)	  
 end
 
 function addon:PLAYER_TARGET_CHANGED(...)
-	addon:SA_TestTarget();
-	addon:SA_SetComboPts("PLAYER_TARGET_CHANGED");	 
+	addon:UpdateTarget();
+	addon:SetComboPoints("PLAYER_TARGET_CHANGED");	 
 end
 
 function addon:PLAYER_REGEN_DISABLED(...) --enter combat
@@ -438,7 +438,7 @@ function addon:PLAYER_REGEN_DISABLED(...) --enter combat
 	end
 end
 
-function addon:resetGuile()	
+function addon:ResetGuile()	
 	SA_Data.guile = 0; 
 	addon:SA_UpdateStats();		
 end
@@ -446,17 +446,17 @@ end
 function addon:PLAYER_REGEN_ENABLED(...) --exit combat
 	UIFrameFadeOut(SA, 0.4, SA:GetAlpha(), SAMod.Main.Fade/100)
 	if SAMod.ShowTimer.Options.guileCount then
-		guileZero = C_Timer.NewTimer(120,addon.resetGuile) --two minutes outsidecombat
+		guileZero = C_Timer.NewTimer(120,addon.ResetGuile) --two minutes outsidecombat
 	end
 end
 
 function addon:UNIT_COMBO_POINTS(...)
-	addon:SA_SetComboPts("UNIT_COMBO_POINTS");
+	addon:SetComboPoints("UNIT_COMBO_POINTS");
 end
 
 function addon:UNIT_AURA(event, ...)
 	if ... == "player" then
-		addon:SA_SetComboPts("UNIT_AURA");
+		addon:SetComboPoints("UNIT_AURA");
 	end
 	if SAMod.Combo.ShowStatBar then
 		addon:SA_UpdateStats();
@@ -527,6 +527,12 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
 		soundBuffer = {}
 	end
 	
+	if type == "SPELL_ENERGIZE" then
+		local spellid = select(12,...)		
+		if spellid == 51699 then
+			addon:SetComboPoints("SPELL_ENERGIZE")
+		end
+	end
 	if type == "SPELL_AURA_REFRESH" or type == "SPELL_AURA_APPLIED" or type == "SPELL_AURA_REMOVED" or type == "SPELL_AURA_APPLIED_DOSE" or type == "SPELL_PERIODIC_AURA_REMOVED" or type == "SPELL_PERIODIC_AURA_APPLIED" or type == "SPELL_PERIODIC_AURA_APPLIED_DOSE" or type == "SPELL_PERIODIC_AURA_REFRESH" then
 		local spellId, spellName, spellSchool = select(12, ...);
 		local isMySpell;
@@ -557,7 +563,7 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
 
 			-- Anticipation event --
 			if (spellId == 115189 and SAMod.Combo.PointShow and type == "SPELL_AURA_REMOVED") then
-				addon:SA_SetComboPts("SPELL_AURA_REMOVED");
+				addon:SetComboPoints("SPELL_AURA_REMOVED");
 			end
 			-- BladeFlurry Switch --
 			if spellId == 13877 and type == "SPELL_AURA_REMOVED" then 
@@ -629,7 +635,7 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
 		elseif spellId == 22482 and saTimerOp.BladeFlurry then
 			bfhits[destGUID] = true
 		elseif spellId == 53 or spellId == 8676 and multistrike then -- Sinister Calling fix 
-			C_Timer.After(0.1, addon.SA_TestTarget); -- For some reason there must be a delay or it won't notice the new expiretime
+			C_Timer.After(0.1, addon.UpdateTarget); -- For some reason there must be a delay or it won't notice the new expiretime
 		elseif saTimerOp.guileCount and (spellId == 84745) or (spellId == 84746) or (spellId == 84747) or (spellId == 1752) and not (multistrike) then
 			-- bandits guile--
 			addon:GuileAdvance(spellId,type);
@@ -678,7 +684,7 @@ function addon:GuileAdvance(spellId,event)
 	end	
 end
 
-function addon:SA_TestTarget()
+function addon:UpdateTarget()
 	local showT = SAMod.ShowTimer	
 	local saTimerOp = SAMod.ShowTimer.Options
 	
@@ -708,30 +714,32 @@ function addon:SA_TestTarget()
 end
 
 function addon:GetComboPointsBufferd(event)
-	local event = event or ""
-	local points = GetComboPoints("player")
+	local event = event or ""	
+	local points = GetComboPoints("player", "target")	
 	local buffer = SA_Data.buffer or 0
 	local cpTarget = UnitCanAttack("player","target")
-	local gotCP = IsUsableSpell(5171)	
-
+	local gotCP = IsUsableSpell(5171)
+	
 	if cpTarget then
-		SA_Data.buffer = points
+		SA_Data.buffer = points		
 		return points
 	elseif ("UNIT_COMBO_POINTS" == event) and not UnitAffectingCombat("player") and not (buffer == 0) then
 		SA_Data.buffer = buffer - 1 --should be every 10 sec outside combat
 		return SA_Data.buffer
-	elseif event == "PLAYER_TARGET_CHANGED" or event == "UNIT_AURA" then
+	elseif event == "PLAYER_TARGET_CHANGED" or event == "UNIT_AURA" then		
 		if gotCP then
-			return buffer
+			return SA_Data.buffer
 		else
 		   SA_Data.buffer = points
 		   return points
 		end
+	elseif event == "SPELL_ENERGIZE" and not (buffer == 5) then -- Should only be HaT
+		SA_Data.buffer = buffer + 1;
 	end		
-	return buffer or 0
+	return SA_Data.buffer or 0
 end
 
-function addon:SA_SetComboPts(event)
+function addon:SetComboPoints(event)
 	local points = addon:GetComboPointsBufferd(event)
 	local name, rank, icon, count = UnitAura("player", SA_Spells[115189].name)
 	local cpBar = SA_Data.BARS["CP"]["obj"]
