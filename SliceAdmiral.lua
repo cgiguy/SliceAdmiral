@@ -60,7 +60,7 @@ SADefault = {
 				[1943] = {r=130/255, g=15/255, b=0,},
 				[1966]  = {r=155/255, g=155/255, b=255/255,},
 				[703] = {r=130/255, g=15/255, b=0,},
-				[115189] = {r=0,g=0,b=0,},
+				[115189] = {r=121/255,g=30/255,b=28/255,},
 				[137573] = {r=135/255, g=135/255, b=255/255,},
 				[154953] = {r=205/255, g=92/255, b=92/255,},
 				[79140] = {r=130/255, g=130/255, b=0,},
@@ -83,6 +83,7 @@ SADefault = {
 				[84746] = 6.0, -- BanditsGuile
 				[84747] = 6.0, -- BanditsGuile
 				[1943] = 6.0, --Rupture
+				[115189] = 6.0, -- Anticipation
 				[73651] = 6.0, -- Recuperate
 				[32645] = 6.0, -- Envenom
 				[1966] = 5.0, -- Feint
@@ -101,10 +102,11 @@ SADefault = {
 				[31665]= 5.0, --Master of Subtlety
 			},
 			[5171] = true, --Slice and Dice
-			[84745] = true, -- BanditsGuile
-			[84746] = true, -- BanditsGuile
-			[84747] = true, -- BanditsGuile
+			[84745] = true, -- BanditsGuile, Shallow
+			[84746] = true, -- BanditsGuile, Moderate
+			[84747] = true, -- BanditsGuile, Deep
 			[1943] = true, --Rupture
+			[115189] = false, -- Anticipation
 			[73651] = true, -- Recuperate
 			[32645] = true, -- Envenom
 			[1966] = true, -- Feint
@@ -153,6 +155,7 @@ SADefault = {
 			[16511] = {enabled=true, tick = "Ping", alert = "None", tickStart=3.0, }, --Hemorrhage
 			[84745] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
 			[157562] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
+			[115189] = {enabled=false, tick = "None", alert="None", tickStart=3.0, }, -- Anticipation
 			[84746] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
 			[84747] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
 			[32645] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
@@ -297,10 +300,10 @@ function addon:SA_BarTexture(object)
 	end
 end
 
-function addon:SA_Sound(saved,bufferd)
+function addon:SA_Sound(sound,bufferd)
 	if not UnitAffectingCombat("player") and not SAMod.Sound.OutOfCombat then return end
-	if not saved then return end
-	soundBuffer[#soundBuffer+1] = saved;	
+	if not sound then return end
+	soundBuffer[#soundBuffer+1] = sound;
 	if bufferd then
 		C_Timer.After(0.3,addon.PlayBuffer)
 	else
@@ -501,13 +504,14 @@ end
 
 local function MasterOfSubtley()					
 	local name, rank, icon, count, debuffType, duration, expirationTime = UnitAura("player", SA_Spells[31665].name);
-	local SABars = SA_Data.BARS
-	local SA_Spells = SA_Spells
+	local MOSBar = SA_Data.BARS[SA_Spells[31665].name]
+	
 	if name then		
-		SABars[SA_Spells[31665].name]["Expires"] = expirationTime;		
-		SABars[SA_Spells[31665].name]["tickStart"] = (expirationTime or 0) - SAMod.Sound[31665].tickStart;					
-		SABars[SA_Spells[31665].name]["LastTick"] = SABars[SA_Spells[31665].name]["tickStart"] - 1.0
-		SABars[SA_Spells[31665].name]["obj"]:Show();
+		MOSBar["Expires"] = expirationTime;		
+		MOSBar["tickStart"] = (expirationTime or 0) - SAMod.Sound[31665].tickStart;					
+		MOSBar["LastTick"] = MOSBar["tickStart"] - 1.0;
+		MOSBAR["count"] = count or 0;
+		MOSBar["obj"]:Show();
 	end
 end
 
@@ -530,26 +534,29 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
 		if (destName == UnitName("player")) then
 			--Buffs EVENT --
 			if SAMod.ShowTimer[spellId] then
+				local BuffBar = SA_Data.BARS[SA_Spells[spellId].name]
 				if (type == "SPELL_AURA_REMOVED") then 
 					if SAMod.Sound[spellId].enabled then
 						addon:SA_Sound(LSM:Fetch("sound",SAMod.Sound[spellId].alert),true)
 					end
-					SABars[SA_Spells[spellId].name]["Expires"] = 0;
-					SABars[SA_Spells[spellId].name]["tickStart"] = 0;
-					SABars[SA_Spells[spellId].name]["obj"]:Hide();
+					BuffBar["Expires"] = 0;
+					BuffBar["tickStart"] = 0;
+					BuffBar["count"] = 0;
+					BuffBar["obj"]:Hide();
 				else
 					local name, rank, icon, count, debuffType, duration, expirationTime = UnitAura("player", SA_Spells[spellId].name);					
-					SABars[SA_Spells[spellId].name]["Expires"] = expirationTime or 0;
-					SABars[SA_Spells[spellId].name]["tickStart"] = (expirationTime or 0) - SAMod.Sound[spellId].tickStart;					
-					SABars[SA_Spells[spellId].name]["LastTick"] = SABars[SA_Spells[spellId].name]["tickStart"] - 1.0
-					SABars[SA_Spells[spellId].name]["obj"]:Show();
+					BuffBar["Expires"] = expirationTime or 0;
+					BuffBar["tickStart"] = (expirationTime or 0) - SAMod.Sound[spellId].tickStart;					
+					BuffBar["LastTick"] = BuffBar["tickStart"] - 1.0;
+					BuffBar["count"] = count or 0;
+					BuffBar["obj"]:Show();
 					if saTimerOp.Dynamic then addon:UpdateMaxValue(spellId,duration) end
 				end
 				addon:SA_ChangeAnchor();
 			end
 
 			-- Anticipation event --
-			if (spellId == SA_Spells[115189].id and SAMod.Combo.PointShow and type == "SPELL_AURA_REMOVED") then
+			if (spellId == 115189 and SAMod.Combo.PointShow and type == "SPELL_AURA_REMOVED") then
 				addon:SA_SetComboPts("SPELL_AURA_REMOVED");
 			end
 			-- BladeFlurry Switch --
@@ -570,19 +577,22 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
 		else
 			if (destName == GetUnitName("target",true)) then
 				if isMySpell and SAMod.ShowTimer[spellId] then
+					local Debuff = SA_Data.BARS[SA_Spells[spellId].name]
 					if (type == "SPELL_AURA_REMOVED") then 
 						if SAMod.Sound[spellId].enabled then
 							addon:SA_Sound(LSM:Fetch("sound",SAMod.Sound[spellId].alert),true)
 						end
-						SABars[SA_Spells[spellId].name]["Expires"] = 0;
-						SABars[SA_Spells[spellId].name]["tickStart"] = 0; 
-						SABars[SA_Spells[spellId].name]["obj"]:Hide();
+						Debuff["Expires"] = 0;
+						Debuff["tickStart"] = 0; 
+						Debuff["count"] = 0;
+						Debuff["obj"]:Hide();
 					else
 						local name, rank, icon, count, debuffType, duration, expirationTime = UnitDebuff("target", SA_Spells[spellId].name, nil, "PLAYER");
-						SABars[SA_Spells[spellId].name]["Expires"] = expirationTime or 0;
-						SABars[SA_Spells[spellId].name]["tickStart"] = (expirationTime or 0) - SAMod.Sound[spellId].tickStart;
-						SABars[SA_Spells[spellId].name]["LastTick"] = SABars[SA_Spells[spellId].name]["tickStart"] - 1.0
-						SABars[SA_Spells[spellId].name]["obj"]:Show();
+						Debuff["Expires"] = expirationTime or 0;
+						Debuff["tickStart"] = (expirationTime or 0) - SAMod.Sound[spellId].tickStart;
+						Debuff["LastTick"] = Debuff["tickStart"] - 1.0
+						Debuff["count"] = count or 0;
+						Debuff["obj"]:Show();
 						if saTimerOp.Dynamic then addon:UpdateMaxValue(spellId,duration) end
 					end
 					addon:SA_ChangeAnchor();
@@ -629,14 +639,17 @@ end
 
 function addon:UpdateMaxValue(spellId,duration)
 	if not SA_Spells[spellId] or not SA_Spells[spellId].pandemic then return end;
+	local SpellBar = SA_Data.BARS[SA_Spells[spellId].name]
 	local spelld = SA_Spells[spellId].duration
+	
 	if not duration then duration = spelld end;
 	local dynvalue = duration*0.3
 	
 	if duration > spelld then
-	 dynvalue = spelld*0.3
+		dynvalue = spelld*0.3
 	end
-	SA_Data.BARS[SA_Spells[spellId].name]["obj"]:SetMinMaxValues(0,dynvalue)
+	SpellBar["obj"]:SetMinMaxValues(0,dynvalue);
+	return
 end
 
 function addon:GuileAdvance(spellId,event)
@@ -666,24 +679,26 @@ function addon:GuileAdvance(spellId,event)
 end
 
 function addon:SA_TestTarget()
-	local showT = SAMod.ShowTimer
-	local saBars = SA_Data.BARS
+	local showT = SAMod.ShowTimer	
 	local saTimerOp = SAMod.ShowTimer.Options
 	
 	for k,v in pairs(showT) do
 		local spell = SA_Spells[k]
 		if v and spell then
-			local name, _, _, _, _, duration, expirationTime, _ = UnitAura(spell.target, spell.name, nil, Sa_filter[spell.target]);
+			local spellBar = SA_Data.BARS[spell.name]
+			local name, _, _, count, _, duration, expirationTime, _ = UnitAura(spell.target, spell.name, nil, Sa_filter[spell.target]);
 			if not (name) then
-				saBars[spell.name]["Expires"] = 0;
-				saBars[spell.name]["tickStart"] = 0;
-				saBars[spell.name]["obj"]:Hide();
+				spellBar["Expires"] = 0;
+				spellBar["tickStart"] = 0;
+				spellBar["count"] = 0;
+				spellBar["obj"]:Hide();
 			else				
-				saBars[spell.name]["Expires"] = expirationTime or 0;
-				saBars[spell.name]["tickStart"] = (expirationTime or 0) - SAMod.Sound[spell.id].tickStart;					
-				saBars[spell.name]["LastTick"] = saBars[spell.name]["tickStart"] - 1.0
+				spellBar["Expires"] = expirationTime or 0;
+				spellBar["tickStart"] = (expirationTime or 0) - SAMod.Sound[spell.id].tickStart;					
+				spellBar["LastTick"] = spellBar["tickStart"] - 1.0;
+				spellBar["count"] = count or 0;
 				if expirationTime > 0 then
-					saBars[spell.name]["obj"]:Show();
+					spellBar["obj"]:Show();
 				end
 				if saTimerOp.Dynamic then addon:UpdateMaxValue(spell.id,duration) end				
 			end
@@ -1069,6 +1084,16 @@ function addon:SA_NewFrame()
 	 f.icon:SetBlendMode("ADD");
 	 f.icon:SetAlpha(.99);
 
+	 -- text on the left --
+	 if not f.count then
+		f.count = f:CreateFontString(nil, nil, "GameFontWhite")
+	 end
+	 f.count:SetFontObject(SA_Data.BarFont2);
+	 f.count:SetSize(30,10);	 
+	 f.count:SetPoint("TOPLEFT", f, "TOPLEFT", f.icon:GetHeight(),0);
+	 f.count:SetJustifyH("LEFT") 
+	 f.count:SetText("");
+	 
 	 -- DoT Text --
 	 if not f.DoTtext then
 		f.DoTtext = f:CreateFontString(nil, nil, nil)
@@ -1210,11 +1235,15 @@ local function SA_UpdateBar(unit, spell, sa_sound)
 	
 	if sa_time > 0 and sabars then
 		sabars["obj"]:SetValue(sa_time);
-		sabars["obj"].text:SetText(string.format("%0.1f", sa_time));		
+		sabars["obj"].text:SetText(string.format("%0.1f", sa_time));
+		if sabars["count"] > 0 then 
+			sabars["obj"].count:SetText(sabars["count"]);
+		end
 	else
 		sabars["obj"]:Hide();
 		sabars["Expires"] = 0;
 		sabars["LastTick"] = 0;
+		sabars["count"] = 0;		
 		return
 	end
 	if (sa_time > tickStart) and ((lastTick + 1.0) < GetTime()) then
@@ -1230,6 +1259,9 @@ local function SA_QuickUpdateBar(unit, spell)
 	if sa_time > 0 and sabars then		
 		sabars["obj"]:SetValue(sa_time);
 		sabars["obj"].text:SetText(string.format("%0.1f", sa_time));
+		if sabars["count"] > 0 then 
+			sabars["obj"].count:SetText(sabars["count"]);
+		end
 	else
 		sabars["obj"]:Hide();
 		sabars["Expires"] = 0;
@@ -1437,15 +1469,14 @@ function addon:OnEnable()
 	local localizedClass, englishClass = UnitClass("player");
 	local point, xOfs, yOfs = SAMod.Main.point, SAMod.Main.xOfs, SAMod.Main.yOfs
 	if (englishClass == "ROGUE") then
-		for k in pairs(SA_Spells) do
-			if not (k == 115189) then
-				SA_Data.BARS[SA_Spells[k].name] = {	
-						["obj"] = 0,
-						["Expires"] = 0,		-- expire time until GetTime()
-						["LastTick"] = 0,
-						["tickStart"] = 0, 
-				}
-			end
+		for k in pairs(SA_Spells) do			
+			SA_Data.BARS[SA_Spells[k].name] = {	
+					["obj"] = 0,
+					["Expires"] = 0,		-- expire time until GetTime()
+					["LastTick"] = 0,
+					["tickStart"] = 0, 
+					["count"] = 0,
+			}
 		end
 		addon:SA_OnLoad()
 		SA:ClearAllPoints(); SA:SetPoint(point, xOfs, yOfs);
