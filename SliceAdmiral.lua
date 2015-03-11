@@ -20,13 +20,9 @@ addon.opt = {
 SADefault = {
 	data = {
 		Version = SliceAdmiralVer,
-		lastSort = 0,
 		maxSortableBars = 0,
 		topSortableBars = 0,
-		sortPeriod = 0.5,
-		tNow = 0,
-		UpdateInterval = 0.05,
-		TimeSinceLastUpdate = 0,
+		UpdateInterval = 0.05,		
 		numStats = 3,
 	},
 	Modules = {
@@ -186,6 +182,8 @@ SA_Data = {
 	buffer = 0,
 	sortPeriod = 0.5, -- Only sort bars every sortPeriod seconds
 	tNow = 0,
+	sinister = true,
+	curCombo = 0,
 	BARS = { --TEH BARS
 		["CP"] = {
 			["obj"] = 0
@@ -209,8 +207,6 @@ local UnitAura = UnitAura
 local _,k,v,guileZero 
 local bfhits = {}
 local soundBuffer = {}
-local sinister = true
-local curCombo = 0
 
 local Sa_filter = {	["player"] = "PLAYER", 
 					["target"] = "PLAYER HARMFUL", };
@@ -219,18 +215,6 @@ local function tablelength(T)
   local count = 0
   for _ in pairs(T) do count = count + 1 end
   return count
-end
-
-local function EnergyFade()
-	local alpha = VTimerEnergy:GetAlpha()
-	local eTransp = SAMod.Energy.EnergyTrans / 100.0
-	
-	if  (lUnitManaMax("player") == lUnitMana("player")) and not (alpha == eTransp) then
-		UIFrameFadeOut(VTimerEnergy, 0.4, alpha, eTransp)
-	elseif not (lUnitManaMax("player") == lUnitMana("player")) and not (alpha == 1.0) then
-		UIFrameFadeIn(VTimerEnergy, 0.4, alpha, 1.0);
-	end
-	return
 end
 
 function addon:SA_SetScale(NewScale)
@@ -247,7 +231,9 @@ function addon:SA_SetWidth(w)
   if (w >= 25) then
     VTimerEnergy:SetWidth(w);
 	for k in pairs(SA_Data.BARS) do
-		SA_Data.BARS[k]["obj"]:SetWidth(w);
+		if not (k == "CP" or k == "Stat") then
+			SA_Data.BARS[k]["obj"]:SetWidth(w-12);
+		end
 	end	
 	if SAMod.Energy.ShowEnergy then
 		VTimerEnergy:Show();
@@ -260,8 +246,8 @@ function addon:SA_SetWidth(w)
 	else
 		VTimerEnergy:Hide();
 	end
-    addon:SA_UpdateCPWidths();
-    addon:SA_UpdateStatWidths();
+    addon:SA_UpdateCPWidths(w);
+    addon:SA_UpdateStatWidths(w);
 	
   end
 end
@@ -367,6 +353,11 @@ function addon:SA_ChangeAnchor()
 		end
 	end
  end
+	-- Fix for icon offset
+	local tmp = SA_Data.BARORDER[1]["obj"]
+	tmp:SetPoint("BOTTOMLEFT",LastAnchor,"TOPLEFT",12,-12)	
+	LastAnchor = tmp 
+	
 	for i = 1, SA2.maxSortableBars do 
 		local SortBar = SA_Data.BARORDER[i]
 		if (SortBar["Expires"] > 0) then
@@ -454,13 +445,15 @@ function addon:UNIT_COMBO_POINTS(...)
 	addon:SetComboPoints("UNIT_COMBO_POINTS");
 end
 
-function addon:UNIT_AURA(event, ...)
-	if ... == "player" then
-		addon:SetComboPoints("UNIT_AURA");
-	end
+function addon:UNIT_AURA(event, ...)	
 	if SAMod.Combo.ShowStatBar then
 		addon:SA_UpdateStats();
 	end  
+	if ... == "player" then
+		local name, rank, icon, count = UnitAura("player", SA_Spells[115189].name);
+		if not name then return end;
+		addon:SetComboPoints("UNIT_AURA");
+	end
 end
 
 function addon:UNIT_ATTACK_POWER(...)
@@ -470,10 +463,10 @@ function addon:UNIT_ATTACK_POWER(...)
 end
 
 function addon:UpdateBFText()
-	SA_Data.BladeFlurry = tablelength(bfhits)
-	bfhits = {}
+	SA_Data.BladeFlurry = tablelength(bfhits);
+	bfhits = {};
 	if SAMod.ShowTimer.Options.BladeFlurry and SA_Data.BFActive then
-		SA_Data.BARS["Stat"]["obj"].stats[3].fs:SetText(SA_Data.BladeFlurry)
+		SA_Data.BARS["Stat"]["obj"].stats[3].fs:SetText(SA_Data.BladeFlurry);
 	end
 end
 
@@ -492,7 +485,15 @@ end
 
 function addon:UNIT_POWER(...)
 	if SAMod.Energy.ShowEnergy then
-		EnergyFade()
+		local alpha = VTimerEnergy:GetAlpha()
+		local eTransp = SAMod.Energy.EnergyTrans / 100.0;
+		
+		if  (lUnitManaMax("player") == lUnitMana("player")) and not (alpha == eTransp) then
+			UIFrameFadeOut(VTimerEnergy, 0.4, alpha, eTransp)
+		elseif not (lUnitManaMax("player") == lUnitMana("player")) and not (alpha == 1.0) then
+			UIFrameFadeIn(VTimerEnergy, 0.4, alpha, 1.0);
+		end
+		return
 	end
 end
 
@@ -510,57 +511,75 @@ local function MasterOfSubtley()
 		MOSBar["Expires"] = expirationTime;		
 		MOSBar["tickStart"] = (expirationTime or 0) - SAMod.Sound[31665].tickStart;					
 		MOSBar["LastTick"] = MOSBar["tickStart"] - 1.0;
-		MOSBAR["count"] = count or 0;
+		MOSBar["count"] = count or 0;
 		MOSBar["obj"]:Show();
 	end
 end
 
-function addon:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
-	local timestamp, type, hideCaster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName = ...;
+local dbtypes = { SPELL_AURA_REFRESH = true,
+	SPELL_AURA_APPLIED = true,
+	SPELL_AURA_REMOVED = true,
+	SPELL_AURA_APPLIED_DOSE  = true,
+	SPELL_PERIODIC_AURA_REMOVED = true,
+	SPELL_PERIODIC_AURA_APPLIED = true,
+	SPELL_PERIODIC_AURA_APPLIED_DOSE = true,
+	SPELL_PERIODIC_AURA_REFRESH = true,
+	};
+local dotEvents = { SPELL_DAMAGE = true,
+	SPELL_PERIODIC_DAMAGE = true,
+	SPELL_PERIODIC_HEAL = true,
+};
+local specialEvent = { SPELL_DAMAGE = true,
+	SPELL_AURA_APPLIED = true,
+	SPELL_AURA_REMOVED = true,
+	SPELL_AURA_REFRESH = true,
+}; 
+
+function addon:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, type, hideCaster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId, ...)	
 	local saTimerOp = SAMod.ShowTimer.Options
-	local GetUnitName = GetUnitName
-	local UnitName = UnitName
 	local select = select
 	local SA_Spells = SA_Spells
 	local SABars = SA_Data.BARS
+	local isMySpell = (sourceName == UnitName("player"))	
+	local isOnMe = (destName == UnitName("player"))
+	local isOnTarget = (destName == GetUnitName("target",true))
 	if type =="UNIT_DIED" then
 		soundBuffer = {}
+		return
 	end
 	
-	if type == "SPELL_ENERGIZE" then
-		local spellid = select(12,...)		
-		if spellid == 51699 then
+	if type == "SPELL_ENERGIZE" then				
+		if spellId == 51699 and isOnMe then	--- 51699 HaT		
 			addon:SetComboPoints("SPELL_ENERGIZE")
 		end
-	end
-	if type == "SPELL_AURA_REFRESH" or type == "SPELL_AURA_APPLIED" or type == "SPELL_AURA_REMOVED" or type == "SPELL_AURA_APPLIED_DOSE" or type == "SPELL_PERIODIC_AURA_REMOVED" or type == "SPELL_PERIODIC_AURA_APPLIED" or type == "SPELL_PERIODIC_AURA_APPLIED_DOSE" or type == "SPELL_PERIODIC_AURA_REFRESH" then
-		local spellId, spellName, spellSchool = select(12, ...);
-		local isMySpell;
-		isMySpell = (sourceName == UnitName("player")); 
-		if (destName == UnitName("player")) then
-			--Buffs EVENT --
-			if SAMod.ShowTimer[spellId] then
-				local BuffBar = SA_Data.BARS[SA_Spells[spellId].name]
-				if (type == "SPELL_AURA_REMOVED") then 
-					if SAMod.Sound[spellId].enabled then
-						addon:SA_Sound(LSM:Fetch("sound",SAMod.Sound[spellId].alert),true)
-					end
-					BuffBar["Expires"] = 0;
-					BuffBar["tickStart"] = 0;
-					BuffBar["count"] = 0;
-					BuffBar["obj"]:Hide();
-				else
-					local name, rank, icon, count, debuffType, duration, expirationTime = UnitAura("player", SA_Spells[spellId].name);					
-					BuffBar["Expires"] = expirationTime or 0;
-					BuffBar["tickStart"] = (expirationTime or 0) - SAMod.Sound[spellId].tickStart;					
-					BuffBar["LastTick"] = BuffBar["tickStart"] - 1.0;
-					BuffBar["count"] = count or 0;
-					BuffBar["obj"]:Show();
-					if saTimerOp.Dynamic then addon:UpdateMaxValue(spellId,duration) end
+		return
+	end	
+	if not isMySpell then return end;
+	if dbtypes[type] then
+		--Buffs EVENT --
+		if SAMod.ShowTimer[spellId] then
+			local BuffBar = SA_Data.BARS[SA_Spells[spellId].name]
+			if (type == "SPELL_AURA_REMOVED") then 
+				if SAMod.Sound[spellId].enabled then
+					addon:SA_Sound(LSM:Fetch("sound",SAMod.Sound[spellId].alert),true)
 				end
-				addon:SA_ChangeAnchor();
+				BuffBar["Expires"] = 0;
+				BuffBar["tickStart"] = 0;
+				BuffBar["count"] = 0;
+				BuffBar["obj"]:Hide();
+			else
+				local spell = SA_Spells[spellId]
+				local name, rank, icon, count, debuffType, duration, expirationTime = UnitAura(spell.target, spell.name, nil, Sa_filter[spell.target])				
+				BuffBar["Expires"] = expirationTime or 0;
+				BuffBar["tickStart"] = (expirationTime or 0) - SAMod.Sound[spellId].tickStart;
+				BuffBar["LastTick"] = BuffBar["tickStart"] - 1.0;
+				BuffBar["count"] = count or 0;
+				BuffBar["obj"]:Show();
+				if saTimerOp.Dynamic then addon:UpdateMaxValue(spellId,duration) end
 			end
-
+			addon:SA_ChangeAnchor();
+		end
+		if isOnMe then
 			-- Anticipation event --
 			if (spellId == 115189 and SAMod.Combo.PointShow and type == "SPELL_AURA_REMOVED") then
 				addon:SetComboPoints("SPELL_AURA_REMOVED");
@@ -580,39 +599,18 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
 			if type == "SPELL_AURA_REMOVED" and spellId == 1784 and SAMod.ShowTimer[31665] then
 				C_Timer.After(0.1, MasterOfSubtley);
 			end
-		else
-			if (destName == GetUnitName("target",true)) then
-				if isMySpell and SAMod.ShowTimer[spellId] then
-					local Debuff = SA_Data.BARS[SA_Spells[spellId].name]
-					if (type == "SPELL_AURA_REMOVED") then 
-						if SAMod.Sound[spellId].enabled then
-							addon:SA_Sound(LSM:Fetch("sound",SAMod.Sound[spellId].alert),true)
-						end
-						Debuff["Expires"] = 0;
-						Debuff["tickStart"] = 0; 
-						Debuff["count"] = 0;
-						Debuff["obj"]:Hide();
-					else
-						local name, rank, icon, count, debuffType, duration, expirationTime = UnitDebuff("target", SA_Spells[spellId].name, nil, "PLAYER");
-						Debuff["Expires"] = expirationTime or 0;
-						Debuff["tickStart"] = (expirationTime or 0) - SAMod.Sound[spellId].tickStart;
-						Debuff["LastTick"] = Debuff["tickStart"] - 1.0
-						Debuff["count"] = count or 0;
-						Debuff["obj"]:Show();
-						if saTimerOp.Dynamic then addon:UpdateMaxValue(spellId,duration) end
-					end
-					addon:SA_ChangeAnchor();
-				end	
-			end
 		end
 	end
 	-- DOT monitors
-	if (saTimerOp.ShowDoTDmg and (type == "SPELL_DAMAGE" or type == "SPELL_PERIODIC_DAMAGE" or type == "SPELL_PERIODIC_HEAL") and (destName == GetUnitName("target",true) or  destName == GetUnitName("player",true)) and sourceName == UnitName("player")) then
-		local spellId, spellName, spellSchool = select(12, ...);
-		if SAMod.ShowTimer[spellId] then
-			local amount, overkill, school, resisted, blocked, absorbed, critical,_ = select(15, ...)
-			local dotText = SA_Data.BARS[SA_Spells[spellId].name]["obj"].DoTtext
-			
+	if saTimerOp.ShowDoTDmg and dotEvents[type] and (isOnTarget or isOnMe) then		
+		if SAMod.ShowTimer[spellId] or (spellId == 113780 and SAMod.ShowTimer[2818]) then
+			local amount, overkill, school, resisted, blocked, absorbed, critical,_ = select(3, ...)			
+			local dotText
+			if spellId == 113780 then
+				dotText = SABars[SA_Spells[2818].name]["obj"].DoTtext
+			else
+				dotText = SABars[SA_Spells[spellId].name]["obj"].DoTtext
+			end
 			dotText:SetAlpha(1);
 			if (saTimerOp.DoTCrits and critical) then
 				dotText:SetText(string.format("*%.0f*", amount));
@@ -623,15 +621,15 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, ...)
 			end
 		end
 	end
-	if (type=="SPELL_DAMAGE") or (type == "SPELL_AURA_APPLIED") or (type == "SPELL_AURA_REMOVED") or (type == "SPELL_AURA_REFRESH") and (sourceName == UnitName("player"))  then
-		local spellId, spellName = select(12,...)
-		local multistrike = select(25,...)
+	if specialEvent[type] then		
+		local multistrike = select(13,...)
 		if 113780 == spellId then
 			local eventDeadlyPoison = SA_Spells[2818].name
 			local name, rank, icon, count, debuffType, duration, expirationTime = UnitDebuff("target", eventDeadlyPoison, nil, "PLAYER");					
 			SABars[eventDeadlyPoison]["Expires"] = expirationTime or 0;
 			SABars[eventDeadlyPoison]["tickStart"] = (expirationTime or 0) - SAMod.Sound[2818].tickStart;					
-			SABars[eventDeadlyPoison]["LastTick"] = SABars[eventDeadlyPoison]["tickStart"] - 1.0		
+			SABars[eventDeadlyPoison]["LastTick"] = SABars[eventDeadlyPoison]["tickStart"] - 1.0;
+		
 		elseif spellId == 22482 and saTimerOp.BladeFlurry then
 			bfhits[destGUID] = true
 		elseif spellId == 53 or spellId == 8676 and multistrike then -- Sinister Calling fix 
@@ -660,26 +658,26 @@ end
 
 function addon:GuileAdvance(spellId,event)
 	local insightBar = SA_Data.BARS["Stat"]["obj"].stats[4]
-	if sinister and (spellId == 1752) then
+	if SA_Data.sinister and (spellId == 1752) then
 		SA_Data.guile = SA_Data.guile + 1;
-		addon:SA_UpdateStats()
+		addon:SA_UpdateStats();
 	end
 	if 	("SPELL_AURA_APPLIED" == event) then
-		SA_Data.guile = 1
-		sinister = false
+		SA_Data.guile = 1;
+		SA_Data.sinister = false;
 		if (spellId == 84747) then
-			SA_Data.guile = 0 
-			insightBar.fs:Hide()
+			SA_Data.guile = 0;
+			insightBar.fs:Hide();
 		end
 	end
 	if ("SPELL_AURA_REFRESH" == event) then
 		SA_Data.guile = SA_Data.guile + 1;
 	end
 	if ("SPELL_AURA_REMOVED" == event) then
-		SA_Data.guile = 0
-		sinister = true
+		SA_Data.guile = 0;
+		SA_Data.sinister = true;
 		if (spellId == 84747) then
-			insightBar.fs:Show()
+			insightBar.fs:Show();
 		end
 	end	
 end
@@ -714,11 +712,10 @@ function addon:UpdateTarget()
 end
 
 function addon:GetComboPointsBufferd(event)
-	local event = event or ""	
-	local points = GetComboPoints("player", "target")	
-	local buffer = SA_Data.buffer or 0
-	local cpTarget = UnitCanAttack("player","target")
-	local gotCP = IsUsableSpell(5171)
+	local event = event or "";
+	local points = GetComboPoints("player", "target");
+	local buffer = SA_Data.buffer or 0;
+	local cpTarget = UnitCanAttack("player","target");
 	
 	if cpTarget then
 		SA_Data.buffer = points		
@@ -726,15 +723,21 @@ function addon:GetComboPointsBufferd(event)
 	elseif ("UNIT_COMBO_POINTS" == event) and not UnitAffectingCombat("player") and not (buffer == 0) then
 		SA_Data.buffer = buffer - 1 --should be every 10 sec outside combat
 		return SA_Data.buffer
-	elseif event == "PLAYER_TARGET_CHANGED" or event == "UNIT_AURA" then		
+	elseif event == "PLAYER_TARGET_CHANGED" or event == "UNIT_AURA" then
+		local gotCP = IsUsableSpell(5171);
 		if gotCP then
 			return SA_Data.buffer
 		else
 		   SA_Data.buffer = points
 		   return points
 		end
-	elseif event == "SPELL_ENERGIZE" and not (buffer == 5) then -- Should only be HaT
-		SA_Data.buffer = buffer + 1;
+	elseif event == "SPELL_ENERGIZE" then -- Should only be HaT with no target
+		if buffer == 5 then
+			return SA_Data.buffer
+		else
+			SA_Data.buffer = buffer + 1;
+			return SA_Data.buffer
+		end
 	end		
 	return SA_Data.buffer or 0
 end
@@ -760,8 +763,8 @@ function addon:SetComboPoints(event)
 		end
 	end
 		
-	if name and (count > 0) and SAMod.Combo.AnticipationShow then
-		for i = 1, count do
+	if name and (count%6 > 0) and SAMod.Combo.AnticipationShow then
+		for i = 1, count%6 do
 			cpBar.antis[i]:Show();
 		end	 
 	else
@@ -770,16 +773,16 @@ function addon:SetComboPoints(event)
 		end
 	end
 	if SAMod.Combo.PointShow then
-		if (points > curCombo) then
-			for i = curCombo + 1, points do
+		if (points > SA_Data.curCombo) then
+			for i = SA_Data.curCombo + 1, points do
 				cpBar.combos[i]:Show();
 			end
 		else
-			for i = points + 1, curCombo do
+			for i = points + 1, SA_Data.curCombo do
 				cpBar.combos[i]:Hide();
 			end
 		 end
-		curCombo = points;
+		SA_Data.curCombo = points;
 	end
 end
 
@@ -857,30 +860,29 @@ function addon:SA_CPFrame()
 	return f;
 end
 
-function addon:SA_UpdateCPWidths()
+function addon:SA_UpdateCPWidths(width)
 	local width = VTimerEnergy:GetWidth()
 	local cx = 0;
 	local spacing = width/30; --orig:= 3
 	local cpwidth = ((width-(spacing*4))/5); --orig: ((width-(spacing*4))/5);
 
-	local f = SA_Data.BARS["CP"]["obj"]
-	local combo = SA_Data.BARS["CP"]["obj"].combos
-	local anti = SA_Data.BARS["CP"]["obj"].antis
-		
+	local f = SA_Data.BARS["CP"]["obj"]	
+	f:SetWidth(width);
+	
 	for i = 1, 5 do
-		combo[i]:ClearAllPoints()
-		anti[i]:ClearAllPoints()
-		combo[i]:SetPoint("TOPLEFT", f, "TOPLEFT", cx, 0)
-		anti[i]:SetPoint("TOPLEFT", f, "TOPLEFT", cx, 0)
-		combo[i]:SetPoint("BOTTOMRIGHT", f, "BOTTOMLEFT", cx + cpwidth, 0)
-		anti[i]:SetPoint("BOTTOMRIGHT", f, "BOTTOMLEFT", cx + cpwidth, 0)
+		f.combos[i]:ClearAllPoints()
+		f.antis[i]:ClearAllPoints()
+		f.combos[i]:SetPoint("TOPLEFT", f, "TOPLEFT", cx, 0)
+		f.antis[i]:SetPoint("TOPLEFT", f, "TOPLEFT", cx, 0)
+		f.combos[i]:SetPoint("BOTTOMRIGHT", f, "BOTTOMLEFT", cx + cpwidth, 0)
+		f.antis[i]:SetPoint("BOTTOMRIGHT", f, "BOTTOMLEFT", cx + cpwidth, 0)
 
 		cx = cx + cpwidth + spacing
 	end
 end
 
-function addon:SA_UpdateStatWidths()
-	local width = VTimerEnergy:GetWidth()
+function addon:SA_UpdateStatWidths(width)
+	local width = width or VTimerEnergy:GetWidth()
 
 	local numStats = SA2.numStats or 3--HP TODO option for this
 	local spacing = width/90;
@@ -888,7 +890,7 @@ function addon:SA_UpdateStatWidths()
 	local cur_location = 0; --small initial offset
 
 	local f = SA_Data.BARS["Stat"]["obj"];
-
+	f:SetWidth(width);
 	for i = 1, 4 do
 		--Create the frame & space it
 		local statText = SA_Data.BARS["Stat"]["obj"].stats[i];
@@ -1027,12 +1029,16 @@ function addon:SA_flashBuffedStats(totalAP,buffAP,crit,mhSpeed,guile)
 	statCheck[3] = (mhSpeed < (SA_Data.baseSpeed / 1.5));
 	statCheck[4] = (guile == 4 and UnitExists("target"));
 	
+	if SA_Data.BFActive then
+		statCheck[3] = (SA_Data.BladeFlurry == 0);
+	end
+	
 	local barStats = SA_Data.BARS["Stat"]["obj"].stats
 	 
 	for i = 1, numStats do
 		local alpha = barStats[i]:GetAlpha()
 		if statCheck[i] then
-		barStats[i].fs:SetTextColor(140/255, 15/255, 0);
+			barStats[i].fs:SetTextColor(140/255, 15/255, 0);
 			if (not UIFrameIsFading(barStats[i])) then --flash if not already flashing
 				if (alpha > 0.5) then
 					UIFrameFadeOut(barStats[i], 1, alpha, 0.1)
@@ -1052,8 +1058,6 @@ function addon:SA_NewFrame()
 
 	 f:SetSize(widthUI, 12);
 	 f:SetScale(scaleUI); 
-	 
-	 f:SetPoint("BOTTOMLEFT", VTimerEnergy, "TOPLEFT", 2, 0);
 	 
 	 f:SetStatusBarTexture(addon:SA_BarTexture());
 	 f:SetStatusBarColor(0.768627451, 0, 0, 1);
@@ -1088,9 +1092,8 @@ function addon:SA_NewFrame()
 	 end
 	 f.icon:SetHeight(f:GetHeight());
 	 f.icon:SetWidth(f.icon:GetHeight());
-	 f.icon:SetPoint("TOPLEFT", f, "TOPLEFT", 0, 0);
-	 f.icon:SetBlendMode("ADD");
-	 f.icon:SetAlpha(.99);
+	 f.icon:SetPoint("TOPLEFT", f, "TOPLEFT", -12, 0);
+	 f.icon:SetBlendMode("DISABLE");	 
 
 	 -- text on the left --
 	 if not f.count then
@@ -1098,7 +1101,7 @@ function addon:SA_NewFrame()
 	 end
 	 f.count:SetFontObject(SA_Data.BarFont2);
 	 f.count:SetSize(30,10);	 
-	 f.count:SetPoint("TOPLEFT", f, "TOPLEFT", f.icon:GetHeight(),0);
+	 f.count:SetPoint("TOPLEFT", f, "TOPLEFT", 2,-1);
 	 f.count:SetJustifyH("LEFT") 
 	 f.count:SetText("");
 	 
@@ -1108,7 +1111,7 @@ function addon:SA_NewFrame()
 	 end
 	 f.DoTtext:SetFontObject(SA_Data.BarFont2);
 	 f.DoTtext:SetSize(60,10)	 
-	 f.DoTtext:SetPoint("CENTER", f, "CENTER", 0 , 0);
+	 f.DoTtext:SetPoint("CENTER", f, "CENTER", -12 , 0);
 	 f.DoTtext:SetJustifyH("CENTER")
 	 f.DoTtext:SetText("");
 	
@@ -1277,8 +1280,6 @@ local function SA_QuickUpdateBar(unit, spell)
 end
 
 function addon:OnUpdate(elapsed)
-SA2.TimeSinceLastUpdate = SA2.TimeSinceLastUpdate + elapsed;
-if (SA2.TimeSinceLastUpdate > SA2.UpdateInterval) then	
 	local SATimer = SAMod.ShowTimer
 	
 	if SAMod.Main.PadLatency then
@@ -1315,8 +1316,7 @@ if (SA2.TimeSinceLastUpdate > SA2.UpdateInterval) then
 			end
 		end
 	end 
-	SA2.TimeSinceLastUpdate = 0;
- end
+
 end
 
 function addon:SA_Config_VarsChanged()
@@ -1488,7 +1488,8 @@ function addon:OnEnable()
 		end
 		addon:SA_OnLoad()
 		SA:ClearAllPoints(); SA:SetPoint(point, xOfs, yOfs);
-		SA:SetScript("OnUpdate", addon.OnUpdate);
+		--SA:SetScript("OnUpdate", addon.OnUpdate);
+		addon.UpdateTicker = C_Timer.NewTicker(SA2.UpdateInterval, addon.OnUpdate)
 		SA:SetScript("OnMouseDown", function(self) if (not SAMod.Main.IsLocked) then self:StartMoving() end end)
 		SA:SetScript("OnMouseUp", function(self) self:StopMovingOrSizing(); SAMod.Main.point, _l, _l, SAMod.Main.xOfs, SAMod.Main.yOfs = SA:GetPoint(); end )
 		SA:EnableMouse(not SAMod.Main.IsLocked);
