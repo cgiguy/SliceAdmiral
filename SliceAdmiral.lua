@@ -72,6 +72,7 @@ SADefault = {
 				[51713] = {r=0/255, g=0/255, b=128/255,},
 				[91021] = {r=130/255, g=130/255, b=0,},
 				[31665] = {r=99/255, g=26/255, b=151/255,},
+				[137586] = {r=34/255, g=189/255, b=34/255,},
 			},
 			Timers = {
 				[5171] = 6.0, --Slice and Dice
@@ -96,6 +97,7 @@ SADefault = {
 				[51713] = 6.0, -- ShadowDance
 				[91021] = 6.0, --FindWeaknes
 				[31665]= 5.0, --Master of Subtlety
+				[137586] = 6.0,--Shuricken toss
 			},
 			[5171] = true, --Slice and Dice
 			[84745] = true, -- BanditsGuile, Shallow
@@ -119,6 +121,7 @@ SADefault = {
 			[157562] = true, -- Crimson Poison
 			[51713] = false, -- ShadowDance
 			[31665] = true, -- master of Subtlety
+			[137586] = false, -- Shuriken toss
 		},
 		Combo = {
 			PointShow = true,
@@ -165,6 +168,7 @@ SADefault = {
 			[51713] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
 			[91021] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
 			[31665] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
+			[137586] = {enabeld=false, tick= "None", alert="None", tickStart=3.0, },
 			MasterVolume = false,
 			OutOfCombat = false,			
 			none = "none",

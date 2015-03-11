@@ -23,6 +23,7 @@ SA_Spells = { [5171] = { target = "player", sort = true,duration=36, pandemic=tr
 	[91021] = { target = "target",sort=true, duration=10,pandemic=false, }, -- FindWeaknes
 	[157562] = { target = "player",sort=true, duration=6,pandemic=false, }, -- Crimson Poison
 	[31665] = { target = "player",sort=true, duration=5,pandemic=false, }, -- Master of Subtlety
+	[137586] = { target = "player", sort=true, duration=10, pandemic=false,}, --Shuriken Toss
 	};
 
 for k in pairs(SA_Spells) do
