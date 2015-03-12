@@ -73,6 +73,7 @@ SADefault = {
 				[91021] = {r=130/255, g=130/255, b=0,},
 				[31665] = {r=99/255, g=26/255, b=151/255,},
 				[137586] = {r=34/255, g=189/255, b=34/255,},
+				[61304] = {r=192/255,g=192/255,b=192/255},
 			},
 			Timers = {
 				[5171] = 6.0, --Slice and Dice
@@ -98,6 +99,7 @@ SADefault = {
 				[91021] = 6.0, --FindWeaknes
 				[31665]= 5.0, --Master of Subtlety
 				[137586] = 6.0,--Shuricken toss
+				[61304] = 1.0, --GCD
 			},
 			[5171] = true, --Slice and Dice
 			[84745] = true, -- BanditsGuile, Shallow
@@ -122,6 +124,7 @@ SADefault = {
 			[51713] = false, -- ShadowDance
 			[31665] = true, -- master of Subtlety
 			[137586] = false, -- Shuriken toss
+			[61304] = false, --GCD
 		},
 		Combo = {
 			PointShow = true,
@@ -169,6 +172,7 @@ SADefault = {
 			[91021] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
 			[31665] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
 			[137586] = {enabeld=false, tick= "None", alert="None", tickStart=3.0, },
+			[61304] = {enabeld=false, tick= "None", alert="None", tickStart=0.5, },
 			MasterVolume = false,
 			OutOfCombat = false,			
 			none = "none",
@@ -193,6 +197,9 @@ SA_Data = {
 			["obj"] = 0
 		},
 		["Stat"] = {
+			["obj"] = 0,
+		},
+		["tmp"] = {
 			["obj"] = 0,
 		},
 	}
@@ -358,7 +365,7 @@ function addon:SA_ChangeAnchor()
 	end
  end
 	-- Fix for icon offset
-	local tmp = SA_Data.BARORDER[1]["obj"]
+	local tmp = SA_Data.BARS["tmp"]["obj"]
 	tmp:SetPoint("BOTTOMLEFT",LastAnchor,"TOPLEFT",12,-12)	
 	LastAnchor = tmp 
 	
@@ -470,7 +477,7 @@ function addon:UpdateBFText()
 	SA_Data.BladeFlurry = tablelength(bfhits);
 	bfhits = {};
 	if SAMod.ShowTimer.Options.BladeFlurry and SA_Data.BFActive then
-		SA_Data.BARS["Stat"]["obj"].stats[3].fs:SetText(SA_Data.BladeFlurry);
+		SA_Data.BARS["Stat"]["obj"].stats[3].fs:SetFormattedText(SA_Data.BladeFlurry);
 	end
 end
 
@@ -538,7 +545,19 @@ local specialEvent = { SPELL_DAMAGE = true,
 	SPELL_AURA_REMOVED = true,
 	SPELL_AURA_REFRESH = true,
 }; 
-
+local function GCD()
+	if not SAMod.ShowTimer[61304] then return end
+	local start, duration, enabled = GetSpellCooldown(61304) 
+	local GCD = SA_Data.BARS[SA_Spells[61304].name]
+	
+	if start > 0 then		
+		GCD["Expires"] = start + duration;		
+		GCD["tickStart"] = (start + duration or 0) - SAMod.Sound[61304].tickStart;					
+		GCD["LastTick"] = GCD["tickStart"] - 1.0;
+		GCD["count"] = 0;
+		GCD["obj"]:Show();		
+	end
+end
 function addon:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, type, hideCaster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId, ...)	
 	local saTimerOp = SAMod.ShowTimer.Options
 	local select = select
@@ -557,8 +576,9 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, type, hideCaster, s
 			addon:SetComboPoints("SPELL_ENERGIZE")
 		end
 		return
-	end	
+	end		
 	if not isMySpell then return end;
+	GCD();
 	if dbtypes[type] then
 		--Buffs EVENT --
 		if SAMod.ShowTimer[spellId] then
@@ -590,11 +610,11 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, type, hideCaster, s
 			end
 			-- BladeFlurry Switch --
 			if spellId == 13877 and type == "SPELL_AURA_REMOVED" then 
-				SA_Data.BARS["Stat"]["obj"].stats[3].labelFrame.fs:SetText("Speed")
+				SA_Data.BARS["Stat"]["obj"].stats[3].labelFrame.fs:SetFormattedText("Speed")
 				SA_Data.BFActive = false
 				bfticker:Cancel()
 			elseif spellId == 13877 and type == "SPELL_AURA_APPLIED" and saTimerOp.BladeFlurry then
-				SA_Data.BARS["Stat"]["obj"].stats[3].labelFrame.fs:SetText("Flurry")
+				SA_Data.BARS["Stat"]["obj"].stats[3].labelFrame.fs:SetFormattedText("Flurry")
 				SA_Data.BFActive = true
 				bfticker:Cancel()
 				bfticker = C_Timer.NewTicker(2,addon.UpdateBFText)
@@ -617,10 +637,10 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, type, hideCaster, s
 			end
 			dotText:SetAlpha(1);
 			if (saTimerOp.DoTCrits and critical) then
-				dotText:SetText(string.format("*%.0f*", amount));
+				dotText:SetFormattedText("*%.0f*", amount);
 				UIFrameFadeOut(dotText, 3, 1, 0);
 			else
-				dotText:SetText(amount);
+				dotText:SetFormattedText(amount);
 				UIFrameFadeOut(dotText, 2, 1, 0);
 			end
 		end
@@ -751,9 +771,9 @@ function addon:SetComboPoints(event)
 	local name, rank, icon, count = UnitAura("player", SA_Spells[115189].name)
 	local cpBar = SA_Data.BARS["CP"]["obj"]
 	count = count or 0
-	local text = "0(0)"
+	local text = "0(0)" --string.format("%d(%d)",points,count) 
 	if count >= 0 and SAMod.Energy.AnticpationText and SAMod.Energy.ShowComboText then
-		text = points .. "(" .. count.. ")"
+		text = points .. "(" .. count.. ")" --string.format("%d(%d)",points,count)
 	elseif count >= 0 and SAMod.Energy.AnticpationText then
 		text = count
 	else
@@ -761,9 +781,9 @@ function addon:SetComboPoints(event)
 	end	
 	if (SAMod.Energy.ShowComboText) or (SAMod.Energy.AnticpationText) then
 		if (text == 0 or text == "0(0)") then
-			SA_Combo:SetText("");
+			SA_Combo:SetFormattedText("");
 		else
-			SA_Combo:SetText(text);
+			SA_Combo:SetFormattedText(text);
 		end
 	end
 		
@@ -966,7 +986,7 @@ function addon:SA_CreateStatBar()
 		statText.fs:SetJustifyV("TOP")
 		statText.fs:SetFont(font, fontsize, fontstyle);
 		statText.fs:SetAllPoints();
-		statText.fs:SetText("");
+		statText.fs:SetFormattedText("");
 
 		--Create stat label frame
 		local labelFrame = CreateFrame("Frame", nil, f)	
@@ -977,7 +997,7 @@ function addon:SA_CreateStatBar()
 		labelFrame.fs:SetJustifyH("CENTER")
 		labelFrame.fs:SetJustifyV("BOTTOM")
 		labelFrame.fs:SetFont(font, fontsize/1.6, "");
-		labelFrame.fs:SetText(lableText[i]);
+		labelFrame.fs:SetFormattedText(lableText[i]);
 		labelFrame.fs:SetAllPoints(); 
 		
 		f.stats[i] = statText;
@@ -998,21 +1018,21 @@ function addon:SA_UpdateStats()
 	local barStats = SA_Data.BARS["Stat"]["obj"].stats
 		
 	if(totalAP > 99999) then 
-		barStats[1].fs:SetText(string.format("%.1f", totalAP/1000).."k")
+		barStats[1].fs:SetFormattedText("%.1fk", totalAP/1000)
 	else
-		barStats[1].fs:SetText(totalAP);
+		barStats[1].fs:SetFormattedText(totalAP);
 	end
 		
-	barStats[2].fs:SetText(string.format("%.1f%%", crit));
+	barStats[2].fs:SetFormattedText("%.1f%%", crit);
 	
 	if SAMod.ShowTimer.Options.BladeFlurry and SA_Data.BFActive then
-		barStats[3].fs:SetText(SA_Data.BladeFlurry)
+		barStats[3].fs:SetFormattedText(SA_Data.BladeFlurry)
 	else
-		barStats[3].fs:SetText(string.format("%.2f", mhSpeed));
+		barStats[3].fs:SetFormattedText("%.2f", mhSpeed);
 	end
 	
 	if (barStats[4]) then
-		barStats[4].fs:SetText(string.format("%s",SA_Data.guile));
+		barStats[4].fs:SetFormattedText("%s",SA_Data.guile);
 	 end 
 		
 	if SAMod.Combo.HilightBuffed then
@@ -1088,7 +1108,7 @@ function addon:SA_NewFrame()
 	 f.text:SetSize(30,10);	 
 	 f.text:SetPoint("TOPRIGHT", f, "TOPRIGHT", -2,0);
 	 f.text:SetJustifyH("RIGHT") 
-	 f.text:SetText("");
+	 f.text:SetFormattedText("");
 
 	 -- icon on the left --
 	 if not f.icon then
@@ -1107,7 +1127,7 @@ function addon:SA_NewFrame()
 	 f.count:SetSize(30,10);	 
 	 f.count:SetPoint("TOPLEFT", f, "TOPLEFT", 2,-1);
 	 f.count:SetJustifyH("LEFT") 
-	 f.count:SetText("");
+	 f.count:SetFormattedText("");
 	 
 	 -- DoT Text --
 	 if not f.DoTtext then
@@ -1117,11 +1137,11 @@ function addon:SA_NewFrame()
 	 f.DoTtext:SetSize(60,10)	 
 	 f.DoTtext:SetPoint("CENTER", f, "CENTER", -12 , 0);
 	 f.DoTtext:SetJustifyH("CENTER")
-	 f.DoTtext:SetText("");
+	 f.DoTtext:SetFormattedText("");
 	
 	f:SetScript("OnHide", addon.SA_ChangeAnchor)
 	f:SetScript("OnShow", addon.SA_ChangeAnchor)
-	--f:SetScript("OnValueChanged", function(self,value) self.text:SetText(string.format("%0.1f", value)) end)
+	--f:SetScript("OnValueChanged", function(self,value) self.text:SetFormattedText("%0.1f", value))end)
 	 return f;
 
 end
@@ -1194,15 +1214,16 @@ function addon:SA_OnLoad()
 	VTimerEnergy:SetWidth(200);
 	local oEner = SAMod.Energy.Color
 	VTimerEnergy:SetStatusBarColor(oEner.r, oEner.g, oEner.b); 
-	VTimerEnergy:SetScript("OnValueChanged",function(self,value)local mi, ma = self:GetMinMaxValues() if  (value == ma) then VTimerEnergyTxt:SetText("") else VTimerEnergyTxt:SetText(floor(value)) end end) 
+	VTimerEnergy:SetScript("OnValueChanged",function(self,value)local mi, ma = self:GetMinMaxValues() if  (value == ma) then VTimerEnergyTxt:SetFormattedText("") else VTimerEnergyTxt:SetFormattedText(floor(value)) end end) 
 	scaleUI = VTimerEnergy:GetScale();
 	widthUI = VTimerEnergy:GetWidth();
 		
 	S:SmoothBar(VTimerEnergy);
 		
 	SA_Data.BARS["CP"]["obj"] = addon:SA_CPFrame();
-
+	SA_Data.BARS["tmp"]["obj"] = addon:SA_NewFrame()
 	SA_Data.BARS["Stat"]["obj"] = addon:SA_CreateStatBar();
+	
 	local Sc = SAMod.ShowTimer.Colours
 	
 	for k in pairs(SA_Spells) do
@@ -1217,8 +1238,7 @@ function addon:SA_OnLoad()
 			SA_Data.BARS[name]["obj"].icon:SetTexture(icont);
 			SA_Data.BARS[name]["obj"]:SetMinMaxValues(0,smax);
 		end
-	end
-
+	end	
 	SA_Data.BARORDER = {}; -- Initial order puts the longest towards the inside.
 	SA_Data.TOPORDER = {};
 	for k,v in pairs(SA_Spells) do
@@ -1250,9 +1270,9 @@ local function SA_UpdateBar(unit, spell, sa_sound)
 	
 	if sa_time > 0 and sabars then
 		sabars["obj"]:SetValue(sa_time);
-		sabars["obj"].text:SetText(string.format("%0.1f", sa_time));
+		sabars["obj"].text:SetFormattedText("%0.1f", sa_time);
 		if sabars["count"] > 0 then 
-			sabars["obj"].count:SetText(sabars["count"]);
+			sabars["obj"].count:SetFormattedText(sabars["count"]);
 		end
 	else
 		sabars["obj"]:Hide();
@@ -1273,9 +1293,9 @@ local function SA_QuickUpdateBar(unit, spell)
 	
 	if sa_time > 0 and sabars then		
 		sabars["obj"]:SetValue(sa_time);
-		sabars["obj"].text:SetText(string.format("%0.1f", sa_time));
+		sabars["obj"].text:SetFormattedText("%0.1f", sa_time);
 		if sabars["count"] > 0 then 
-			sabars["obj"].count:SetText(sabars["count"]);
+			sabars["obj"].count:SetFormattedText(sabars["count"]);
 		end
 	else
 		sabars["obj"]:Hide();

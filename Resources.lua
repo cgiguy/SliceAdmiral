@@ -1,5 +1,38 @@
 -- Author      : Administrator
 -- Create Date : 9/13/2008 10:16:36 AM
+SA_Spells = { [5171] = { target = "player", sort = true,duration=36, pandemic=true,}, --Slice and Dice
+	[73651] = { target = "player", sort = true, duration=30,pandemic=true, }, -- Recuperate
+	[2818] = { target = "target", sort = false, duration=12,pandemic=true,}, --DeadlyPoison
+	[1943] = { target = "target", sort = true,duration=24, pandemic=true, },  --Rupture
+	[1966]  = { target = "player", sort = false,duration=5,pandemic=false, }, --Feint
+	[703] = { target = "target", sort = true,duration=18, pandemic=true, }, --Garrote
+	[115189] = { target = "player",sort = true,duration=15,pandemic=false, }, --Anticipation
+	[137573] = { target = "player",sort = true,duration=4,pandemic=false, }, --BurstOfSpeed
+	[154953] = { target = "target", sort = true,duration=12,pandemic=false, }, --InternalBleeding
+	[79140] = { target = "target", sort=false,duration=20,pandemic=false, }, --Vendetta
+	[32645] = { target = "player",sort = true,duration=6,pandemic=false,}, --Envenom
+	[84617] = { target = "target", sort=true,duration=24,pandemic=true,}, --RevealingStrike
+	[13750] = { target = "player",sort=true,duration=15,pandemic=false,}, --Adrenaline Rush
+	[84745] = { target = "player",sort=false,duration=15,pandemic=false, }, --Guile Rank 1
+	[84746] = { target = "player",sort=false,duration=15,pandemic=false,}, --Guile Rank 2
+	[84747] = { target = "player",sort=false,duration=15,pandemic=false,}, --Guile Rank 3
+	[16511] = { target = "target",sort=true,duration=24,pandemic=true, }, -- Hemorrhage	
+	[122233] = { target="target",sort=true, duration=12,pandemic=false,}, --CrimsonTempest
+	[51713] = { target = "player",sort=false,duration=8,pandemic=false,}, --ShadowDance
+	[91021] = { target = "target",sort=true, duration=10,pandemic=false, }, -- FindWeaknes
+	[157562] = { target = "player",sort=true, duration=6,pandemic=false, }, -- Crimson Poison
+	[31665] = { target = "player",sort=true, duration=5,pandemic=false, }, -- Master of Subtlety
+	[137586] = { target = "player", sort=true, duration=10, pandemic=false,}, --Shuriken Toss
+	[61304] = { target = "player", sort=true, duration=1, pandemic=false,}, --GCD
+	};
+
+for k in pairs(SA_Spells) do
+ local name, rank, icon, _ = GetSpellInfo(k)
+	SA_Spells[k].name = name
+	SA_Spells[k].icon = icon
+	SA_Spells[k].id = k	
+end
+
 local LSM = LibStub("LibSharedMedia-3.0")
 local SA_BarTextures = {
   ["Aluminium"] = "Interface\\AddOns\\SliceAdmiral\\Images\\Aluminium.tga",
