@@ -1,6 +1,8 @@
 -- Create Date : 3/11/2015
 -- yuningning520
 local L = LibStub("AceLocale-3.0"):NewLocale("SliceAdmiral", "zhCN")
+if not L then return end
+
 L["SALoaded"] = "SliceAdmiral %s 已载入!! 于 界面>插件>SliceAdmiral 设置。"
 L["ClickToMove"] = "锁定点击移动"
 L["PadLatency"] = "计算延迟"
