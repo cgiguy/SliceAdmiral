@@ -27,6 +27,8 @@ lib\AceGUI-3.0-SharedMediaWidgets\widget.xml
 
 localization.lua
 localization.cn.lua
+localization.es.lua
+
 Resources.lua
 SliceAdmiral.lua
 ConfigCombo.lua

@@ -25,7 +25,7 @@ local function pandemic(val)
 		if val then
 			opt[SA_Spells[k].name].args.valuses.disabled = SA_Spells[k].pandemic
 		else
-			opt[SA_Spells[k].name].args.valuses.disabled = false			
+			opt[SA_Spells[k].name].args.valuses.disabled = false
 		end
 	end
 end
@@ -33,13 +33,20 @@ end
 function addon:OnInitialize()
 local options = sliceadmiral.opt.ShowTimer 
 local col = SAMod.ShowTimer.Colours
+local BanditsGuilLocal, _ =  GetSpellInfo(84654)
+local SPECS = {} --1 Assassination, 2 Combat, 3 Subtlety
+for i = 1,3 do
+	local _,SPEC,_ = GetSpecializationInfoForClassID(4,i);
+	SPECS[i] = SPEC;
+end
+
 options.childGroups="tab";
 options.args = { 
-			GrowUp = {name=L["Bars/GrowUp"],type="toggle",order=1,		
+			GrowUp = {name=L["Bars/GrowUp"],type="toggle",order=1,
 				get = function(info) return SAMod.ShowTimer.Options.Barsup; end,
 				set = function(info,val) SAMod.ShowTimer.Options.Barsup = val; end
 			},
-			Sort = {name=L["Bars/Sort"],type="toggle",order=2,			
+			Sort = {name=L["Bars/Sort"],type="toggle",order=2,
 				get = function(info) return SAMod.ShowTimer.Options.SortBars; end,
 				set = function(info,val) SAMod.ShowTimer.Options.SortBars = val; end
 			},
@@ -47,11 +54,11 @@ options.args = {
 				get = function(info) return SAMod.ShowTimer.Options.Dynamic; end,
 				set = function(info,val) SAMod.ShowTimer.Options.Dynamic = val; pandemic(val); end, 
 			},
-			ShowDoT = {name=L["Bars/ShowDoT"],type="toggle",order=4,		
+			ShowDoT = {name=L["Bars/ShowDoT"],type="toggle",order=4,
 				get = function(info) return SAMod.ShowTimer.Options.ShowDoTDmg; end,
 				set = function(info,val) SAMod.ShowTimer.Options.ShowDoTDmg = val; end
 			},
-			DoTCrit = {name=L["Bars/DoTCrit"],type="toggle",order=5,		
+			DoTCrit = {name=L["Bars/DoTCrit"],type="toggle",order=5,
 				get = function(info) return SAMod.ShowTimer.Options.DoTCrits; end,
 				set = function(info,val) SAMod.ShowTimer.Options.DoTCrits = val; end
 			},
@@ -64,17 +71,17 @@ options.args = {
 				get = function(info) return SAMod.Sound.MasterVolume; end,
 				set = function(info,val) SAMod.Sound.MasterVolume = val; end
 			},
-			OutOfCombat = {name=L["Sound/OutOfCombat"],type="toggle",order=8,width="double",		
+			OutOfCombat = {name=L["Sound/OutOfCombat"],type="toggle",order=8,width="double",
 				get = function(info) return SAMod.Sound.OutOfCombat; end,
 				set = function(info,val) SAMod.Sound.OutOfCombat = val; end
 			},			
 			Shared = {name=L["SharedAbilites"],type="group",order=20,childGroups="tree",args={},},
-			Assassination = {name=L["Assassination"],type="group",order=30,childGroups="tree",args={},},
-			Combat = {name=L["Combat"],type="group",order=40,childGroups="tree",args={},},
-			Subtlety ={name=L["Subtlety"],type="group",order=50,childGroups="tree",args={},},			
+			Assassination = {name=SPECS[1],type="group",order=30,childGroups="tree",args={},},
+			Combat = {name=SPECS[2],type="group",order=40,childGroups="tree",args={},},
+			Subtlety ={name=SPECS[3],type="group",order=50,childGroups="tree",args={},},
 		}
 
-	for k,v in pairs(SA_talents) do		
+	for k,v in pairs(SA_talents) do
 		if v == "Shared" then
 			opt = options.args.Shared.args
 		elseif v == "Assassination" then
@@ -105,7 +112,7 @@ options.args = {
 					get = function(info) return col[k].r, col[k].g,col[k].b; end,
 					set = function(info, r,g,b,a) SA_Data.BARS[SA_Spells[k].name]["obj"]:SetStatusBarColor(r, g, b); col[k].r = r; col[k].g = g; col[k].b = b; end,
 				},
-				bar1 = {name=L["SoundSettings"],type="header",order=5},				
+				bar1 = {name=L["SoundSettings"],type="header",order=5},
 				tick = {name=L["TickSound"],type="select",order=12, dialogControl = 'LSM30_Sound',
 					values = LSM:HashTable("sound"),
 					get = function(info) return SAMod.Sound[k].tick; end,
@@ -125,7 +132,7 @@ options.args = {
 		}
 	end
 	
-	options.args.Combat.args["BanditsGuile"] = {name=L["BanditsGuile"],type="group",
+	options.args.Combat.args["BanditsGuile"] = {name=BanditsGuilLocal,type="group",
 		args = {
 			enable = {name=L["ShowBar"],type="toggle", order=1,
 				get = function(info) return SAMod.ShowTimer[84745]; end,

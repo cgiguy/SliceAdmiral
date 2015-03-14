@@ -15,7 +15,6 @@ L["Main/oocFade"] = "脱离战斗渐隐"
 L["Main/Texture"] = "材质"
 L["Main/Hide"] = "脱战隐藏"
 
-L["Version"] = "版本"
 L["TimerBars"] = "计时条"
 L["Combo"] = "连击点和统计栏"
 L["EnergyBar"] = "能量条"
@@ -35,10 +34,7 @@ L["Assassination"] = "刺杀"
 L["Combat"] = "战斗"
 L["Subtlety"]= "敏锐"
 
-L["BanditsGuile"] = "刺客的狡诈"
-
 L["ShowBar"] = "显示计时条"
-L["SliceNDice/Seconds"] = ""
 
 L["Bars/GrowUp"] = "向上延伸计时条"
 L["Bars/Sort"] = "按照持续时间排序"
@@ -51,11 +47,6 @@ L["Sound/MasterVolume"] = "使用主音量。"
 L["Sound/MasterDesc"] = "当声音效果被禁用时播放声音。"
 L["Sound/OutOfCombat"] = "非战斗时播放音效。"
 L["Sound/Preview"] = "预先播放音效的选项菜单。"
-
-L["Frames/Custom"] = "自定义"
-L["Frames/Tank"]=  "坦克"
-L["Frames/DPS"] = "输出"
-L["Frames/Healer"] = "治疗"
 
 L["combo/Show"] = "显示连击点"
 L["tShow/anticipation"] = "显示预感点"
