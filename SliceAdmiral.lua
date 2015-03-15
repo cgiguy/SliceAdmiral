@@ -321,52 +321,43 @@ function addon:PlayBuffer()
 end
 
 function addon:SA_ChangeAnchor()
- local LastAnchor = VTimerEnergy;
+ local LastAnchor = SA;
+ local FirstAnchor = SA;
  local offSetSize = SAMod.Main.BarMargin; -- other good values, -1, -2 
  local opt = SAMod.ShowTimer.Options
  local statsBar = SA_Data.BARS["Stat"]["obj"]
  local cpBar = SA_Data.BARS["CP"]["obj"]
 
  -- Stat bar goes first, because it's fucking awesome like that
- if SAMod.Combo.ShowStatBar then 
+ if SAMod.Combo.ShowStatBar then 	
 	statsBar:ClearAllPoints();
-	statsBar:SetPoint("BOTTOMLEFT", LastAnchor, "TOPLEFT", 0, offSetSize); 
- end
-
- --anchor CPs on stat bar if energy bar is hidden.
- if not SAMod.Energy.ShowEnergy then
+	statsBar:SetPoint("TOPLEFT", LastAnchor, "BOTTOMLEFT", 0, -1 * offSetSize);
+	FirstAnchor = statsBar;
 	LastAnchor = statsBar;
  end
 
- -- CP Bar --
- cpBar:ClearAllPoints(); --so it can move
- cpBar:SetPoint("TOPLEFT", LastAnchor, "BOTTOMLEFT", 0, -1 * offSetSize); --CP bar on bottom of Stat Bar
-
- LastAnchor = statsBar; --timer bars grow off top of stat bar by default
- if opt.Barsup then
-	if SAMod.Combo.ShowStatBar then
-		LastAnchor = statsBar;
-	else
-		if SAMod.Energy.ShowEnergy then
-			LastAnchor = VTimerEnergy;
-		else
-			LastAnchor = cpBar;
-		end
-	end
- else
-	if SAMod.Combo.PointShow then
-		LastAnchor = cpBar;
-	else
-		if SAMod.Energy.ShowEnergy then
-			LastAnchor = VTimerEnergy;
-		else
-			LastAnchor = statsBar;
-		end
-	end
+ --anchor CPs on stat bar if energy bar is hidden.
+ if SAMod.Energy.ShowEnergy then	
+	VTimerEnergy:ClearAllPoints()
+	VTimerEnergy:SetPoint("TOPLEFT", LastAnchor, "BOTTOMLEFT", 0, -1 * offSetSize); 
+	if not (FirstAnchor == statsBar) then FirstAnchor = VTimerEnergy end
+	LastAnchor = VTimerEnergy;
  end
-	-- Fix for icon offset
+
+ -- CP Bar --
+ if SAMod.Combo.PointShow then
+	cpBar:ClearAllPoints(); --so it can move
+	cpBar:SetPoint("TOPLEFT", LastAnchor, "BOTTOMLEFT", 0, -1 * offSetSize); --CP bar on bottom of Stat Bar
+	if (FirstAnchor == SA) then FirstAnchor = cpBar end
+	LastAnchor = cpBar
+end
 	local tmp = SA_Data.BARS["tmp"]["obj"]
-	tmp:SetPoint("BOTTOMLEFT",LastAnchor,"TOPLEFT",12,-12)	
+	if opt.Barsup then
+		LastAnchor = FirstAnchor
+		tmp:SetPoint("BOTTOMLEFT",LastAnchor,"TOPLEFT",12,-12);
+	else
+		tmp:SetPoint("TOPLEFT",LastAnchor,"BOTTOMLEFT",12,12);
+	end
 	LastAnchor = tmp 
 	
 	for i = 1, SA2.maxSortableBars do 
@@ -489,8 +480,7 @@ function addon:UNIT_ATTACK_SPEED(...)
 	end	
 	if SAMod.ShowTimer.Options.BladeFlurry then
 		if bfticker then bfticker:Cancel() end
-		local mhSpeed, ohSpeed = UnitAttackSpeed("player");
-		bfticker = C_Timer.NewTicker(math.max(0.3,mhSpeed), addon.UpdateBFText)
+		bfticker = C_Timer.NewTicker(math.max(0.3,UnitAttackSpeed("player")), addon.UpdateBFText);
 	end
 end
 
@@ -558,25 +548,24 @@ local function GCD()
 	end
 end
 function addon:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, type, hideCaster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId, ...)	
-	local saTimerOp = SAMod.ShowTimer.Options
-	local select = select
-	local SA_Spells = SA_Spells
-	local SABars = SA_Data.BARS
-	local isMySpell = (sourceName == UnitName("player"))
-	local isOnMe = (destName == UnitName("player"))
-	local isOnTarget = (destName == GetUnitName("target",true))
 	if type =="UNIT_DIED" then
 		soundBuffer = {}
 		return
-	end
-	
+	end	
+	local isOnMe = (destName == UnitName("player"))	
 	if type == "SPELL_ENERGIZE" then
 		if spellId == 51699 and isOnMe then	--- 51699 HaT
 			addon:SetComboPoints("SPELL_ENERGIZE")
 		end
 		return
 	end
+	local isMySpell = (sourceName == UnitName("player"))
 	if not isMySpell then return end;
+	local saTimerOp = SAMod.ShowTimer.Options
+	local select = select
+	local SA_Spells = SA_Spells
+	local SABars = SA_Data.BARS	
+	local isOnTarget = (destName == GetUnitName("target",true))	
 	GCD();
 	if dbtypes[type] then
 		--Buffs EVENT --
@@ -612,12 +601,11 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, type, hideCaster, s
 				SA_Data.BARS["Stat"]["obj"].stats[3].lable:SetFormattedText("Speed")
 				SA_Data.BFActive = false
 				bfticker:Cancel()
-			elseif spellId == 13877 and type == "SPELL_AURA_APPLIED" and saTimerOp.BladeFlurry then
-				local mhSpeed, ohSpeed = UnitAttackSpeed("player");
+			elseif spellId == 13877 and type == "SPELL_AURA_APPLIED" and saTimerOp.BladeFlurry then				
 				SA_Data.BARS["Stat"]["obj"].stats[3].lable:SetFormattedText("Flurry")
 				SA_Data.BFActive = true
 				bfticker:Cancel()
-				bfticker = C_Timer.NewTicker(math.max(mhSpeed,1),addon.UpdateBFText)
+				bfticker = C_Timer.NewTicker(math.max(UnitAttackSpeed("player"),1),addon.UpdateBFText)
 			end
 			-- Master of Subtlety Work around-- 
 			if type == "SPELL_AURA_REMOVED" and spellId == 1784 and SAMod.ShowTimer[31665] then
@@ -997,31 +985,28 @@ function addon:SA_CreateStatBar()
 		f.stats[i].lable = labelFrame
 		
 	end
-
+	f:SetScript("OnShow", addon.UpdateStats)
 	return f;
 end
 
 function addon:SA_UpdateStats()
 	local baseAP, buffAP, negAP = UnitAttackPower("player");
 	local totalAP = baseAP+buffAP+negAP;
-	local crit = GetCritChance();
-	local mhSpeed, ohSpeed = UnitAttackSpeed("player");	 
-	local guile = SA_Data.guile; 
+	local guile = SA_Data.guile;
 	local barStats = SA_Data.BARS["Stat"]["obj"].stats
 	
-		
 	if(totalAP > 99999) then 
 		barStats[1]:SetFormattedText("%.1fk", totalAP/1000)
 	else
 		barStats[1]:SetFormattedText(totalAP);
 	end
 		
-	barStats[2]:SetFormattedText("%.1f%%", crit);
+	barStats[2]:SetFormattedText("%.1f%%", GetCritChance());
 	
 	if SAMod.ShowTimer.Options.BladeFlurry and SA_Data.BFActive then
 		barStats[3]:SetFormattedText(SA_Data.BladeFlurry)
 	else
-		barStats[3]:SetFormattedText("%.2f", mhSpeed);
+		barStats[3]:SetFormattedText("%.2f", UnitAttackSpeed("player"));
 	end
 	
 	if (barStats[4]) then
@@ -1038,7 +1023,7 @@ function addon:SA_flashBuffedStats()
 	local totalAP = baseAP+buffAP+negAP;
 	local crit = GetCritChance();
 	local mhSpeed, ohSpeed = UnitAttackSpeed("player");	 
-	local guile = SA_Data.guile; 
+	local guile = SA_Data.guile;
 	local numStats = SA2.numStats or 3;
 	if (not SA_Data.baseAP or SA_Data.baseAP == 0) then --initialize here since all stats = 0 when OnLoad is called.
 		addon:SA_ResetBaseStats();
@@ -1058,91 +1043,89 @@ function addon:SA_flashBuffedStats()
 	local barStats = SA_Data.BARS["Stat"]["obj"].stats
 	 
 	for i = 1, numStats do
-		local alpha = barStats[i]:GetAlpha()
+		local alpha = barStats[i]:GetAlpha();
 		if statCheck[i] and SAMod.Combo.HilightBuffed then
 			barStats[i]:SetTextColor(140/255, 15/255, 0);
 			if (not UIFrameIsFading(barStats[i])) then --flash if not already flashing
 				if (alpha > 0.5) then
-					UIFrameFadeOut(barStats[i], 1, alpha, 0.1)					
+					UIFrameFadeOut(barStats[i], 1, alpha, 0.1);
 				else --UIFrameFlash likes to throw execeptions deep in the bliz ui?
-					UIFrameFadeOut(barStats[i], 1, alpha, 1)					
+					UIFrameFadeOut(barStats[i], 1, alpha, 1);
 				end
 			end
 		else
 			barStats[i]:SetTextColor(1, .82, 0); --default text color
-			UIFrameFadeOut(barStats[i], 1, alpha, 1)
+			UIFrameFadeOut(barStats[i], 1, alpha, 1);
 		end
 	end	
 end
 
 function addon:SA_NewFrame()
-	 local f = CreateFrame("StatusBar", nil, SA);
+	local f = CreateFrame("StatusBar", nil, SA);
 
-	 f:SetSize(widthUI, 12);
-	 f:SetScale(scaleUI); 
+	f:SetSize(widthUI, 12);
+	f:SetScale(scaleUI); 
 	 
-	 f:SetStatusBarTexture(addon:SA_BarTexture());
-	 f:SetStatusBarColor(0.768627451, 0, 0, 1);
-	 f:EnableMouse(false);
-	 f:SetMinMaxValues(0, 6.0);
-	 f:SetValue(0);
+	f:SetStatusBarTexture(addon:SA_BarTexture());
+	f:SetStatusBarColor(0.768627451, 0, 0, 1);
+	f:EnableMouse(false);
+	f:SetMinMaxValues(0, 6.0);
+	f:SetValue(0);
 
-	 f:Hide();
+	f:Hide();
 	
-	 f:SetBackdrop({
-			 bgFile="Interface\\AddOns\\SliceAdmiral\\Images\\winco_stripe_128.tga",
-			 edgeFile="",
-			 tile=true, tileSize=1, edgeSize=0,
-			 insets={left=0, right=0, top=0, bottom=0}
-		 });
-	 f:SetBackdropBorderColor(1,1,1,1);
-	 f:SetBackdropColor(0,0,0,0.5);
+	f:SetBackdrop({
+			bgFile="Interface\\AddOns\\SliceAdmiral\\Images\\winco_stripe_128.tga",
+			edgeFile="",
+			tile=true, tileSize=1, edgeSize=0,
+			insets={left=0, right=0, top=0, bottom=0}
+		});
+	f:SetBackdropBorderColor(1,1,1,1);
+	f:SetBackdropColor(0,0,0,0.5);
 
 	 -- text on the right --
-	 if not f.text then
-		f.text = f:CreateFontString(nil, nil, "GameFontWhite")
-	 end
-	 f.text:SetFontObject(SA_Data.BarFont2);
-	 f.text:SetSize(30,10);	 
-	 f.text:SetPoint("TOPRIGHT", f, "TOPRIGHT", -2,0);
-	 f.text:SetJustifyH("RIGHT") 
-	 f.text:SetFormattedText("");
+	if not f.text then
+		f.text = f:CreateFontString(nil, nil, "GameFontWhite");
+	end
+	f.text:SetFontObject(SA_Data.BarFont2);
+	f.text:SetSize(30,10);
+	f.text:SetPoint("TOPRIGHT", f, "TOPRIGHT", -2,0);
+	f.text:SetJustifyH("RIGHT");
+	f.text:SetFormattedText("");
 
-	 -- icon on the left --
-	 if not f.icon then
+	-- icon on the left --
+	if not f.icon then
 		f.icon = f:CreateTexture(nil, "OVERLAY");
-	 end
-	 f.icon:SetHeight(f:GetHeight());
-	 f.icon:SetWidth(f.icon:GetHeight());
-	 f.icon:SetPoint("TOPLEFT", f, "TOPLEFT", -12, 0);
-	 f.icon:SetBlendMode("DISABLE");	 
+	end
+	f.icon:SetHeight(f:GetHeight());
+	f.icon:SetWidth(f.icon:GetHeight());
+	f.icon:SetPoint("TOPLEFT", f, "TOPLEFT", -12, 0);
+	f.icon:SetBlendMode("DISABLE");
 
 	 -- text on the left --
-	 if not f.count then
-		f.count = f:CreateFontString(nil, nil, "GameFontWhite")
-	 end
-	 f.count:SetFontObject(SA_Data.BarFont2);
-	 f.count:SetSize(30,10);	 
-	 f.count:SetPoint("TOPLEFT", f, "TOPLEFT", 2,-1);
-	 f.count:SetJustifyH("LEFT") 
-	 f.count:SetFormattedText("");
+	if not f.count then
+		f.count = f:CreateFontString(nil, nil, "GameFontWhite");
+	end
+	f.count:SetFontObject(SA_Data.BarFont2);
+	f.count:SetSize(30,10);
+	f.count:SetPoint("TOPLEFT", f, "TOPLEFT", 2,-1);
+	f.count:SetJustifyH("LEFT");
+	f.count:SetFormattedText("");
 	 
-	 -- DoT Text --
-	 if not f.DoTtext then
+	-- DoT Text --
+	if not f.DoTtext then
 		f.DoTtext = f:CreateFontString(nil, nil, nil)
-	 end
-	 f.DoTtext:SetFontObject(SA_Data.BarFont2);
-	 f.DoTtext:SetSize(60,10)	 
-	 f.DoTtext:SetPoint("CENTER", f, "CENTER", -12 , 0);
-	 f.DoTtext:SetJustifyH("CENTER")
-	 f.DoTtext:SetFormattedText("");
+	end
+	f.DoTtext:SetFontObject(SA_Data.BarFont2);
+	f.DoTtext:SetSize(60,10);
+	f.DoTtext:SetPoint("CENTER", f, "CENTER", -12 , 0);
+	f.DoTtext:SetJustifyH("CENTER");
+	f.DoTtext:SetFormattedText("");
 	
-	f:SetScript("OnHide", addon.SA_ChangeAnchor)
-	f:SetScript("OnShow", addon.SA_ChangeAnchor)
-	--f:SetScript("OnValueChanged", function(self,value) self.text:SetFormattedText("%0.1f", value))end)
+	f:SetScript("OnHide", addon.SA_ChangeAnchor);
+	f:SetScript("OnShow", addon.SA_ChangeAnchor);
 
-	 return f;
-
+	return f;
 end
 
 function addon:SA_ResetBaseStats()
