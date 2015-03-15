@@ -4,8 +4,7 @@ local addon = sliceadmiral:NewModule("Combo");
 
 function addon:OnInitialize()
 	local cpC = SAMod.Combo.CPColor
-	local cpA = SAMod.Combo.AnColor
-	local HighTicker
+	local cpA = SAMod.Combo.AnColor	
 	sliceadmiral.opt.Combo.args = {
 				showcp = {name=L["combo/Show"],type="toggle",order=1,
 					get = function(info) return SAMod.Combo.PointShow; end, 
@@ -53,7 +52,9 @@ function addon:OnInitialize()
 				},
 				megabuff = {name=L["combo/megabuff"], type="toggle", order=7, width="double",
 					get = function(info) return SAMod.Combo.HilightBuffed; end,
-					set = function(info,val) SAMod.Combo.HilightBuffed=val; if val then HighTicker = C_Timer.NewTicker(1, sliceadmiral.SA_flashBuffedStats); else if not val and HighTicker then HighTicker:Cancel() end; end; end,
+					set = function(info,val) SAMod.Combo.HilightBuffed=val; if val and not sliceadmiral.LightTick then 
+					sliceadmiral.LightTick = C_Timer.NewTicker(1, sliceadmiral.SA_flashBuffedStats); 
+					else if not val and sliceadmiral.LightTick then sliceadmiral.LightTick:Cancel() end; end; end,
 				},
 				extrastat = {name=L["combo/armor"],desc=L["combo/guile/desc"], type="toggle", order=8,width="full",
 					get = function(info) return SAMod.ShowTimer.Options.guileCount end,

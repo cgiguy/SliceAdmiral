@@ -190,6 +190,7 @@ SA_Data = {
 	buffer = 0,
 	sortPeriod = 0.5, -- Only sort bars every sortPeriod seconds
 	tNow = 0,
+	lag = 0.1, -- not everyone plays with 50ms ping
 	sinister = true,
 	curCombo = 0,
 	BARS = { --TEH BARS
@@ -302,7 +303,7 @@ function addon:SA_Sound(sound,bufferd)
 	if not sound then return end
 	soundBuffer[#soundBuffer+1] = sound;
 	if bufferd then
-		C_Timer.After(0.3,addon.PlayBuffer)
+		C_Timer.After(math.max(0.3, SA_Data.lag),addon.PlayBuffer)
 	else
 		addon:PlayBuffer()
 	end
@@ -612,14 +613,15 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, type, hideCaster, s
 				SA_Data.BFActive = false
 				bfticker:Cancel()
 			elseif spellId == 13877 and type == "SPELL_AURA_APPLIED" and saTimerOp.BladeFlurry then
+				local mhSpeed, ohSpeed = UnitAttackSpeed("player");
 				SA_Data.BARS["Stat"]["obj"].stats[3].lable:SetFormattedText("Flurry")
 				SA_Data.BFActive = true
 				bfticker:Cancel()
-				bfticker = C_Timer.NewTicker(2,addon.UpdateBFText)
+				bfticker = C_Timer.NewTicker(math.max(mhSpeed,1),addon.UpdateBFText)
 			end
 			-- Master of Subtlety Work around-- 
 			if type == "SPELL_AURA_REMOVED" and spellId == 1784 and SAMod.ShowTimer[31665] then
-				C_Timer.After(0.1, MasterOfSubtley);
+				C_Timer.After(math.max(0.1, SA_Data.lag), MasterOfSubtley);
 			end
 		end
 	end
@@ -655,7 +657,7 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, type, hideCaster, s
 		elseif spellId == 22482 and saTimerOp.BladeFlurry then
 			bfhits[destGUID] = true
 		elseif spellId == 53 or spellId == 8676 and multistrike then -- Sinister Calling fix 
-			C_Timer.After(0.1, addon.UpdateTarget); -- For some reason there must be a delay or it won't notice the new expiretime
+			C_Timer.After(math.max(0.1, SA_Data.lag), addon.UpdateTarget); -- For some reason there must be a delay or it won't notice the new expiretime
 		elseif saTimerOp.guileCount and (spellId == 84745) or (spellId == 84746) or (spellId == 84747) or (spellId == 1752) and not (multistrike) then
 			-- bandits guile--
 			addon:GuileAdvance(spellId,type);
@@ -1251,6 +1253,10 @@ function addon:SA_OnLoad()
 	if SAMod.Combo.ShowStatBar then
 		addon:SA_UpdateStats();
 	end
+	addon.LightTick = false
+	if SAMod.Combo.HilightBuffed then
+		addon.LightTick = C_Timer.NewTicker(1,addon.SA_flashBuffedStats)
+	end
 	print(string.format(L["SALoaded"], SliceAdmiralVer))
 	if (SA) then
 		addon:SA_Config_VarsChanged();		
@@ -1306,6 +1312,7 @@ function addon:OnUpdate(elapsed)
 	if SAMod.Main.PadLatency then
 		local down, up, lag = GetNetStats();
 		SA_Data.tNow = GetTime() + (lag*2/1000);
+		SA_Data.lag = (lag*2/1000)
 	else
 		SA_Data.tNow = GetTime();
 	end 
