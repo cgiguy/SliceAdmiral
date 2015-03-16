@@ -867,7 +867,10 @@ function addon:SA_CPFrame()
 		
 		cx = cx + cpwidth + spacing
 	end
-
+	f:EnableMouse(not SAMod.Main.IsLocked);
+	f:SetScript("OnMouseDown", function(self) if (not SAMod.Main.IsLocked) then SA:StartMoving() end end)
+	f:SetScript("OnMouseUp", function(self) SA:StopMovingOrSizing(); SAMod.Main.point, _l, _l, SAMod.Main.xOfs, SAMod.Main.yOfs = SA:GetPoint(); end )
+	
 	f:Hide();
 	return f;
 end
@@ -986,6 +989,9 @@ function addon:SA_CreateStatBar()
 		
 	end
 	f:SetScript("OnShow", addon.UpdateStats)
+	f:EnableMouse(not SAMod.Main.IsLocked);
+	f:SetScript("OnMouseDown", function(self) if (not SAMod.Main.IsLocked) then SA:StartMoving() end end)
+	f:SetScript("OnMouseUp", function(self) SA:StopMovingOrSizing(); SAMod.Main.point, _l, _l, SAMod.Main.xOfs, SAMod.Main.yOfs = SA:GetPoint(); end )
 	return f;
 end
 
@@ -1124,6 +1130,9 @@ function addon:SA_NewFrame()
 	
 	f:SetScript("OnHide", addon.SA_ChangeAnchor);
 	f:SetScript("OnShow", addon.SA_ChangeAnchor);
+	f:EnableMouse(not SAMod.Main.IsLocked);
+	f:SetScript("OnMouseDown", function(self) if (not SAMod.Main.IsLocked) then SA:StartMoving() end end)
+	f:SetScript("OnMouseUp", function(self) SA:StopMovingOrSizing(); SAMod.Main.point, _l, _l, SAMod.Main.xOfs, SAMod.Main.yOfs = SA:GetPoint(); end )
 
 	return f;
 end
@@ -1401,7 +1410,8 @@ function addon:OnInitialize()
 				version = {name = string.format("%s %s: %s","SliceAdmiral", GAME_VERSION_LABEL, GetAddOnMetadata("SliceAdmiral", "Version")),order=90,type = "header"},
 				lockMovement = {name=L["ClickToMove"],type="toggle",order=1,		
 					get = function(info) return SAMod.Main.IsLocked; end,
-					set = function(info,val) SAMod.Main.IsLocked = val; SA:EnableMouse(not val); VTimerEnergy:EnableMouse( not val); end
+					set = function(info,val) SAMod.Main.IsLocked = val; SA:EnableMouse(not val); VTimerEnergy:EnableMouse( not val); 
+					for k,v in pairs(SA_Data.BARS) do SA_Data.BARS[k]["obj"]:EnableMouse(not val); end end
 				},
 				padLatency = {name=L["PadLatency"],type="toggle",order=3, width="full",		
 					get = function(info) return SAMod.Main.PadLatency; end,
