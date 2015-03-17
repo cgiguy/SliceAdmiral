@@ -571,24 +571,21 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, type, hideCaster, s
 		--Buffs EVENT --
 		if SAMod.ShowTimer[spellId] then
 			local BuffBar = SA_Data.BARS[SA_Spells[spellId].name]
-			if (type == "SPELL_AURA_REMOVED") then 
-				if SAMod.Sound[spellId].enabled then
-					addon:SA_Sound(LSM:Fetch("sound",SAMod.Sound[spellId].alert),true)
-				end
-				BuffBar["Expires"] = 0;
-				BuffBar["tickStart"] = 0;
-				BuffBar["count"] = 0;
+			local spell = SA_Spells[spellId]
+			local name, rank, icon, count, debuffType, duration, expirationTime = UnitAura(spell.target, spell.name, nil, Sa_filter[spell.target])
+			BuffBar["Expires"] = expirationTime or 0;
+			BuffBar["tickStart"] = (expirationTime or 0) - SAMod.Sound[spellId].tickStart;
+			BuffBar["LastTick"] = BuffBar["tickStart"] - 1.0;
+			BuffBar["count"] = count or 0;
+			if saTimerOp.Dynamic then addon:UpdateMaxValue(spellId,duration) end;
+			if not (name) then
 				BuffBar["obj"]:Hide();
 			else
-				local spell = SA_Spells[spellId]
-				local name, rank, icon, count, debuffType, duration, expirationTime = UnitAura(spell.target, spell.name, nil, Sa_filter[spell.target])
-				BuffBar["Expires"] = expirationTime or 0;
-				BuffBar["tickStart"] = (expirationTime or 0) - SAMod.Sound[spellId].tickStart;
-				BuffBar["LastTick"] = BuffBar["tickStart"] - 1.0;
-				BuffBar["count"] = count or 0;
 				BuffBar["obj"]:Show();
-				if saTimerOp.Dynamic then addon:UpdateMaxValue(spellId,duration) end
 			end
+			if SAMod.Sound[spellId].enabled and (type == "SPELL_AURA_REMOVED") and not (name) and (isOnMe or isOnTarget) then
+				addon:SA_Sound(LSM:Fetch("sound",SAMod.Sound[spellId].alert),true)
+			end			
 			addon:SA_ChangeAnchor();
 		end
 		if isOnMe then

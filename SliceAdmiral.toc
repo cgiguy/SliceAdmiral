@@ -2,7 +2,7 @@
 ## Interface: 60100
 ## Author: Iorrh - Bronzebeard US
 ## Modified: Haghala - Shadowsong EU
-## Version: 1.1.18a
+## Version: 1.1.18b
 ## Notes: Info-center for maximizing Rogue DPS. 
 ## DefaultState: Enabled
 ## LoadOnDemand: 0
