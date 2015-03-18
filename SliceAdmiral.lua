@@ -222,11 +222,15 @@ local soundBuffer = {}
 
 local Sa_filter = {	["player"] = "PLAYER", 
 					["target"] = "PLAYER HARMFUL", };
-					
+
 local function tablelength(T)
   local count = 0
   for _ in pairs(T) do count = count + 1 end
   return count
+end
+
+local function Lsort(a,b)
+	return a["Expires"] < b["Expires"];
 end
 
 function addon:SA_SetScale(NewScale)
@@ -386,24 +390,6 @@ end
 	end 
 end
 
-local function MB_SortBarsByTime(startIndex)
---[[ 
- Dumb ass sort. Simple shuffle of the lower bars to higher if
- they are refreshed. It will only run once every SA_Data.sortPeriod
- seconds, max. Also, we only call this if BARORDER contains a
- non-zero value for expiration. AND we start at the index we
- found the non-zero value at (because we know that the bars above
- that have 0 and we don't need to sort them).
- Also, we only call SA_ChangeAnchor() if something has changed to be
- a little lighter weight.
-]]
-	if ((SA_Data.tNow - SA_Data.lastSort) >= SA_Data.sortPeriod) then 
-		table.sort(SA_Data.BARORDER, function(a,b) return a["Expires"] < b["Expires"] end)
-		SA_Data.lastSort = SA_Data.tNow;
-		addon:SA_ChangeAnchor();
-	end
-end
-
 function addon:PET_BATTLE_OPENING_START()
 	SA:Hide();
 end
@@ -480,7 +466,7 @@ function addon:UNIT_ATTACK_SPEED(...)
 	end	
 	if SAMod.ShowTimer.Options.BladeFlurry then
 		if bfticker then bfticker:Cancel() end
-		bfticker = C_Timer.NewTicker(math.max(0.3,UnitAttackSpeed("player")), addon.UpdateBFText);
+		bfticker = C_Timer.NewTicker(math.max(UnitAttackSpeed("player") or 0), addon.UpdateBFText);
 	end
 end
 
@@ -602,7 +588,7 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, type, hideCaster, s
 				SA_Data.BARS["Stat"]["obj"].stats[3].lable:SetFormattedText("Flurry")
 				SA_Data.BFActive = true
 				bfticker:Cancel()
-				bfticker = C_Timer.NewTicker(math.max(UnitAttackSpeed("player"),1),addon.UpdateBFText)
+				bfticker = C_Timer.NewTicker(math.max(UnitAttackSpeed("player") or 0,1),addon.UpdateBFText)
 			end
 			-- Master of Subtlety Work around-- 
 			if type == "SPELL_AURA_REMOVED" and spellId == 1784 and SAMod.ShowTimer[31665] then
@@ -1328,8 +1314,8 @@ function addon:OnUpdate(elapsed)
 	if SATimer.Options.SortBars then
 		for i = 1, SA2.maxSortableBars do
 			if (SA_Data.BARORDER[i]["Expires"] > 0) then
-				MB_SortBarsByTime(i);
-				break;
+				table.sort(SA_Data.BARORDER, Lsort);
+				addon:SA_ChangeAnchor();
 			end
 		end
 	end 
