@@ -2,10 +2,10 @@ local sliceadmiral = LibStub("AceAddon-3.0"):GetAddon("SliceAdmiral");
 local L = LibStub("AceLocale-3.0"):GetLocale("SliceAdmiral", true);
 local LSM  = LibStub("LibSharedMedia-3.0")
 local addon = sliceadmiral:NewModule("Energy");
-local lUnitManaMax = UnitManaMax("player")
+local UnitPowerMax = UnitPowerMax("player")
 
 function addon:OnInitialize()
-	local energy = lUnitManaMax
+	local energy = UnitPowerMax
 	local Co = SAMod.Energy.Color;
 	local tCo = SAMod.Energy.TextColor;
 	local cCo = SAMod.Energy.ComboTextColor

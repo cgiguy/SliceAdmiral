@@ -187,7 +187,6 @@ SA_Data = {
 	lastSort = 0,	-- Last time bars were sorted
 	guile = 0,
 	BladeFlurry = 0,
-	buffer = 0,
 	sortPeriod = 0.5, -- Only sort bars every sortPeriod seconds
 	tNow = 0,
 	lag = 0.1, -- not everyone plays with 50ms ping
@@ -213,8 +212,8 @@ local UnitAffectingCombat = UnitAffectingCombat
 local UnitAttackPower = UnitAttackPower
 local UnitAttackSpeed = UnitAttackSpeed
 local GetCritChance = GetCritChance
-local lUnitMana = UnitMana
-local lUnitManaMax = UnitManaMax
+local UnitPower = UnitPower
+local UnitPowerMax = UnitPowerMax
 local UnitAura = UnitAura
 local _,k,v,guileZero 
 local bfhits = {}
@@ -253,12 +252,12 @@ function addon:SA_SetWidth(w)
 	end	
 	if SAMod.Energy.ShowEnergy then
 		VTimerEnergy:Show();
-		local lUnitManaMax = UnitManaMax("player")
-		if (lUnitManaMax == 0) then
-			lUnitManaMax = 100;
+		local UnitPowerMax = UnitPowerMax("player")
+		if (UnitPowerMax == 0) then
+			UnitPowerMax = 100;
 		end
-		SA_Spark1:SetPoint("TOPLEFT", VTimerEnergy, "TOPLEFT", (SAMod.Energy.Energy1 / lUnitManaMax * w), 0);
-		SA_Spark2:SetPoint("TOPLEFT", VTimerEnergy, "TOPLEFT", (SAMod.Energy.Energy2 / lUnitManaMax * w), 0);
+		SA_Spark1:SetPoint("TOPLEFT", VTimerEnergy, "TOPLEFT", (SAMod.Energy.Energy1 / UnitPowerMax * w), 0);
+		SA_Spark2:SetPoint("TOPLEFT", VTimerEnergy, "TOPLEFT", (SAMod.Energy.Energy2 / UnitPowerMax * w), 0);
 	else
 		VTimerEnergy:Hide();
 	end
@@ -406,7 +405,6 @@ end
 
 function addon:PLAYER_TARGET_CHANGED(...)
 	addon:UpdateTarget();
-	addon:SetComboPoints("PLAYER_TARGET_CHANGED");	 
 end
 
 function addon:PLAYER_REGEN_DISABLED(...) --enter combat
@@ -430,7 +428,7 @@ function addon:PLAYER_REGEN_ENABLED(...) --exit combat
 end
 
 function addon:UNIT_COMBO_POINTS(...)
-	addon:SetComboPoints("UNIT_COMBO_POINTS");
+	addon:SetComboPoints();
 end
 
 function addon:UNIT_AURA(event, ...)	
@@ -440,7 +438,7 @@ function addon:UNIT_AURA(event, ...)
 	if ... == "player" then
 		local name, rank, icon, count = UnitAura("player", SA_Spells[115189].name);
 		if not name then return end;
-		addon:SetComboPoints("UNIT_AURA");
+		addon:SetComboPoints();
 	end
 end
 
@@ -475,9 +473,9 @@ function addon:UNIT_POWER(...)
 		local alpha = VTimerEnergy:GetAlpha()
 		local eTransp = SAMod.Energy.EnergyTrans / 100.0;
 		
-		if  (lUnitManaMax("player") == lUnitMana("player")) and not (alpha == eTransp) then
+		if  (UnitPowerMax("player") == UnitPower("player")) and not (alpha == eTransp) then
 			UIFrameFadeOut(VTimerEnergy, 0.4, alpha, eTransp)
-		elseif not (lUnitManaMax("player") == lUnitMana("player")) and not (alpha == 1.0) then
+		elseif not (UnitPowerMax("player") == UnitPower("player")) and not (alpha == 1.0) then
 			UIFrameFadeIn(VTimerEnergy, 0.4, alpha, 1.0);
 		end
 		return
@@ -486,7 +484,7 @@ end
 
 function addon:UNIT_MAXPOWER(...)
 	if SAMod.Energy.ShowEnergy then
-		VTimerEnergy:SetMinMaxValues(0,lUnitManaMax("player"));
+		VTimerEnergy:SetMinMaxValues(0,UnitPowerMax("player"));
 	end
 end
 
@@ -706,39 +704,8 @@ function addon:UpdateTarget()
 	addon:SA_ChangeAnchor(); 
 end
 
-function addon:GetComboPointsBufferd(event)
-	local event = event or "";
-	local points = GetComboPoints("player", "target");
-	local buffer = SA_Data.buffer or 0;
-	local cpTarget = UnitCanAttack("player","target");
-	
-	if cpTarget then
-		SA_Data.buffer = points
-		return points
-	elseif ("UNIT_COMBO_POINTS" == event) and not UnitAffectingCombat("player") and not (buffer == 0) then
-		SA_Data.buffer = buffer - 1 --should be every 10 sec outside combat
-		return SA_Data.buffer
-	elseif event == "PLAYER_TARGET_CHANGED" or event == "UNIT_AURA" then
-		local gotCP = IsUsableSpell(5171);
-		if gotCP then
-			return SA_Data.buffer
-		else
-		   SA_Data.buffer = points
-		   return points
-		end
-	elseif event == "SPELL_ENERGIZE" then -- Should only be HaT with no target
-		if buffer == 5 then
-			return SA_Data.buffer
-		else
-			SA_Data.buffer = buffer + 1;
-			return SA_Data.buffer
-		end
-	end		
-	return SA_Data.buffer or 0
-end
-
-function addon:SetComboPoints(event)
-	local points = addon:GetComboPointsBufferd(event)
+function addon:SetComboPoints()
+	local points = UnitPower("player",4); 
 	local name, rank, icon, count = UnitAura("player", SA_Spells[115189].name)
 	local cpBar = SA_Data.BARS["CP"]["obj"]
 	count = count or 0
@@ -1174,7 +1141,7 @@ function addon:SA_OnLoad()
 	SA_Combo:SetFontObject(SA_Data.BarFont3);
 	SA_Combo:SetTextColor(Co.r,Co.g,Co.b,Co.a)
 
-	VTimerEnergy:SetMinMaxValues(0,UnitManaMax("player"));
+	VTimerEnergy:SetMinMaxValues(0,UnitPowerMax("player"));
 	VTimerEnergy:SetBackdrop({
 				bgFile="Interface\\AddOns\\SliceAdmiral\\Images\\winco_stripe_128.tga",
 				edgeFile="",
@@ -1293,7 +1260,7 @@ function addon:OnUpdate(elapsed)
 	end 
 	
 	if SAMod.Energy.ShowEnergy then
-		VTimerEnergy:SetValue(lUnitMana("player"));
+		VTimerEnergy:SetValue(UnitPower("player"));
 	end
 	
 	for k,v in pairs(SATimer) do
@@ -1345,7 +1312,7 @@ function addon:SA_Config_VarsChanged()
 		VTimerEnergy:Hide();    
 	end
 	
-	local lManaMax = UnitManaMax("player");
+	local lManaMax = UnitPowerMax("player");
 	if (lManaMax == 0) then
 		lManaMax = 100
 	end
