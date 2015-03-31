@@ -196,6 +196,9 @@ SA_Data = {
 		["CP"] = {
 			["obj"] = 0
 		},
+		["CP2"] = {
+			["obj"] = 0
+		},
 		["Stat"] = {
 			["obj"] = 0,
 		},
@@ -246,7 +249,7 @@ function addon:SA_SetWidth(w)
   if (w >= 25) then
     VTimerEnergy:SetWidth(w);
 	for k in pairs(SA_Data.BARS) do
-		if not (k == "CP" or k == "Stat") then
+		if not (k == "CP" or k == "Stat" or k == "CP2") then
 			SA_Data.BARS[k]["obj"]:SetWidth(w-12);
 		end
 	end	
@@ -274,7 +277,7 @@ function addon:RetextureBars(texture, object)
 	if object == "spells" then
 		local bars =  SA_Data.BARS
 		for k in pairs(bars) do
-			if not (k == "CP" or k == "Stat") then
+			if not (k == "CP" or k == "Stat" or k == "CP2") then
 				bars[k]["obj"]:SetStatusBarTexture(texture);
 			end	
 		end
@@ -282,6 +285,7 @@ function addon:RetextureBars(texture, object)
 	if object == "stats" then
 		local combos = SA_Data.BARS["CP"]["obj"].combos
 		SA_Data.BARS["CP"]["obj"].bg:SetTexture(texture);
+		SA_Data.BARS["CP2"]["obj"].bg:SetTexture(texture);
 		SA_Data.BARS["Stat"]["obj"].bg:SetTexture(texture);
 		for i = 1, 5 do
 			combos[i].bg:SetTexture(texture);
@@ -330,7 +334,8 @@ function addon:SA_ChangeAnchor()
  local opt = SAMod.ShowTimer.Options
  local statsBar = SA_Data.BARS["Stat"]["obj"]
  local cpBar = SA_Data.BARS["CP"]["obj"]
-
+ local cpBar2 = SA_Data.BARS["CP2"]["obj"]
+ 
  -- Stat bar goes first, because it's fucking awesome like that
  if SAMod.Combo.ShowStatBar then 	
 	statsBar:ClearAllPoints();
@@ -353,6 +358,12 @@ function addon:SA_ChangeAnchor()
 	cpBar:SetPoint("TOPLEFT", LastAnchor, "BOTTOMLEFT", 0, -1 * offSetSize); --CP bar on bottom of Stat Bar
 	if (FirstAnchor == SA) then FirstAnchor = cpBar end
 	LastAnchor = cpBar
+end
+ if SAMod.Combo.PointShow then
+	cpBar2:ClearAllPoints(); --so it can move
+	cpBar2:SetPoint("TOPLEFT", LastAnchor, "BOTTOMLEFT", 0, -1 * offSetSize); --CP bar on bottom of Stat Bar
+	if (FirstAnchor == SA) then FirstAnchor = cpBar2 end
+	LastAnchor = cpBar2
 end
 	local tmp = SA_Data.BARS["tmp"]["obj"]
 	if opt.Barsup then
@@ -399,8 +410,7 @@ end
 
 function addon:PLAYER_ENTERING_WORLD(...)
 	addon:UpdateTarget();
-	VTimerEnergy:SetScript("OnHide", addon.SA_ChangeAnchor)
-	VTimerEnergy:SetScript("OnShow", addon.SA_ChangeAnchor)	  
+	addon:SetComboPoints();  
 end
 
 function addon:PLAYER_TARGET_CHANGED(...)
@@ -532,24 +542,24 @@ local function GCD()
 	end
 end
 function addon:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, type, hideCaster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId, ...)	
-	if type =="UNIT_DIED" then
-		soundBuffer = {}
+	if (type =="UNIT_DIED") or (type == "UNIT_DESTROYED") or (type == "UNIT_DISSIPATES") then
+		soundBuffer = {};
 		return
 	end	
-	local isOnMe = (destName == UnitName("player"))	
+	local isOnMe = (destGUID  == UnitGUID("player"))	
 	if type == "SPELL_ENERGIZE" then
 		if spellId == 51699 and isOnMe then	--- 51699 HaT
 			addon:SetComboPoints("SPELL_ENERGIZE")
 		end
 		return
 	end
-	local isMySpell = (sourceName == UnitName("player"))
+	local isMySpell = (sourceGUID == UnitGUID("player"))
 	if not isMySpell then return end;
 	local saTimerOp = SAMod.ShowTimer.Options
 	local select = select
 	local SA_Spells = SA_Spells
 	local SABars = SA_Data.BARS	
-	local isOnTarget = (destName == GetUnitName("target",true))	
+	local isOnTarget = (destGUID == UnitGUID("target"))	
 	GCD();
 	if dbtypes[type] then
 		--Buffs EVENT --
@@ -708,7 +718,10 @@ function addon:SetComboPoints()
 	local points = UnitPower("player",4); 
 	local name, rank, icon, count = UnitAura("player", SA_Spells[115189].name)
 	local cpBar = SA_Data.BARS["CP"]["obj"]
+	local cpBar2 = SA_Data.BARS["CP2"]["obj"]	
 	count = count or 0
+	cpBar2.combo:SetValue(points);
+	cpBar2.anti:SetValue(count);
 	local text = "0(0)" --string.format("%d(%d)",points,count) 
 	if count >= 0 and SAMod.Energy.AnticpationText and SAMod.Energy.ShowComboText then
 		text = points .. "(" .. count.. ")" --string.format("%d(%d)",points,count)
@@ -825,15 +838,66 @@ function addon:SA_CPFrame()
 	return f;
 end
 
+function addon:CreateComboFrame()
+	local f = CreateFrame("Frame", nil, SA);
+	local flvl = f:GetFrameLevel()
+	local bg = f:CreateTexture(nil, "BACKGROUND");
+	local combo = CreateFrame("StatusBar", nil, f);
+	local anti = CreateFrame("StatusBar", nil, f);
+	local width = VTimerEnergy:GetWidth();
+	local cpC = SAMod.Combo.CPColor
+	local cpA = SAMod.Combo.AnColor
+	
+	f:ClearAllPoints();
+	f:SetSize(width, 10);
+	f:SetScale(scaleUI);
+	f:SetAllPoints(VTimerEnergy);
+
+	bg:SetTexture(addon:SA_BarTexture("stats"));
+	bg:SetAllPoints(f);
+	bg:SetVertexColor(0.3, 0.3, 0.3);
+	bg:SetAlpha(0.7);
+	
+	combo:SetSize(width, 10);
+	combo:SetScale(scaleUI);
+	combo:SetFrameLevel(flvl+1)
+	combo:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 0, 0)
+	combo:SetStatusBarTexture(addon:SA_BarTexture());
+	combo:SetStatusBarColor(cpC.r, cpC.g, cpC.b);
+	combo:SetMinMaxValues(0, 5);
+	combo:SetValue(0);
+	combo:Show()
+	
+	anti:SetSize(width, 5);
+	anti:SetScale(scaleUI);
+	anti:SetFrameLevel(flvl+2)
+	anti:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 0, 0)
+	anti:SetStatusBarTexture(addon:SA_BarTexture());
+	anti:SetStatusBarColor(cpA.r, cpA.g, cpA.b);
+	anti:SetMinMaxValues(0, 5);
+	anti:SetValue(0);
+	anti:Show()
+	
+	f.bg = bg;
+	f.combo = combo;
+	f.anti = anti;
+	f:Show();
+	return f;
+end
+
+
 function addon:SA_UpdateCPWidths(width)
 	local width = VTimerEnergy:GetWidth()
 	local cx = 0;
 	local spacing = width/30; --orig:= 3
 	local cpwidth = ((width-(spacing*4))/5); --orig: ((width-(spacing*4))/5);
 
-	local f = SA_Data.BARS["CP"]["obj"]	
+	local f = SA_Data.BARS["CP"]["obj"];	
 	f:SetWidth(width);
-	
+	local z = SA_Data.BARS["CP2"]["obj"];
+	z:SetWidth(width);
+	z.combo:SetWidth(width);
+	z.anti:SetWidth(width);
 	for i = 1, 5 do
 		f.combos[i]:ClearAllPoints()
 		f.antis[i]:ClearAllPoints()
@@ -954,7 +1018,7 @@ function addon:SA_UpdateStats()
 	if(totalAP > 99999) then 
 		barStats[1]:SetFormattedText("%.1fk", totalAP/1000)
 	else
-		barStats[1]:SetFormattedText(totalAP);
+		barStats[1]:SetFormattedText(BreakUpLargeNumbers(totalAP));
 	end
 		
 	barStats[2]:SetFormattedText("%.1f%%", GetCritChance());
@@ -1153,6 +1217,8 @@ function addon:SA_OnLoad()
 	VTimerEnergy:SetBackdropColor(0,0,0,0.2);
 	VTimerEnergy:SetStatusBarTexture(addon:SA_BarTexture("Energy"));
 	VTimerEnergy:SetWidth(200);
+	VTimerEnergy:SetScript("OnHide", addon.SA_ChangeAnchor);
+	VTimerEnergy:SetScript("OnShow", addon.SA_ChangeAnchor);
 	local oEner = SAMod.Energy.Color
 	VTimerEnergy:SetStatusBarColor(oEner.r, oEner.g, oEner.b); 
 	VTimerEnergy:SetScript("OnValueChanged",function(self,value)local mi, ma = self:GetMinMaxValues() if  (value == ma) then VTimerEnergyTxt:SetFormattedText("") else VTimerEnergyTxt:SetFormattedText(floor(value)) end end) 
@@ -1164,6 +1230,7 @@ function addon:SA_OnLoad()
 	SA_Data.BARS["CP"]["obj"] = addon:SA_CPFrame();
 	SA_Data.BARS["tmp"]["obj"] = addon:SA_NewFrame()
 	SA_Data.BARS["Stat"]["obj"] = addon:SA_CreateStatBar();
+	SA_Data.BARS["CP2"]["obj"] = addon:CreateComboFrame();
 	
 	local Sc = SAMod.ShowTimer.Colours
 	
@@ -1322,9 +1389,11 @@ function addon:SA_Config_VarsChanged()
 	SA_Spark2:SetPoint("TOPLEFT", VTimerEnergy, "TOPLEFT", p2, 0);
 
 	if not SACombo.PointShow and not SACombo.AnticipationShow  then   
-		SA_Data.BARS["CP"]["obj"]:Hide();		
+		SA_Data.BARS["CP"]["obj"]:Hide();
+		SA_Data.BARS["CP2"]["obj"]:Hide();
 	else
-		SA_Data.BARS["CP"]["obj"]:Show();		     		
+		SA_Data.BARS["CP"]["obj"]:Show();	
+		SA_Data.BARS["CP2"]["obj"]:Show();		
 	end
 	if SAMod.Energy.ShowComboText then
 		SA_Combo:Show();			
