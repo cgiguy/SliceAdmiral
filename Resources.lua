@@ -33,6 +33,7 @@ SA_Spells = { [5171] = { target = "player", sort = true,duration=36, pandemic=tr
 	[5277] = {target="player", sort=true, duration=10, pandemic=false,}, --Evasion
 	[1776] = {target="target", sort=true, duration=4, pandemic=false,}, --Gouge
 	[2983] =  {target="player", sort=true, duration=8, pandemic=false,}, --Sprint
+	[2094] =  {target="target", sort=true, duration=60, pandemic=false,}, --Blind
 	};
 
 for k in pairs(SA_Spells) do

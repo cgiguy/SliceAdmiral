@@ -83,6 +83,7 @@ SADefault = {
 				[5277] = {r=0,g=0,b=0},
 				[1776] = {r=0,g=0,b=0},
 				[2983]  = {r=0,g=0,b=0},
+				[2094]  = {r=0,g=0,b=0},
 			},
 			Timers = {
 				[5171] = 6.0, --Slice and Dice
@@ -118,6 +119,7 @@ SADefault = {
 				[5277] = 6.0,
 				[1776] = 4.0,
 				[2983]= 6.0,
+				[2094] = 6.0,
 			},
 			[5171] = true, --Slice and Dice
 			[84745] = true, -- BanditsGuile, Shallow
@@ -152,6 +154,7 @@ SADefault = {
 			[5277] = false,
 			[1776] = false,
 			[2983]= false,
+			[2094] = false,
 		},
 		Combo = {
 			PointShow = true,
@@ -210,6 +213,7 @@ SADefault = {
 			[5277] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
 			[1776] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
 			[2983] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
+			[2094] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
 			MasterVolume = false,
 			OutOfCombat = false,
 			none = "none",
