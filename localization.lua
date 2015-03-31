@@ -44,6 +44,7 @@ L["Sound/OutOfCombat"] = "Play sound outside of combat."
 L["Sound/Preview"] = "Pre-play Sound in options menu."
 
 L["combo/Show"] = "Show Combo Points"
+L["combo/texture"] = "Combo Point Texture"
 L["tShow/anticipation"] = "Show Anticipation"
 L["combo/statsheader"] = "Stats Bar Settings"
 L["combo/showStats"] = "Show Stat Bar"

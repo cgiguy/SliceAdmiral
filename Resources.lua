@@ -24,6 +24,15 @@ SA_Spells = { [5171] = { target = "player", sort = true,duration=36, pandemic=tr
 	[31665] = { target = "player",sort=true, duration=5,pandemic=false, }, -- Master of Subtlety
 	[137586] = { target = "player", sort=true, duration=10, pandemic=false,}, --Shuriken Toss
 	[61304] = { target = "player", sort=true, duration=1, pandemic=false,}, --GCD
+	[137619] = { target= "target", sort=true, duration=60, pandemic=false,}, --Marked for Death
+	[74001] = {target="player", sort=true, duration=10, pandemic = false,}, --Combat Rediness
+	[408] = {target="target", sort=true, duration=6, pandemic=false,}, --Kidney Shot
+	[26679] ={target="target", sort=true, duration=6, pandemic=false,}, --Deadly throw
+	[31224] ={target="player", sort=true, duration=5, pandemic=false,}, --Cloak of Shadows
+	[152151] = {target="player", sort=true, duration=8, pandemic=false,}, --Shadow Reflection --player
+	[5277] = {target="player", sort=true, duration=10, pandemic=false,}, --Evasion
+	[1776] = {target="target", sort=true, duration=4, pandemic=false,}, --Gouge
+	[2983] =  {target="player", sort=true, duration=8, pandemic=false,}, --Sprint
 	};
 
 for k in pairs(SA_Spells) do

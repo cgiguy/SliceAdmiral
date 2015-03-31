@@ -74,6 +74,15 @@ SADefault = {
 				[31665] = {r=99/255, g=26/255, b=151/255,},
 				[137586] = {r=34/255, g=189/255, b=34/255,},
 				[61304] = {r=192/255,g=192/255,b=192/255},
+				[137619] = {r=0,g=0,b=0},
+				[74001] = {r=0,g=0,b=0},
+				[408] = {r=0,g=0,b=0},
+				[26679] = {r=0,g=0,b=0},
+				[31224] = {r=0,g=0,b=0},
+				[152151] = {r=0,g=0,b=0},
+				[5277] = {r=0,g=0,b=0},
+				[1776] = {r=0,g=0,b=0},
+				[2983]  = {r=0,g=0,b=0},
 			},
 			Timers = {
 				[5171] = 6.0, --Slice and Dice
@@ -100,6 +109,15 @@ SADefault = {
 				[31665]= 5.0, --Master of Subtlety
 				[137586] = 6.0,--Shuricken toss
 				[61304] = 1.0, --GCD
+				[137619] = 6.0, --Marked for death
+				[74001] = 6.0,
+				[408] = 6.0,
+				[26679] = 6.0,
+				[31224] = 5.0,
+				[152151] = 6.0,
+				[5277] = 6.0,
+				[1776] = 4.0,
+				[2983]= 6.0,
 			},
 			[5171] = true, --Slice and Dice
 			[84745] = true, -- BanditsGuile, Shallow
@@ -125,14 +143,24 @@ SADefault = {
 			[31665] = true, -- master of Subtlety
 			[137586] = false, -- Shuriken toss
 			[61304] = false, --GCD
+			[137619] = false, --Marked for death
+			[74001] = false,
+			[408] = false,
+			[26679] = false,
+			[31224] = false,
+			[152151] = false,
+			[5277] = false,
+			[1776] = false,
+			[2983]= false,
 		},
 		Combo = {
 			PointShow = true,
+			Texture = "Grid",
 			AnticipationShow = true,
 			ShowStatBar = true,
 			HilightBuffed = false,
 			CPColor = {r=1.0,g=0.86,b=0.1,a=1.0},
-			AnColor = {r=0.1,g=0.86,b=1.0,a=1.0},
+			AnColor = {r=1.0,g=0.15,b=0.2,a=1.0},
 		},
 		Energy  = {
 			ShowEnergy = false,
@@ -171,8 +199,17 @@ SADefault = {
 			[51713] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
 			[91021] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
 			[31665] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
-			[137586] = {enabeld=false, tick= "None", alert="None", tickStart=3.0, },
-			[61304] = {enabeld=false, tick= "None", alert="None", tickStart=0.5, },
+			[137586] = {enabled=false, tick= "None", alert="None", tickStart=3.0, },
+			[61304] = {enabled=false, tick= "None", alert="None", tickStart=0.5, },
+			[137619] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
+			[74001] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
+			[408] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
+			[26679] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
+			[31224] ={enabled=false, tick = "None", alert="None", tickStart=3.0, },
+			[152151]= {enabled=false, tick = "None", alert="None", tickStart=3.0, },
+			[5277] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
+			[1776] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
+			[2983] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
 			MasterVolume = false,
 			OutOfCombat = false,
 			none = "none",
@@ -183,20 +220,15 @@ SADefault = {
 SADefaults = {char = SADefault, realm = SADefault, profile = SADefault}
 SAGlobals = {Version = SliceAdmiralVer}
 
-SA_Data = {
-	lastSort = 0,	-- Last time bars were sorted
+SA_Data = {	
 	guile = 0,
 	BladeFlurry = 0,
 	sortPeriod = 0.5, -- Only sort bars every sortPeriod seconds
 	tNow = 0,
 	lag = 0.1, -- not everyone plays with 50ms ping
-	sinister = true,
-	curCombo = 0,
+	sinister = true,	
 	BARS = { --TEH BARS
 		["CP"] = {
-			["obj"] = 0
-		},
-		["CP2"] = {
 			["obj"] = 0
 		},
 		["Stat"] = {
@@ -249,7 +281,7 @@ function addon:SA_SetWidth(w)
   if (w >= 25) then
     VTimerEnergy:SetWidth(w);
 	for k in pairs(SA_Data.BARS) do
-		if not (k == "CP" or k == "Stat" or k == "CP2") then
+		if not (k == "CP" or k == "Stat") then
 			SA_Data.BARS[k]["obj"]:SetWidth(w-12);
 		end
 	end	
@@ -277,19 +309,18 @@ function addon:RetextureBars(texture, object)
 	if object == "spells" then
 		local bars =  SA_Data.BARS
 		for k in pairs(bars) do
-			if not (k == "CP" or k == "Stat" or k == "CP2") then
+			if not (k == "CP" or k == "Stat") then
 				bars[k]["obj"]:SetStatusBarTexture(texture);
 			end	
 		end
 	end
-	if object == "stats" then
-		local combos = SA_Data.BARS["CP"]["obj"].combos
-		SA_Data.BARS["CP"]["obj"].bg:SetTexture(texture);
-		SA_Data.BARS["CP2"]["obj"].bg:SetTexture(texture);
+	if object == "combo" then
+		SA_Data.BARS["CP"]["obj"].combo:SetStatusBarTexture(texture);
+		SA_Data.BARS["CP"]["obj"].anti:SetStatusBarTexture(texture);
+	end
+	if object == "stats" then		
+		SA_Data.BARS["CP"]["obj"].bg:SetTexture(texture);		
 		SA_Data.BARS["Stat"]["obj"].bg:SetTexture(texture);
-		for i = 1, 5 do
-			combos[i].bg:SetTexture(texture);
-		end
 	end	
 end
 
@@ -300,6 +331,8 @@ function addon:SA_BarTexture(object)
 		return LSM:Fetch("statusbar",SAMod.Main.BarTexture)
 	elseif object == "spells" then
 		return LSM:Fetch("statusbar",SAMod.ShowTimer.Options.BarTexture)
+	elseif object == "combo" then
+		return LSM:Fetch("statusbar",SAMod.Combo.Texture)
 	else
 		return LSM:Fetch("statusbar",SAMod.Main.BarTexture) ;
 	end
@@ -334,7 +367,6 @@ function addon:SA_ChangeAnchor()
  local opt = SAMod.ShowTimer.Options
  local statsBar = SA_Data.BARS["Stat"]["obj"]
  local cpBar = SA_Data.BARS["CP"]["obj"]
- local cpBar2 = SA_Data.BARS["CP2"]["obj"]
  
  -- Stat bar goes first, because it's fucking awesome like that
  if SAMod.Combo.ShowStatBar then 	
@@ -359,12 +391,7 @@ function addon:SA_ChangeAnchor()
 	if (FirstAnchor == SA) then FirstAnchor = cpBar end
 	LastAnchor = cpBar
 end
- if SAMod.Combo.PointShow then
-	cpBar2:ClearAllPoints(); --so it can move
-	cpBar2:SetPoint("TOPLEFT", LastAnchor, "BOTTOMLEFT", 0, -1 * offSetSize); --CP bar on bottom of Stat Bar
-	if (FirstAnchor == SA) then FirstAnchor = cpBar2 end
-	LastAnchor = cpBar2
-end
+
 	local tmp = SA_Data.BARS["tmp"]["obj"]
 	if opt.Barsup then
 		LastAnchor = FirstAnchor
@@ -718,10 +745,8 @@ function addon:SetComboPoints()
 	local points = UnitPower("player",4); 
 	local name, rank, icon, count = UnitAura("player", SA_Spells[115189].name)
 	local cpBar = SA_Data.BARS["CP"]["obj"]
-	local cpBar2 = SA_Data.BARS["CP2"]["obj"]	
 	count = count or 0
-	cpBar2.combo:SetValue(points);
-	cpBar2.anti:SetValue(count);
+
 	local text = "0(0)" --string.format("%d(%d)",points,count) 
 	if count >= 0 and SAMod.Energy.AnticpationText and SAMod.Energy.ShowComboText then
 		text = points .. "(" .. count.. ")" --string.format("%d(%d)",points,count)
@@ -738,112 +763,22 @@ function addon:SetComboPoints()
 		end
 	end
 		
-	if name and (count%6 > 0) and SAMod.Combo.AnticipationShow then
-		for i = 1, count%6 do
-			cpBar.antis[i]:Show();
-		end	 
-	else
-		for i = 1, 5 do
-			cpBar.antis[i]:Hide();
-		end
+	if SAMod.Combo.AnticipationShow then
+		cpBar.anti:SetValue(count);
 	end
 	if SAMod.Combo.PointShow then
-		if (points > SA_Data.curCombo) then
-			for i = SA_Data.curCombo + 1, points do
-				cpBar.combos[i]:Show();
-			end
-		else
-			for i = points + 1, SA_Data.curCombo do
-				cpBar.combos[i]:Hide();
-			end
-		 end
-		SA_Data.curCombo = points;
+		cpBar.combo:SetValue(points);	
 	end
-end
-
-function addon:SA_CPFrame()
-	local f = CreateFrame("Frame", nil, SA);
-	local width = widthUI --SA_Data.BARS["CP"]["obj"]:GetWidth();
-
-	f:ClearAllPoints();
-	f:SetSize(width, 10);
-	f:SetScale(scaleUI);	
-	f:SetAllPoints(VTimerEnergy)
-	--f:SetPoint("TOPLEFT", VTimerEnergy, "BOTTOMLEFT", 1, 0);	 
-	 
-	f.bg = f:CreateTexture(nil, "BACKGROUND");
-	f.bg:ClearAllPoints();
-	 --f.bg:SetAllPoints(f);
-	f.bg:SetPoint("TOPLEFT", f, "TOPLEFT", 0, 0);
-	f.bg:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", 0, 0);
-	f.bg:SetTexture(addon:SA_BarTexture("stats"));
-	f.bg:SetVertexColor(0.3, 0.3, 0.3);
-	f.bg:SetAlpha(0.7);
-
-	f.combos = {true, true, true, true, true};
-	f.antis = {true, true, true, true, true};
-
-	local cx = 0;
-	local spacing = width/30; --orig:= 3
-	local cpwidth = ((width-(spacing*4))/9.2);
-
-	local cpC = SAMod.Combo.CPColor
-	local cpA = SAMod.Combo.AnColor
-	local flvl = f:GetFrameLevel()
-	 
-	for i = 1, 5 do
-		local combo = CreateFrame("Frame", nil, f);
-		combo:SetFrameLevel(flvl+1)
-		combo:ClearAllPoints()
-		combo:SetPoint("TOPLEFT", f, "TOPLEFT", cx, 0)
-		combo:SetPoint("BOTTOMRIGHT", f, "BOTTOMLEFT", cx + cpwidth, 0)
-
-		combo:SetBackdrop({bgFile = "Interface/Tooltips/UI-Tooltip-Background",
-			 edgeFile = "Interface/Tooltips/UI-Tooltip-Border", --"Interface/Tooltips/UI-Tooltip-Border"
-			 tile = true, tileSize = 8, edgeSize = 8,
-			 insets = { left = 2, right = 2, top = 2, bottom = 2 }});
-		combo:SetBackdropColor( cpC.r, cpC.g, cpC.b);
-
-		combo.bg = combo:CreateTexture(nil, "BACKGROUND") 
-		combo:Hide()
-		f.combos[i] = combo;
-		
-		cx = cx + cpwidth + spacing
-	end
-	cx = 0;
-	for i = 1, 5 do
-		local anti = CreateFrame("Frame", nil, f);
-		anti:SetFrameLevel(flvl+2); -- Better than f.combo[i] as parrent due to visibility
-		anti:ClearAllPoints()
-		anti:SetPoint("TOPLEFT", f, "TOPLEFT", cx, 0)
-		anti:SetPoint("BOTTOMRIGHT", f, "BOTTOMLEFT", cx + cpwidth, 0)
-
-		anti:SetBackdrop({bgFile = "Interface/Tooltips/UI-Tooltip-Background",
-			 edgeFile = "Interface/DialogFrame/UI-DialogBox-Gold-Border", --"Interface/Tooltips/UI-Tooltip-Border"
-			 tile = true, tileSize = 8, edgeSize = 8,
-			 insets = { left = 2, right = 2, top = 2, bottom = 2 }});
-		anti:SetBackdropColor( cpA.r, cpA.g, cpA.b);
-
-		anti.bg = anti:CreateTexture(nil, "BACKGROUND") 
-		anti:Hide()
-		f.antis[i] = anti;
-		
-		cx = cx + cpwidth + spacing
-	end
-	f:EnableMouse(not SAMod.Main.IsLocked);
-	f:SetScript("OnMouseDown", function(self) if (not SAMod.Main.IsLocked) then SA:StartMoving() end end)
-	f:SetScript("OnMouseUp", function(self) SA:StopMovingOrSizing(); SAMod.Main.point, _l, _l, SAMod.Main.xOfs, SAMod.Main.yOfs = SA:GetPoint(); end )
-	
-	f:Hide();
-	return f;
 end
 
 function addon:CreateComboFrame()
 	local f = CreateFrame("Frame", nil, SA);
 	local flvl = f:GetFrameLevel()
 	local bg = f:CreateTexture(nil, "BACKGROUND");
+	
 	local combo = CreateFrame("StatusBar", nil, f);
 	local anti = CreateFrame("StatusBar", nil, f);
+	local overlay = anti:CreateTexture(nil, "OVERLAY");
 	local width = VTimerEnergy:GetWidth();
 	local cpC = SAMod.Combo.CPColor
 	local cpA = SAMod.Combo.AnColor
@@ -858,56 +793,47 @@ function addon:CreateComboFrame()
 	bg:SetVertexColor(0.3, 0.3, 0.3);
 	bg:SetAlpha(0.7);
 	
+	overlay:SetTexture("Interface\\Archeology\\ArcheologyToast");
+	overlay:SetAllPoints(f);
+	overlay:SetTexCoord(0.015625,0.6328125,0.109375,0.13671875);
+	
 	combo:SetSize(width, 10);
 	combo:SetScale(scaleUI);
 	combo:SetFrameLevel(flvl+1)
-	combo:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 0, 0)
-	combo:SetStatusBarTexture(addon:SA_BarTexture());
+	combo:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 0, 0);
+	combo:SetStatusBarTexture(addon:SA_BarTexture("combo"));
 	combo:SetStatusBarColor(cpC.r, cpC.g, cpC.b);
 	combo:SetMinMaxValues(0, 5);
 	combo:SetValue(0);
-	combo:Show()
+	combo:Show();
 	
 	anti:SetSize(width, 5);
 	anti:SetScale(scaleUI);
-	anti:SetFrameLevel(flvl+2)
-	anti:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 0, 0)
-	anti:SetStatusBarTexture(addon:SA_BarTexture());
+	anti:SetFrameLevel(flvl+2);
+	anti:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 0, 0);
+	anti:SetStatusBarTexture(addon:SA_BarTexture("combo"));
 	anti:SetStatusBarColor(cpA.r, cpA.g, cpA.b);
 	anti:SetMinMaxValues(0, 5);
 	anti:SetValue(0);
 	anti:Show()
 	
+	f:EnableMouse(not SAMod.Main.IsLocked);
+	f:SetScript("OnMouseDown", function(self) if (not SAMod.Main.IsLocked) then SA:StartMoving() end end)
+	f:SetScript("OnMouseUp", function(self) SA:StopMovingOrSizing(); SAMod.Main.point, _l, _l, SAMod.Main.xOfs, SAMod.Main.yOfs = SA:GetPoint(); end )
 	f.bg = bg;
+	f.overlay = overlay;
 	f.combo = combo;
 	f.anti = anti;
-	f:Show();
 	return f;
 end
 
-
 function addon:SA_UpdateCPWidths(width)
-	local width = VTimerEnergy:GetWidth()
-	local cx = 0;
-	local spacing = width/30; --orig:= 3
-	local cpwidth = ((width-(spacing*4))/5); --orig: ((width-(spacing*4))/5);
+	local width = width or VTimerEnergy:GetWidth()
 
-	local f = SA_Data.BARS["CP"]["obj"];	
+	local f = SA_Data.BARS["CP"]["obj"];
 	f:SetWidth(width);
-	local z = SA_Data.BARS["CP2"]["obj"];
-	z:SetWidth(width);
-	z.combo:SetWidth(width);
-	z.anti:SetWidth(width);
-	for i = 1, 5 do
-		f.combos[i]:ClearAllPoints()
-		f.antis[i]:ClearAllPoints()
-		f.combos[i]:SetPoint("TOPLEFT", f, "TOPLEFT", cx, 0)
-		f.antis[i]:SetPoint("TOPLEFT", f, "TOPLEFT", cx, 0)
-		f.combos[i]:SetPoint("BOTTOMRIGHT", f, "BOTTOMLEFT", cx + cpwidth, 0)
-		f.antis[i]:SetPoint("BOTTOMRIGHT", f, "BOTTOMLEFT", cx + cpwidth, 0)
-
-		cx = cx + cpwidth + spacing
-	end
+	f.combo:SetWidth(width);
+	f.anti:SetWidth(width);
 end
 
 function addon:SA_UpdateStatWidths(width)
@@ -1227,10 +1153,9 @@ function addon:SA_OnLoad()
 		
 	S:SmoothBar(VTimerEnergy);
 		
-	SA_Data.BARS["CP"]["obj"] = addon:SA_CPFrame();
+	SA_Data.BARS["CP"]["obj"] = addon:CreateComboFrame();
 	SA_Data.BARS["tmp"]["obj"] = addon:SA_NewFrame()
 	SA_Data.BARS["Stat"]["obj"] = addon:SA_CreateStatBar();
-	SA_Data.BARS["CP2"]["obj"] = addon:CreateComboFrame();
 	
 	local Sc = SAMod.ShowTimer.Colours
 	
@@ -1363,16 +1288,11 @@ function addon:SA_Config_VarsChanged()
 	local cpC = SAMod.Combo.CPColor
 	local cpA = SAMod.Combo.AnColor
 	local SACombo = SAMod.Combo
-	
-	local combos = SA_Data.BARS["CP"]["obj"].combos; 
-	local antis = SA_Data.BARS["CP"]["obj"].antis; 
-						
+
 	VTimerEnergy:SetStatusBarColor(eCo.r,eCo.g,eCo.b)
-	for i = 1,5 do 
-		combos[i]:SetBackdropColor(cpC.r,cpC.g,cpC.b); 
-		antis[i]:SetBackdropColor(cpA.r,cpA.g,cpA.b)
-	end;		
-	
+	SA_Data.BARS["CP"]["obj"].combo:SetStatusBarColor(cpC.r,cpC.g,cpC.b); 
+	SA_Data.BARS["CP"]["obj"].anti:SetStatusBarColor(cpA.r,cpA.g,cpA.b);
+
 	if SAMod.Energy.ShowEnergy then
 		VTimerEnergy:Show();
 	else
@@ -1390,10 +1310,8 @@ function addon:SA_Config_VarsChanged()
 
 	if not SACombo.PointShow and not SACombo.AnticipationShow  then   
 		SA_Data.BARS["CP"]["obj"]:Hide();
-		SA_Data.BARS["CP2"]["obj"]:Hide();
 	else
-		SA_Data.BARS["CP"]["obj"]:Show();	
-		SA_Data.BARS["CP2"]["obj"]:Show();		
+		SA_Data.BARS["CP"]["obj"]:Show();
 	end
 	if SAMod.Energy.ShowComboText then
 		SA_Combo:Show();			
