@@ -4,7 +4,7 @@ local addon = sliceadmiral:NewModule("ShowTimer");
 local LSM = LibStub("LibSharedMedia-3.0")
 
 local SA_talents = {[5171] = "Shared", [73651]= "Shared", [154953]= "Shared", [137573]= "Shared", [1966]= "Shared", [703]= "Shared", [122233]= "Shared", [115189] = "Shared", [137586] = "Shared", [61304] = "Shared",
-			[137619] = "Shared",[74001] = "Shared",[408] = "Shared", [26679] = "Shared", [31224]  = "Shared", [152151] = "Shared", [5277] = "Shared", [1776] = "Shared", [2983] = "Shared", [2094] = "Shared"
+			[137619] = "Shared",[74001] = "Shared",[408] = "Shared", [26679] = "Shared", [31224]  = "Shared", [152151] = "Shared", [5277] = "Shared", [1776] = "Shared", [2983] = "Shared", [2094] = "Shared",
 			[1943] = "Assassination", [79140]="Assassination", [32645]="Assassination", [2818]="Assassination", [157562]="Assassination",
 			[84617] = "Combat" ,[13750] = "Combat", 
 			[91021]= "Subtlety", [16511]= "Subtlety",[51713]= "Subtlety", [31665] = "Subtlety",

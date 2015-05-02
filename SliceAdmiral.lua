@@ -560,6 +560,10 @@ local specialEvent = { SPELL_DAMAGE = true,
 	SPELL_AURA_REMOVED = true,
 	SPELL_AURA_REFRESH = true,
 }; 
+local deathEvent = { UNIT_DIED = true,
+	UNIT_DESTROYED = true,
+	UNIT_DISSIPATES = true,
+};
 local function GCD()
 	if not SAMod.ShowTimer[61304] then return end
 	local start, duration, enabled = GetSpellCooldown(61304) 
@@ -573,7 +577,7 @@ local function GCD()
 	end
 end
 function addon:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, type, hideCaster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId, ...)	
-	if (type =="UNIT_DIED") or (type == "UNIT_DESTROYED") or (type == "UNIT_DISSIPATES") then
+	if deathEvent[type] then
 		soundBuffer = {};
 		return
 	end	
@@ -819,9 +823,8 @@ function addon:CreateComboFrame()
 	anti:SetStatusBarColor(cpA.r, cpA.g, cpA.b);
 	anti:SetMinMaxValues(0, 5);
 	anti:SetValue(0);
-	anti:Show()
+	anti:Show()	
 	
-	f:EnableMouse(not SAMod.Main.IsLocked);
 	f:SetScript("OnMouseDown", function(self) if (not SAMod.Main.IsLocked) then SA:StartMoving() end end)
 	f:SetScript("OnMouseUp", function(self) SA:StopMovingOrSizing(); SAMod.Main.point, _l, _l, SAMod.Main.xOfs, SAMod.Main.yOfs = SA:GetPoint(); end )
 	f.bg = bg;
@@ -932,8 +935,7 @@ function addon:SA_CreateStatBar()
 		f.stats[i].lable = labelFrame
 		
 	end
-	f:SetScript("OnShow", addon.UpdateStats)
-	f:EnableMouse(not SAMod.Main.IsLocked);
+	f:SetScript("OnShow", addon.UpdateStats)	
 	f:SetScript("OnMouseDown", function(self) if (not SAMod.Main.IsLocked) then SA:StartMoving() end end)
 	f:SetScript("OnMouseUp", function(self) SA:StopMovingOrSizing(); SAMod.Main.point, _l, _l, SAMod.Main.xOfs, SAMod.Main.yOfs = SA:GetPoint(); end )
 	return f;
@@ -1018,7 +1020,6 @@ function addon:SA_NewFrame()
 	 
 	f:SetStatusBarTexture(addon:SA_BarTexture());
 	f:SetStatusBarColor(0.768627451, 0, 0, 1);
-	f:EnableMouse(false);
 	f:SetMinMaxValues(0, 6.0);
 	f:SetValue(0);
 
@@ -1073,8 +1074,7 @@ function addon:SA_NewFrame()
 	f.DoTtext:SetFormattedText("");
 	
 	f:SetScript("OnHide", addon.SA_ChangeAnchor);
-	f:SetScript("OnShow", addon.SA_ChangeAnchor);
-	f:EnableMouse(not SAMod.Main.IsLocked);
+	f:SetScript("OnShow", addon.SA_ChangeAnchor);	
 	f:SetScript("OnMouseDown", function(self) if (not SAMod.Main.IsLocked) then SA:StartMoving() end end)
 	f:SetScript("OnMouseUp", function(self) SA:StopMovingOrSizing(); SAMod.Main.point, _l, _l, SAMod.Main.xOfs, SAMod.Main.yOfs = SA:GetPoint(); end )
 
@@ -1194,6 +1194,9 @@ function addon:SA_OnLoad()
 	addon.LightTick = false
 	if SAMod.Combo.HilightBuffed then
 		addon.LightTick = C_Timer.NewTicker(1,addon.SA_flashBuffedStats)
+	end
+	for k in pairs(SA_Data.BARS) do
+		SA_Data.BARS[k]["obj"]:EnableMouse(not SAMod.Main.IsLocked);
 	end
 	print(string.format(L["SALoaded"], SliceAdmiralVer))
 	if (SA) then
@@ -1349,12 +1352,12 @@ function addon:OnInitialize()
 	addon.opt.profile = LibStub("AceDBOptions-3.0"):GetOptionsTable(addon.db);	
 	addon.opt.Main.args = {
 				version = {name = string.format("%s %s: %s","SliceAdmiral", GAME_VERSION_LABEL, GetAddOnMetadata("SliceAdmiral", "Version")),order=90,type = "header"},
-				lockMovement = {name=L["ClickToMove"],type="toggle",order=1,		
+				lockMovement = {name=L["ClickToMove"],type="toggle",order=1,
 					get = function(info) return SAMod.Main.IsLocked; end,
-					set = function(info,val) SAMod.Main.IsLocked = val; SA:EnableMouse(not val); VTimerEnergy:EnableMouse( not val); 
-					for k,v in pairs(SA_Data.BARS) do SA_Data.BARS[k]["obj"]:EnableMouse(not val); end end
+					set = function(info,val) SAMod.Main.IsLocked = val; SA:EnableMouse(not val); VTimerEnergy:EnableMouse(not val);
+					for k in pairs(SA_Data.BARS) do SA_Data.BARS[k]["obj"]:EnableMouse(not val); end end
 				},
-				padLatency = {name=L["PadLatency"],type="toggle",order=3, width="full",		
+				padLatency = {name=L["PadLatency"],type="toggle",order=3, width="full",
 					get = function(info) return SAMod.Main.PadLatency; end,
 					set = function(info,val) SAMod.Main.PadLatency = val; end
 				},
@@ -1395,7 +1398,7 @@ function addon:OnInitialize()
 				reset = {name = L["ResetDatabase"],type = "execute",order=100,width="full",
 					desc = L["ResetDatabaseDesc"],
 					func = function()
-						if (InCombatLockdown()) then 
+						if (InCombatLockdown()) then
 							addon:Print(ERR_NOT_IN_COMBAT);
 						else
 							addon.db:ResetDB();
@@ -1416,51 +1419,49 @@ function addon:OnInitialize()
 	addon.db.RegisterCallback(self, "OnProfileReset", "UpdateModuleConfigs")
 end
 
-function addon:InitializeProfile()	
-	self.db:RegisterDefaults(SADefaults)	
+function addon:InitializeProfile()
+	self.db:RegisterDefaults(SADefaults);
 end
 
 function addon:UpdateModuleConfigs()
-	self.db:RegisterDefaults(SADefaults)
+	self.db:RegisterDefaults(SADefaults);
 end
 
 function addon:AddOption(name, Table, displayName)
-	AceConfig:RegisterOptionsTable("SliceAdmiral"..name, Table)
-	AceConfigDialog:AddToBlizOptions("SliceAdmiral"..name, displayName, "SliceAdmiral")
+	AceConfig:RegisterOptionsTable("SliceAdmiral"..name, Table);
+	AceConfigDialog:AddToBlizOptions("SliceAdmiral"..name, displayName, "SliceAdmiral");
 end
 
 function addon:OnEnable()
-	AceConfig:RegisterOptionsTable("SliceAdmiral", addon.opt.Main)
-	self.optionsFrame = AceConfigDialog:AddToBlizOptions("SliceAdmiral")	
-	if addon:GetModule("ShowTimer", true) then addon:AddOption("ShowTimer Bars", addon.opt.ShowTimer, L["TimerBars"]) end	
+	AceConfig:RegisterOptionsTable("SliceAdmiral", addon.opt.Main);
+	self.optionsFrame = AceConfigDialog:AddToBlizOptions("SliceAdmiral");
+	if addon:GetModule("ShowTimer", true) then addon:AddOption("ShowTimer Bars", addon.opt.ShowTimer, L["TimerBars"]); end;
     if addon:GetModule("Combo", true) then addon:AddOption("Combo Points", addon.opt.Combo, L["Combo"]) end
-    if addon:GetModule("Energy", true) then addon:AddOption("Energy Bar", addon.opt.Energy, L["EnergyBar"]) end    
+    if addon:GetModule("Energy", true) then addon:AddOption("Energy Bar", addon.opt.Energy, L["EnergyBar"]) end
 	--addon:AddOption("Profiles", addon.opt.profile, "Profiles"); --Localization Needed
 	local localizedClass, englishClass = UnitClass("player");
 	local point, xOfs, yOfs = SAMod.Main.point, SAMod.Main.xOfs, SAMod.Main.yOfs
 	if (englishClass == "ROGUE") then
-		for k in pairs(SA_Spells) do			
+		for k in pairs(SA_Spells) do
 			SA_Data.BARS[SA_Spells[k].name] = {	
 					["obj"] = 0,
 					["Expires"] = 0,		-- expire time until GetTime()
 					["LastTick"] = 0,
-					["tickStart"] = 0, 
+					["tickStart"] = 0,
 					["count"] = 0,
 			}
 		end
 		addon:SA_OnLoad()
 		SA:ClearAllPoints(); SA:SetPoint(point, xOfs, yOfs);
-		--SA:SetScript("OnUpdate", addon.OnUpdate);
-		addon.UpdateTicker = C_Timer.NewTicker(SA2.UpdateInterval, addon.OnUpdate)
-		SA:SetScript("OnMouseDown", function(self) if (not SAMod.Main.IsLocked) then self:StartMoving() end end)
-		SA:SetScript("OnMouseUp", function(self) self:StopMovingOrSizing(); SAMod.Main.point, _l, _l, SAMod.Main.xOfs, SAMod.Main.yOfs = SA:GetPoint(); end )
+		addon.UpdateTicker = C_Timer.NewTicker(SA2.UpdateInterval, addon.OnUpdate);
+		SA:SetScript("OnMouseDown", function(self) if (not SAMod.Main.IsLocked) then self:StartMoving() end end);
+		SA:SetScript("OnMouseUp", function(self) self:StopMovingOrSizing(); SAMod.Main.point, _l, _l, SAMod.Main.xOfs, SAMod.Main.yOfs = SA:GetPoint(); end );
 		SA:EnableMouse(not SAMod.Main.IsLocked);
 		VTimerEnergy:EnableMouse(not SAMod.Main.IsLocked);
-		VTimerEnergy:SetScript("OnMouseDown", function(self) if (not SAMod.Main.IsLocked) then SA:StartMoving() end end)
-		VTimerEnergy:SetScript("OnMouseUp", function(self) SA:StopMovingOrSizing(); SAMod.Main.point, _l, _l, SAMod.Main.xOfs, SAMod.Main.yOfs = SA:GetPoint(); end )
-		addon:SA_SetScale(SAMod.Main.Scale)
-		addon:SA_SetWidth(SAMod.Main.Width)
-		
+		VTimerEnergy:SetScript("OnMouseDown", function(self) if (not SAMod.Main.IsLocked) then SA:StartMoving() end end);
+		VTimerEnergy:SetScript("OnMouseUp", function(self) SA:StopMovingOrSizing(); SAMod.Main.point, _l, _l, SAMod.Main.xOfs, SAMod.Main.yOfs = SA:GetPoint(); end );
+		addon:SA_SetScale(SAMod.Main.Scale);
+		addon:SA_SetWidth(SAMod.Main.Width);
 	else
 		addon:UnregisterAllEvents();
 		SA:Hide();
