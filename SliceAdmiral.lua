@@ -20,8 +20,6 @@ addon.opt = {
 SADefault = {
 	data = {
 		Version = SliceAdmiralVer,
-		maxSortableBars = 0,
-		topSortableBars = 0,
 		UpdateInterval = 0.05,
 		numStats = 3,
 	},
@@ -405,7 +403,7 @@ end
 	end
 	LastAnchor = tmp 
 	
-	for i = 1, SA2.maxSortableBars do 
+	for i = 1, #SA_Data.BARORDER do 
 		local SortBar = SA_Data.BARORDER[i]
 		if (SortBar["Expires"] > 0) then
 			SortBar["obj"]:ClearAllPoints();
@@ -417,7 +415,7 @@ end
 			LastAnchor = SortBar["obj"];
 		end
 	end
-	for i = 1, SA2.topSortableBars do
+	for i = 1, #SA_Data.TOPORDER do
 		local SortBar = SA_Data.TOPORDER[i]
 		if (SortBar["Expires"] > 0) then
 			SortBar["obj"]:ClearAllPoints();
@@ -569,9 +567,9 @@ local function GCD()
 	local start, duration, enabled = GetSpellCooldown(61304) 
 	local GCD = SA_Data.BARS[SA_Spells[61304].name]
 	
-	if start > 0 then		
-		GCD["Expires"] = start + duration;		
-		GCD["tickStart"] = (start + duration or 0) - SAMod.Sound[61304].tickStart;	
+	if start > 0 then
+		GCD["Expires"] = start + duration;
+		GCD["tickStart"] = (start + duration or 0) - SAMod.Sound[61304].tickStart;
 		GCD["LastTick"] = GCD["tickStart"] - 1.0;
 		GCD["obj"]:Show();
 	end
@@ -855,8 +853,8 @@ function addon:SA_UpdateStatWidths(width)
 	f:SetWidth(width);
 	for i = 1, 4 do
 		--Create the frame & space it
-		local statText = SA_Data.BARS["Stat"]["obj"].stats[i];			
-		local labelFrame = SA_Data.BARS["Stat"]["obj"].stats[i].lable;	
+		local statText = SA_Data.BARS["Stat"]["obj"].stats[i];
+		local labelFrame = SA_Data.BARS["Stat"]["obj"].stats[i].lable;
 		statText:ClearAllPoints();
 		statText:SetPoint("TOPLEFT", f, "TOPLEFT", cur_location, 0)
 		statText:SetPoint("BOTTOMRIGHT", f, "BOTTOMLEFT", cur_location + cpwidth, 0)
@@ -1185,9 +1183,7 @@ function addon:SA_OnLoad()
 			SA_Data.TOPORDER[#SA_Data.TOPORDER+1] = SA_Data.BARS[SA_Spells[k].name];
 		end
 	end 
-	
-	SA2.maxSortableBars = #SA_Data.BARORDER;
-	SA2.topSortableBars = #SA_Data.TOPORDER;
+
 	if SAMod.Combo.ShowStatBar then
 		addon:SA_UpdateStats();
 	end
@@ -1278,7 +1274,7 @@ function addon:OnUpdate(elapsed)
 	-- non-zero timers 
 	
 	if SATimer.Options.SortBars then
-		for i = 1, SA2.maxSortableBars do
+		for i = 1, #SA_Data.BARORDER do
 			if (SA_Data.BARORDER[i]["Expires"] > 0) then
 				table.sort(SA_Data.BARORDER, Lsort);
 				addon:SA_ChangeAnchor();
