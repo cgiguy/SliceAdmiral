@@ -3,12 +3,14 @@ local L = LibStub("AceLocale-3.0"):GetLocale("SliceAdmiral", true);
 local addon = sliceadmiral:NewModule("ShowTimer");
 local LSM = LibStub("LibSharedMedia-3.0")
 
-local SA_talents = {[5171] = "Shared", [73651]= "Shared", [154953]= "Shared", [137573]= "Shared", [1966]= "Shared", [703]= "Shared", [122233]= "Shared", [115189] = "Shared", [137586] = "Shared", [61304] = "Shared",
-			[137619] = "Shared",[74001] = "Shared",[408] = "Shared", [26679] = "Shared", [31224]  = "Shared", [152151] = "Shared", [5277] = "Shared", [1776] = "Shared", [2983] = "Shared", [2094] = "Shared", [115192] = "Shared",
+local SA_talents = {[5171] = "Shared", [73651]= "Shared",   [1966]= "Shared", [703]= "Shared", [122233]= "Shared",  [61304] = "Shared",
+			[408] = "Shared",  [31224]  = "Shared",  [5277] = "Shared", [1776] = "Shared", [2983] = "Shared", [2094] = "Shared",
 			[1943] = "Assassination", [79140]="Assassination", [32645]="Assassination", [2818]="Assassination", [157562]="Assassination",
 			[84617] = "Combat" ,[13750] = "Combat", 
 			[91021]= "Subtlety", [16511]= "Subtlety",[51713]= "Subtlety", [31665] = "Subtlety",
-	};	
+			[115192] = "Talents", [115189] = "Talents", [137573]= "Talents",[152151] = "Talents", [26679] = "Talents", [74001] = "Talents",
+			[137619] = "Talents", [154953]= "Talents",[137586] = "Talents",
+	};		
 
 local function pandemic(val)
 	local options = sliceadmiral.opt.ShowTimer
@@ -22,6 +24,8 @@ local function pandemic(val)
 			opt = options.args.Combat.args
 		elseif v == "Subtlety" then 
 			opt = options.args.Subtlety.args
+		elseif v == "Talents" then
+			opt = options.args.Talents.args
 		end	
 		if val then
 			opt[SA_Spells[k].name].args.valuses.disabled = SA_Spells[k].pandemic
@@ -84,6 +88,7 @@ options.args = {
 			Assassination = {name=SPECS[1],type="group",order=30,childGroups="tree",args={},},
 			Combat = {name=SPECS[2],type="group",order=40,childGroups="tree",args={},},
 			Subtlety ={name=SPECS[3],type="group",order=50,childGroups="tree",args={},},
+			Talents ={name=TALENTS,type="group",order=60,childGroups="tree",args={},},
 		}
 
 	for k,v in pairs(SA_talents) do
@@ -95,8 +100,10 @@ options.args = {
 			opt = options.args.Combat.args
 		elseif v == "Subtlety" then 
 			opt = options.args.Subtlety.args
+		elseif v == "Talents" then
+			opt = options.args.Talents.args
 		end	
-		opt[SA_Spells[k].name] = {name=SA_Spells[k].name, type="group",
+		opt[SA_Spells[k].name] = {name=SA_Spells[k].name,desc=SA_Spells[k].desc, type="group",
 			args = {
 				enable = {name=L["ShowBar"],type="toggle", order=1,
 					get = function(info) return SAMod.ShowTimer[k]; end,
@@ -137,7 +144,7 @@ options.args = {
 		}
 	end
 	
-	options.args.Combat.args["BanditsGuile"] = {name=BanditsGuilLocal,type="group",
+	options.args.Combat.args["BanditsGuile"] = {name=BanditsGuilLocal,desc=GetSpellDescription(84654),type="group",
 		args = {
 			enable = {name=L["ShowBar"],type="toggle", order=1,
 				get = function(info) return SAMod.ShowTimer[84745]; end,

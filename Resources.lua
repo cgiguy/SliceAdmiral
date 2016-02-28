@@ -39,9 +39,11 @@ SA_Spells = { [5171] = { target = "player", sort = true,duration=36, pandemic=tr
 
 for k in pairs(SA_Spells) do
  local name, rank, icon, _ = GetSpellInfo(k)
+ local desc = GetSpellDescription(k)
 	SA_Spells[k].name = name
 	SA_Spells[k].icon = icon
 	SA_Spells[k].id = k	
+	SA_Spells[k].desc = desc
 end
 
 local LSM = LibStub("LibSharedMedia-3.0")
