@@ -82,6 +82,7 @@ SADefault = {
 				[1776] = {r=0,g=0,b=0},
 				[2983]  = {r=0,g=0,b=0},
 				[2094]  = {r=0,g=0,b=0},
+				[115192] = {r=0,g=0,b=0},
 			},
 			Timers = {
 				[5171] = 6.0, --Slice and Dice
@@ -118,6 +119,7 @@ SADefault = {
 				[1776] = 4.0,
 				[2983]= 6.0,
 				[2094] = 6.0,
+				[115192] = 3.0,
 			},
 			[5171] = true, --Slice and Dice
 			[84745] = true, -- BanditsGuile, Shallow
@@ -153,6 +155,7 @@ SADefault = {
 			[1776] = false,
 			[2983]= false,
 			[2094] = false,
+			[115192] = false,
 		},
 		Combo = {
 			PointShow = true,
@@ -212,6 +215,7 @@ SADefault = {
 			[1776] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
 			[2983] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
 			[2094] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
+			[115192] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
 			MasterVolume = false,
 			OutOfCombat = false,
 			none = "none",
@@ -540,6 +544,16 @@ local function MasterOfSubtley()
 	end
 end
 
+local function Subterfuge()    
+	local expirationTime = GetTime() + 3.0
+	local SubBar = SA_Data.BARS[SA_Spells[115192].name]
+	
+	SubBar["Expires"] = expirationTime;		
+	SubBar["tickStart"] = (expirationTime or 0) - SAMod.Sound[115192].tickStart;					
+	SubBar["LastTick"] = SubBar["tickStart"] - 1.0;	
+	SubBar["obj"]:Show();
+end
+
 local dbtypes = { SPELL_AURA_REFRESH = true,
 	SPELL_AURA_APPLIED = true,
 	SPELL_AURA_REMOVED = true,
@@ -632,8 +646,12 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, type, hideCaster, s
 				bfticker = C_Timer.NewTicker(math.max(UnitAttackSpeed("player") or 0,1),addon.UpdateBFText)
 			end
 			-- Master of Subtlety Work around-- 
-			if type == "SPELL_AURA_REMOVED" and spellId == 1784 and SAMod.ShowTimer[31665] then
+			if type == "SPELL_AURA_REMOVED" and (spellId == 1784 or spellId == 115191) and SAMod.ShowTimer[31665] then
 				C_Timer.After(math.max(0.1, SA_Data.lag), MasterOfSubtley);
+			end
+			-- Subterfuge Work around-- 
+			if type == "SPELL_AURA_REMOVED" and spellId == 115191 and SAMod.ShowTimer[115192] then
+				C_Timer.After(math.max(0.1, SA_Data.lag), Subterfuge);
 			end
 		end
 	end
