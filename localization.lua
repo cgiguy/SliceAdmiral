@@ -65,3 +65,6 @@ L["energy/transp"] = "Energy Transperancy"
 L["energy/Color"] = "Energy Bar Colour"
 L["energy/TextColor"] = "Energy Text Colour"
 L["energy/CoTextColor"] = "Combo Point Text Color"
+
+L["Fix/DeadlyMomentum"] = "Deadly Momentum fix"
+L["Fix/DeadlyMomentumDesc"] = "Improves Glyph of Deadly Momentum death detection at performance loss"

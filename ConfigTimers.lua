@@ -75,7 +75,11 @@ options.args = {
 			OutOfCombat = {name=L["Sound/OutOfCombat"],type="toggle",order=8,width="double",
 				get = function(info) return SAMod.Sound.OutOfCombat; end,
 				set = function(info,val) SAMod.Sound.OutOfCombat = val; end
-			},			
+			},
+			DeadlyMomentum = {name=L["Fix/DeadlyMomentum"],desc=L["Fix/DeadlyMomentumDesc"],type="toggle",order=9,width="full",
+				get = function(info) return SAMod.ShowTimer.Options.DeadlyMomentum; end,
+				set = function(info,val) SAMod.ShowTimer.Options.DeadlyMomentum = val; end
+			},
 			Shared = {name=L["SharedAbilites"],type="group",order=20,childGroups="tree",args={},},
 			Assassination = {name=SPECS[1],type="group",order=30,childGroups="tree",args={},},
 			Combat = {name=SPECS[2],type="group",order=40,childGroups="tree",args={},},

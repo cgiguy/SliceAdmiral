@@ -46,6 +46,7 @@ SADefault = {
 				BarTexture = "Smooth",
 				guileCount = false,
 				BladeFlurry = false,
+				DeadlyMomentum = false,
 			},
 			Colours = { 
 				[5171] = { r=255/255, g=74/255, b=18/255, a=0.9,},
@@ -232,7 +233,7 @@ SA_Data = {
 	sortPeriod = 0.5, -- Only sort bars every sortPeriod seconds
 	tNow = 0,
 	lag = 0.1, -- not everyone plays with 50ms ping
-	sinister = true,	
+	sinister = true,
 	BARS = { --TEH BARS
 		["CP"] = {
 			["obj"] = 0
@@ -588,9 +589,14 @@ local function GCD()
 		GCD["obj"]:Show();
 	end
 end
+
 function addon:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, type, hideCaster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId, ...)	
+	local DeadlyMomentum = SAMod.ShowTimer.Options.DeadlyMomentum
 	if deathEvent[type] then
 		soundBuffer = {};
+		if DeadlyMomentum then --Untested fix for Deadly Momentum Ticket #36
+			addon:UpdateTarget()
+		end 
 		return
 	end	
 	local isOnMe = (destGUID  == UnitGUID("player"))	
