@@ -3,28 +3,19 @@ local L = LibStub("AceLocale-3.0"):GetLocale("SliceAdmiral", true);
 local addon = sliceadmiral:NewModule("ShowTimer");
 local LSM = LibStub("LibSharedMedia-3.0")
 
-local SA_talents = {[5171] = "Shared", [73651]= "Shared",   [1966]= "Shared", [703]= "Shared", [122233]= "Shared",  [61304] = "Shared",
-			[408] = "Shared",  [31224]  = "Shared",  [5277] = "Shared", [1776] = "Shared", [2983] = "Shared", [2094] = "Shared",
-			[1943] = "Assassination", [79140]="Assassination", [32645]="Assassination", [2818]="Assassination", [157562]="Assassination",
-			[84617] = "Combat" ,[13750] = "Combat", 
-			[91021]= "Subtlety", [16511]= "Subtlety",[51713]= "Subtlety", [31665] = "Subtlety",
-			[115192] = "Talents", [115189] = "Talents", [137573]= "Talents",[152151] = "Talents", [26679] = "Talents", [74001] = "Talents",
-			[137619] = "Talents", [154953]= "Talents",[137586] = "Talents",
-	};		
-
 local function pandemic(val)
 	local options = sliceadmiral.opt.ShowTimer
 	local opt
-	for k,v in pairs(SA_talents) do		
-		if v == "Shared" then
+	for k in pairs(SA_Spells) do		
+		if SA_Spells[k].spec == 0 then
 			opt = options.args.Shared.args
-		elseif v == "Assassination" then
+		elseif SA_Spells[k].spec == 1 then
 			opt = options.args.Assassination.args
-		elseif v == "Combat" then
+		elseif SA_Spells[k].spec == 2 then
 			opt = options.args.Combat.args
-		elseif v == "Subtlety" then 
+		elseif SA_Spells[k].spec == 3 then 
 			opt = options.args.Subtlety.args
-		elseif v == "Talents" then
+		elseif SA_Spells[k].spec == 4 then
 			opt = options.args.Talents.args
 		end	
 		if val then
@@ -91,16 +82,16 @@ options.args = {
 			Talents ={name=TALENTS,type="group",order=60,childGroups="tree",args={},},
 		}
 
-	for k,v in pairs(SA_talents) do
-		if v == "Shared" then
+	for k in pairs(SA_Spells) do
+		if SA_Spells[k].spec == 0 then
 			opt = options.args.Shared.args
-		elseif v == "Assassination" then
+		elseif SA_Spells[k].spec == 1 then
 			opt = options.args.Assassination.args
-		elseif v == "Combat" then
+		elseif SA_Spells[k].spec == 2 then
 			opt = options.args.Combat.args
-		elseif v == "Subtlety" then 
+		elseif SA_Spells[k].spec == 3 then 
 			opt = options.args.Subtlety.args
-		elseif v == "Talents" then
+		elseif SA_Spells[k].spec == 4 then
 			opt = options.args.Talents.args
 		end	
 		opt[SA_Spells[k].name] = {name=SA_Spells[k].name,desc=SA_Spells[k].desc, type="group",
@@ -114,7 +105,7 @@ options.args = {
 					set = function(info,val) SAMod.Sound[k].enabled = val; end,
 				},
 				valuses = {name=L["bar/prep"], type="range", order=3,
-					min=1.0,max=12.0, step=0.5,
+					min=1.0,max=math.min(12.0,math.max(3,SA_Spells[k].duration)), step=0.5,
 					get = function(info) return SAMod.ShowTimer.Timers[k]; end,
 					set = function(info,val) 
 						SAMod.ShowTimer.Timers[k] = val; 

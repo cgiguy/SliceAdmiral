@@ -1,40 +1,41 @@
 -- Author      : Administrator
 -- Create Date : 9/13/2008 10:16:36 AM
-SA_Spells = { [5171] = { target = "player", sort = true,duration=36, pandemic=true,}, --Slice and Dice
-	[73651] = { target = "player", sort = true, duration=30,pandemic=true, }, -- Recuperate
-	[2818] = { target = "target", sort = false, duration=12,pandemic=true,}, --DeadlyPoison
-	[1943] = { target = "target", sort = true,duration=24, pandemic=true, },  --Rupture
-	[1966]  = { target = "player", sort = false,duration=5,pandemic=false, }, --Feint
-	[703] = { target = "target", sort = true,duration=18, pandemic=true, }, --Garrote
-	[115189] = { target = "player",sort = true,duration=15,pandemic=false, }, --Anticipation
-	[137573] = { target = "player",sort = true,duration=4,pandemic=false, }, --BurstOfSpeed
-	[154953] = { target = "target", sort = true,duration=12,pandemic=false, }, --InternalBleeding
-	[79140] = { target = "target", sort=false,duration=20,pandemic=false, }, --Vendetta
-	[32645] = { target = "player",sort = true,duration=6,pandemic=false,}, --Envenom
-	[84617] = { target = "target", sort=true,duration=24,pandemic=true,}, --RevealingStrike
-	[13750] = { target = "player",sort=true,duration=15,pandemic=false,}, --Adrenaline Rush
-	[84745] = { target = "player",sort=false,duration=15,pandemic=false, }, --Guile Rank 1
-	[84746] = { target = "player",sort=false,duration=15,pandemic=false,}, --Guile Rank 2
-	[84747] = { target = "player",sort=false,duration=15,pandemic=false,}, --Guile Rank 3
-	[16511] = { target = "target",sort=true,duration=24,pandemic=true, }, -- Hemorrhage	
-	[122233] = { target="target",sort=true, duration=12,pandemic=false,}, --CrimsonTempest
-	[51713] = { target = "player",sort=false,duration=8,pandemic=false,}, --ShadowDance
-	[91021] = { target = "target",sort=true, duration=10,pandemic=false, }, -- FindWeaknes
-	[157562] = { target = "player",sort=true, duration=6,pandemic=false, }, -- Crimson Poison
-	[31665] = { target = "player",sort=true, duration=5,pandemic=false, }, -- Master of Subtlety
-	[137586] = { target = "player", sort=true, duration=10, pandemic=false,}, --Shuriken Toss
-	[61304] = { target = "player", sort=true, duration=1, pandemic=false,}, --GCD
-	[137619] = { target= "target", sort=true, duration=60, pandemic=false,}, --Marked for Death
-	[74001] = {target="player", sort=true, duration=10, pandemic = false,}, --Combat Rediness
-	[408] = {target="target", sort=true, duration=6, pandemic=false,}, --Kidney Shot
-	[26679] ={target="target", sort=true, duration=6, pandemic=false,}, --Deadly throw
-	[31224] ={target="player", sort=true, duration=5, pandemic=false,}, --Cloak of Shadows
-	[152151] = {target="player", sort=true, duration=8, pandemic=false,}, --Shadow Reflection --player
-	[5277] = {target="player", sort=true, duration=10, pandemic=false,}, --Evasion
-	[1776] = {target="target", sort=true, duration=4, pandemic=false,}, --Gouge
-	[2983] =  {target="player", sort=true, duration=8, pandemic=false,}, --Sprint
-	[2094] =  {target="target", sort=true, duration=60, pandemic=false,}, --Blind
-	[115192] = {target="player", sort=false, duration=3, pandemic=false,}, --Subterfuge
+--0 Shared 1 Assassination, 2 Combat, 3 Subtlety 4 Talents
+SA_Spells = { [5171] = { target = "player", sort = true,duration=36, pandemic=true,spec=0,}, --Slice and Dice
+	[73651] = { target = "player", sort = true, duration=30,pandemic=true,spec=0, }, -- Recuperate
+	[2818] = { target = "target", sort = false, duration=12,pandemic=true,spec=1,}, --DeadlyPoison
+	[1943] = { target = "target", sort = true,duration=24, pandemic=true, spec=1,},  --Rupture
+	[1966]  = { target = "player", sort = false,duration=5,pandemic=false,spec=0, }, --Feint
+	[703] = { target = "target", sort = true,duration=18, pandemic=true,spec=0, }, --Garrote
+	[115189] = { target = "player",sort = true,duration=15,pandemic=false,spec=4, }, --Anticipation
+	[137573] = { target = "player",sort = true,duration=4,pandemic=false,spec=4, }, --BurstOfSpeed
+	[154953] = { target = "target", sort = true,duration=12,pandemic=false,spec=4, }, --InternalBleeding
+	[79140] = { target = "target", sort=false,duration=20,pandemic=false,spec=1, }, --Vendetta
+	[32645] = { target = "player",sort = true,duration=6,pandemic=false,spec=1,}, --Envenom
+	[84617] = { target = "target", sort=true,duration=24,pandemic=true,spec=2,}, --RevealingStrike
+	[13750] = { target = "player",sort=true,duration=15,pandemic=false,spec=2,}, --Adrenaline Rush
+	[84745] = { target = "player",sort=false,duration=15,pandemic=false,spec=2, }, --Guile Rank 1
+	[84746] = { target = "player",sort=false,duration=15,pandemic=false,spec=2,}, --Guile Rank 2
+	[84747] = { target = "player",sort=false,duration=15,pandemic=false,spec=2,}, --Guile Rank 3
+	[16511] = { target = "target",sort=true,duration=24,pandemic=true,spec=3, }, -- Hemorrhage	
+	[122233] = { target="target",sort=true, duration=12,pandemic=false,spec=0,}, --CrimsonTempest
+	[51713] = { target = "player",sort=false,duration=8,pandemic=false,spec=3,}, --ShadowDance
+	[91021] = { target = "target",sort=true, duration=10,pandemic=false,spec=3, }, -- FindWeaknes
+	[157562] = { target = "player",sort=true, duration=6,pandemic=false,spec=1, }, -- Crimson Poison
+	[31665] = { target = "player",sort=true, duration=5,pandemic=false,spec=3, }, -- Master of Subtlety
+	[137586] = { target = "player", sort=true, duration=10, pandemic=false,spec=4,}, --Shuriken Toss
+	[61304] = { target = "player", sort=true, duration=1, pandemic=false,spec=0,}, --GCD
+	[137619] = { target= "target", sort=true, duration=60, pandemic=false,spec=4,}, --Marked for Death
+	[74001] = {target="player", sort=true, duration=10, pandemic = false,spec=4,}, --Combat Rediness
+	[408] = {target="target", sort=true, duration=6, pandemic=false,spec=0,}, --Kidney Shot
+	[26679] ={target="target", sort=true, duration=6, pandemic=false,spec=4,}, --Deadly throw
+	[31224] ={target="player", sort=true, duration=5, pandemic=false,spec=0,}, --Cloak of Shadows
+	[152151] = {target="player", sort=true, duration=8, pandemic=false,spec=4,}, --Shadow Reflection --player
+	[5277] = {target="player", sort=true, duration=10, pandemic=false,spec=0,}, --Evasion
+	[1776] = {target="target", sort=true, duration=4, pandemic=false,spec=0,}, --Gouge
+	[2983] =  {target="player", sort=true, duration=8, pandemic=false,spec=0,}, --Sprint
+	[2094] =  {target="target", sort=true, duration=60, pandemic=false,spec=0,}, --Blind
+	[115192] = {target="player", sort=false, duration=3, pandemic=false,spec=4,}, --Subterfuge
 	};
 
 for k in pairs(SA_Spells) do
