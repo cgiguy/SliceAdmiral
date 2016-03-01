@@ -38,6 +38,8 @@ SA_Spells = { [5171] = { target = "player", sort = true,duration=36, pandemic=tr
 	[115192] = {target="player", sort=false, duration=3, pandemic=false,spec=4,}, --Subterfuge
 	[8680] = {target="target", sort=false, duration=12, pandemic=false,spec=0,}, --Wound Poison
 	[3409] = {target="target", sort=false, duration=12, pandemic=false,spec=0,}, --Crippling Poison
+	[112947] = {target="target", sort=false, duration=6, pandemic=false,spec=4,}, --Nervestrike
+	
 	};
 
 for k in pairs(SA_Spells) do
