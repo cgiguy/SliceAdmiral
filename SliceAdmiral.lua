@@ -224,6 +224,15 @@ SADefault = {
 	},  
 }
 
+for k in pairs(SA_Spells) do
+	if not SADefault.Modules.ShowTimer.Colours[k] then
+		SADefault.Modules.ShowTimer.Colours[k] = {r=0,g=0,b=0,a=0}
+		SADefault.Modules.ShowTimer.Timers[k] = 3.0
+		SADefault.Modules.ShowTimer[k] = false
+		SADefault.Modules.Sound[k] = {enabled=false, tick = "None", alert="None", tickStart=3.0 }
+	end
+end
+
 SADefaults = {char = SADefault, realm = SADefault, profile = SADefault}
 SAGlobals = {Version = SliceAdmiralVer}
 
@@ -1183,10 +1192,8 @@ function addon:SA_OnLoad()
 	SA_Data.BARS["tmp"]["obj"] = addon:SA_NewFrame()
 	SA_Data.BARS["Stat"]["obj"] = addon:SA_CreateStatBar();
 	
-	local Sc = SAMod.ShowTimer.Colours
-	
 	for k in pairs(SA_Spells) do
-		local color = Sc[k]
+		local color = SAMod.ShowTimer.Colours[k]
 		local name = SA_Spells[k].name
 		local icont = SA_Spells[k].icon
 		local smax = SAMod.ShowTimer.Timers[k]

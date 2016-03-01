@@ -14,9 +14,9 @@ SA_Spells = { [5171] = { target = "player", sort = true,duration=36, pandemic=tr
 	[32645] = { target = "player",sort = true,duration=6,pandemic=false,spec=1,}, --Envenom
 	[84617] = { target = "target", sort=true,duration=24,pandemic=true,spec=2,}, --RevealingStrike
 	[13750] = { target = "player",sort=true,duration=15,pandemic=false,spec=2,}, --Adrenaline Rush
-	[84745] = { target = "player",sort=false,duration=15,pandemic=false,spec=2, }, --Guile Rank 1
-	[84746] = { target = "player",sort=false,duration=15,pandemic=false,spec=2,}, --Guile Rank 2
-	[84747] = { target = "player",sort=false,duration=15,pandemic=false,spec=2,}, --Guile Rank 3
+	[84745] = { target = "player",sort=false,duration=15,pandemic=false,spec=2,hidden=true, }, --Guile Rank 1
+	[84746] = { target = "player",sort=false,duration=15,pandemic=false,spec=2,hidden=true,}, --Guile Rank 2
+	[84747] = { target = "player",sort=false,duration=15,pandemic=false,spec=2,hidden=true,}, --Guile Rank 3
 	[16511] = { target = "target",sort=true,duration=24,pandemic=true,spec=3, }, -- Hemorrhage	
 	[122233] = { target="target",sort=true, duration=12,pandemic=false,spec=0,}, --CrimsonTempest
 	[51713] = { target = "player",sort=false,duration=8,pandemic=false,spec=3,}, --ShadowDance
@@ -36,11 +36,13 @@ SA_Spells = { [5171] = { target = "player", sort = true,duration=36, pandemic=tr
 	[2983] =  {target="player", sort=true, duration=8, pandemic=false,spec=0,}, --Sprint
 	[2094] =  {target="target", sort=true, duration=60, pandemic=false,spec=0,}, --Blind
 	[115192] = {target="player", sort=false, duration=3, pandemic=false,spec=4,}, --Subterfuge
+	[8680] = {target="target", sort=false, duration=12, pandemic=false,spec=0,}, --Wound Poison
+	[3409] = {target="target", sort=false, duration=12, pandemic=false,spec=0,}, --Crippling Poison
 	};
 
 for k in pairs(SA_Spells) do
  local name, rank, icon, _ = GetSpellInfo(k)
- local desc = GetSpellDescription(k)
+ local desc,_ = GetSpellDescription(k)
 	SA_Spells[k].name = name
 	SA_Spells[k].icon = icon
 	SA_Spells[k].id = k	

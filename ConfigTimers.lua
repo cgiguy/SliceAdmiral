@@ -94,7 +94,7 @@ options.args = {
 		elseif SA_Spells[k].spec == 4 then
 			opt = options.args.Talents.args
 		end	
-		opt[SA_Spells[k].name] = {name=SA_Spells[k].name,desc=SA_Spells[k].desc, type="group",
+		opt[SA_Spells[k].name] = {name=SA_Spells[k].name,desc=SA_Spells[k].desc, type="group", hidden=SA_Spells[k].hidden,
 			args = {
 				enable = {name=L["ShowBar"],type="toggle", order=1,
 					get = function(info) return SAMod.ShowTimer[k]; end,
