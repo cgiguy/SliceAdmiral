@@ -501,9 +501,11 @@ function addon:UNIT_ATTACK_POWER(...)
 	end
 end
 
-function addon:UpdateBFText()
-	SA_Data.BladeFlurry = tablelength(bfhits);
-	bfhits = {};
+function addon:UpdateBFText(what)
+	SA_Data.BladeFlurry = tablelength(bfhits);	
+	if not (what) then
+		bfhits = {};
+	end
 	if SAMod.ShowTimer.Options.BladeFlurry and SA_Data.BFActive then
 		SA_Data.BARS["Stat"]["obj"].stats[3]:SetFormattedText(SA_Data.BladeFlurry);
 	end
@@ -515,9 +517,9 @@ function addon:UNIT_ATTACK_SPEED(...)
 	if SAMod.Combo.ShowStatBar then
 		addon:SA_UpdateStats();
 	end	
-	if SAMod.ShowTimer.Options.BladeFlurry then
-		if bfticker then bfticker:Cancel() end
-		bfticker = C_Timer.NewTicker(math.max(UnitAttackSpeed("player") or 0), addon.UpdateBFText);
+	if SAMod.ShowTimer.Options.BladeFlurry and SA_Data.BFActive then
+		if bfticker then bfticker:Cancel(); addon:UpdateBFText(true); end
+		bfticker = C_Timer.NewTicker(math.max(UnitAttackSpeed("player") or 1), addon.UpdateBFText);
 	end
 end
 
@@ -658,7 +660,7 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, type, hideCaster, s
 				SA_Data.BARS["Stat"]["obj"].stats[3].lable:SetFormattedText("Flurry")
 				SA_Data.BFActive = true
 				bfticker:Cancel()
-				bfticker = C_Timer.NewTicker(math.max(UnitAttackSpeed("player") or 0,1),addon.UpdateBFText)
+				bfticker = C_Timer.NewTicker(math.max(UnitAttackSpeed("player") or 0.1,1),addon.UpdateBFText)
 			end
 			-- Master of Subtlety Work around-- 
 			if type == "SPELL_AURA_REMOVED" and (spellId == 1784 or spellId == 115191) and SAMod.ShowTimer[31665] then
@@ -701,6 +703,7 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, type, hideCaster, s
 		
 		elseif spellId == 22482 and saTimerOp.BladeFlurry then
 			bfhits[destGUID] = true
+			addon:UpdateBFText(true)
 		elseif spellId == 53 or spellId == 8676 and multistrike then -- Sinister Calling fix 
 			C_Timer.After(math.max(0.1, SA_Data.lag), addon.UpdateTarget); -- For some reason there must be a delay or it won't notice the new expiretime
 		elseif saTimerOp.guileCount and (spellId == 84745) or (spellId == 84746) or (spellId == 84747) or (spellId == 1752) and not (multistrike) then
