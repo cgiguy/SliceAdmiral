@@ -62,6 +62,7 @@ SADefault = {
 				[32645] = {r=66/255, g=86/255, b=35/255,},
 				[84617] =  {r=139/255, g=69/255, b=19/255,},
 				[13750] = {r=240/255,g=128/255,b=128/255,},
+				[186286] = {r=240/255,g=128/255,b=128/255,},
 				[84745] = {r=34/255, g=189/255, b=34/255,},
 				[84746] = {r=255/255, g=215/255, b=0/255,},
 				[84747] = {r=200/255, g=34/255, b=34/255,},
@@ -102,6 +103,7 @@ SADefault = {
 				[84617] = 6.0, --RevealingStrike
 				[703] = 6.0, -- Garrote
 				[13750] = 6.0, --Adrenaline Rush
+				[186286] = 4.0,
 				[154953] = 6.0, --InteralBleeding
 				[122233] = 6.0, -- Crimson Tempest
 				[157562] = 6.0, -- Crimson Poison
@@ -139,6 +141,7 @@ SADefault = {
 			[84617] = true, --RevealingStrike
 			[703] = true, -- Garrote
 			[13750] = false, --Adrenaline Rush
+			[186286] = false,
 			[154953] = false, --InteralBleeding
 			[122233] = true, -- Crimson Tempest
 			[157562] = true, -- Crimson Poison
@@ -195,6 +198,7 @@ SADefault = {
 			[84747] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
 			[32645] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
 			[1966] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
+			[186286] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
 			[137573] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
 			[2818] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
 			[703] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },

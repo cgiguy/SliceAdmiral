@@ -13,7 +13,8 @@ SA_Spells = { [5171] = { target = "player", sort = true,duration=36, pandemic=tr
 	[79140] = { target = "target", sort=false,duration=20,pandemic=false,spec=1, }, --Vendetta
 	[32645] = { target = "player",sort = true,duration=6,pandemic=false,spec=1,}, --Envenom
 	[84617] = { target = "target", sort=true,duration=24,pandemic=true,spec=2,}, --RevealingStrike
-	[13750] = { target = "player",sort=true,duration=15,pandemic=false,spec=2,}, --Adrenaline Rush
+	[13750] = { target = "player",sort=true,duration=15,pandemic=false,spec=2,altId=186286,}, --Adrenaline Rush	\w T18 p2
+	[186286] = { target = "player",sort=true,duration=4,pandemic=false,spec=2,hidden=true,}, --T18 2 set
 	[84745] = { target = "player",sort=false,duration=15,pandemic=false,spec=2,hidden=true, }, --Guile Rank 1
 	[84746] = { target = "player",sort=false,duration=15,pandemic=false,spec=2,hidden=true,}, --Guile Rank 2
 	[84747] = { target = "player",sort=false,duration=15,pandemic=false,spec=2,hidden=true,}, --Guile Rank 3
@@ -39,7 +40,6 @@ SA_Spells = { [5171] = { target = "player", sort = true,duration=36, pandemic=tr
 	[8680] = {target="target", sort=false, duration=12, pandemic=false,spec=0,}, --Wound Poison
 	[3409] = {target="target", sort=false, duration=12, pandemic=false,spec=0,}, --Crippling Poison
 	[112947] = {target="target", sort=false, duration=6, pandemic=false,spec=4,}, --Nervestrike
-	
 	};
 
 for k in pairs(SA_Spells) do
@@ -50,6 +50,8 @@ for k in pairs(SA_Spells) do
 	SA_Spells[k].id = k	
 	SA_Spells[k].desc = desc
 end
+
+SA_Spells[186286].name = "Felblade Armor";
 
 local LSM = LibStub("LibSharedMedia-3.0")
 local SA_BarTextures = {
