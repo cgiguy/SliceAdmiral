@@ -6,7 +6,8 @@ local LSM = LibStub("LibSharedMedia-3.0")
 local function pandemic(val)
 	local options = sliceadmiral.opt.ShowTimer
 	local opt
-	for k in pairs(SA_Spells) do		
+	for k in pairs(SA_Spells) do
+		if not SA_Spells[k].hidden then
 		if SA_Spells[k].spec == 0 then
 			opt = options.args.Shared.args
 		elseif SA_Spells[k].spec == 1 then
@@ -22,6 +23,7 @@ local function pandemic(val)
 			opt[SA_Spells[k].name].args.valuses.disabled = SA_Spells[k].pandemic
 		else
 			opt[SA_Spells[k].name].args.valuses.disabled = false
+		end
 		end
 	end
 end
@@ -75,14 +77,20 @@ options.args = {
 				get = function(info) return SAMod.ShowTimer.Options.DeadlyMomentum; end,
 				set = function(info,val) SAMod.ShowTimer.Options.DeadlyMomentum = val; end
 			},
+			Spellnames = {name=L["Bars/SpellNames"],desc=L["Bars/Spellnames/Desc"],type="toggle",order=10,
+				get = function(info) return SAMod.ShowTimer.Options.ShowNames; end,
+				set = function(info,val) SAMod.ShowTimer.Options.ShowNames = val; end
+			},
 			Shared = {name=L["SharedAbilites"],type="group",order=20,childGroups="tree",args={},},
 			Assassination = {name=SPECS[1],type="group",order=30,childGroups="tree",args={},},
 			Combat = {name=SPECS[2],type="group",order=40,childGroups="tree",args={},},
 			Subtlety ={name=SPECS[3],type="group",order=50,childGroups="tree",args={},},
 			Talents ={name=TALENTS,type="group",order=60,childGroups="tree",args={},},
 		}
-
+		
+	local GetSpellDescription = GetSpellDescription
 	for k in pairs(SA_Spells) do
+		if not SA_Spells[k].hidden then
 		if SA_Spells[k].spec == 0 then
 			opt = options.args.Shared.args
 		elseif SA_Spells[k].spec == 1 then
@@ -94,8 +102,7 @@ options.args = {
 		elseif SA_Spells[k].spec == 4 then
 			opt = options.args.Talents.args
 		end	
-		
-		opt[SA_Spells[k].name] = {name=SA_Spells[k].name,desc=SA_Spells[k].desc, type="group", hidden=SA_Spells[k].hidden,
+		opt[SA_Spells[k].name] = {name=SA_Spells[k].name,desc=function(info) return GetSpellDescription(k); end, type="group",
 			args = {
 				enable = {name=L["ShowBar"],type="toggle", order=1,
 					get = function(info) return SAMod.ShowTimer[k]; end,
@@ -134,6 +141,7 @@ options.args = {
 				},
 			},
 		}
+		end
 	end
 	
 	options.args.Combat.args["BanditsGuile"] = {name=BanditsGuilLocal,desc=GetSpellDescription(84654),type="group",

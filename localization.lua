@@ -32,6 +32,8 @@ L["SharedAbilites"] = "Shared Abilities"
 L["ShowBar"] = "Show timer bar"
 
 L["Bars/GrowUp"] = "Bars grow up"
+L["Bars/SpellNames"] = "Show spellname"
+L["Bars/Spellnames/Desc"] = "Enables spellname as text on the bars"
 L["Bars/Sort"] = "Sort bars by duration"
 L["Bars/ShowDoT"] = "Show DoT ticks"
 L["Bars/DoTCrit"] = "Highlight DoT crits"
