@@ -73,10 +73,6 @@ options.args = {
 				get = function(info) return SAMod.Sound.OutOfCombat; end,
 				set = function(info,val) SAMod.Sound.OutOfCombat = val; end
 			},
-			DeadlyMomentum = {name=L["Fix/DeadlyMomentum"],desc=L["Fix/DeadlyMomentumDesc"],type="toggle",order=9,width="full",
-				get = function(info) return SAMod.ShowTimer.Options.DeadlyMomentum; end,
-				set = function(info,val) SAMod.ShowTimer.Options.DeadlyMomentum = val; end
-			},
 			Spellnames = {name=L["Bars/SpellNames"],desc=L["Bars/Spellnames/Desc"],type="toggle",order=10,
 				get = function(info) return SAMod.ShowTimer.Options.ShowNames; end,
 				set = function(info,val) SAMod.ShowTimer.Options.ShowNames = val; end

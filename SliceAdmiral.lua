@@ -46,7 +46,6 @@ SADefault = {
 				BarTexture = "Smooth",
 				guileCount = false,
 				BladeFlurry = false,
-				DeadlyMomentum = false,
 				ShowNames = false,
 			},
 			Colours = { 
@@ -281,6 +280,11 @@ local function Lsort(a,b)
 	return a["Expires"] < b["Expires"];
 end
 
+local function tablelength(T)
+  local count = 0
+  for _ in pairs(T) do count = count + 1 end
+  return count
+end
 function addon:SA_SetScale(NewScale)
   if (NewScale >= 50) then
     SA:SetScale ( NewScale / 100 );
@@ -478,17 +482,16 @@ function addon:PLAYER_REGEN_ENABLED(...) --exit combat
 	end
 end
 
-function addon:UNIT_COMBO_POINTS(...)
-	addon:SetComboPoints();
-end
-
-function addon:UNIT_AURA(event, ...)	
+function addon:UNIT_AURA(Time, arg1)	
 	if SAMod.Combo.ShowStatBar then
 		addon:SA_UpdateStats();
-	end  
-	if ... == "player" then
+	end
+	if arg1 == "player" then
+		addon:BarUpdate(5171)
+		addon:BarUpdate(73651)
 		local name, rank, icon, count = UnitAura("player", SA_Spells[115189].name);
 		if not name then return end;
+		addon:BarUpdate(115189);
 		addon:SetComboPoints();
 	end
 end
@@ -501,7 +504,7 @@ end
 
 function addon:UpdateBFText(what)
 	if SAMod.ShowTimer.Options.BladeFlurry and SA_Data.BFActive then
-		SA_Data.BARS["Stat"]["obj"].stats[3]:SetFormattedText(#bfhits);
+		SA_Data.BARS["Stat"]["obj"].stats[3]:SetFormattedText(tablelength(bfhits));
 	end	
 	if not (what) then
 		bfhits = {};
@@ -520,8 +523,9 @@ function addon:UNIT_ATTACK_SPEED(...)
 	end
 end
 
-function addon:UNIT_POWER(...)
-	if SAMod.Energy.ShowEnergy then
+function addon:UNIT_POWER(Time,arg1,arg2)
+	if not arg1 == "player" then return end;
+	if SAMod.Energy.ShowEnergy and arg2 == "ENERGY" then
 		local alpha = VTimerEnergy:GetAlpha()
 		local eTransp = SAMod.Energy.EnergyTrans / 100.0;
 		
@@ -531,6 +535,9 @@ function addon:UNIT_POWER(...)
 			UIFrameFadeIn(VTimerEnergy, 0.4, alpha, 1.0);
 		end
 		return
+	end
+	if arg2 == "COMBO_POINTS" then
+		addon:SetComboPoints();
 	end
 end
 
@@ -598,14 +605,9 @@ local function GCD()
 	end
 end
 
-function addon:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, type, hideCaster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId, ...)	
-	local DeadlyMomentum = SAMod.ShowTimer.Options.DeadlyMomentum
+function addon:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, type, hideCaster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId, ...)
 	if deathEvent[type] then
 		soundBuffer = {};
-		if DeadlyMomentum then --Untested fix for Deadly Momentum Ticket #36
-			addon:BarUpdate(5171)
-			addon:BarUpdate(73651)
-		end 
 		return
 	end	
 	local isOnMe = (destGUID  == UnitGUID("player"))	
@@ -708,7 +710,8 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, type, hideCaster, s
 			-- bandits guile--
 			addon:GuileAdvance(spellId,type);
 		end
-	end		
+	end	
+	if type == "SPELL_AURA_REFRESH" then C_Timer.After(0.2, addon.UpdateTarget) end
 end
 
 function addon:UpdateMaxValue(spellId,duration)
@@ -1002,7 +1005,7 @@ function addon:SA_UpdateStats()
 
 	barStats[2]:SetFormattedText("%.1f%%", GetCritChance());
 	
-	barStats[3]:SetFormattedText(SAMod.ShowTimer.Options.BladeFlurry and SA_Data.BFActive and #bfhits or string.format("%.2f", UnitAttackSpeed("player")))
+	barStats[3]:SetFormattedText(SAMod.ShowTimer.Options.BladeFlurry and SA_Data.BFActive and tablelength(bfhits) or "%.2f", UnitAttackSpeed("player"))
 
 	barStats[4]:SetFormattedText(barStats[4] and "%s",SA_Data.guile);	
 		
@@ -1030,7 +1033,7 @@ function addon:SA_flashBuffedStats()
 	statCheck[4] = (SA_Data.guile == 4 and UnitExists("target"));
 	
 	if SA_Data.BFActive then
-		statCheck[3] = (#bfhits == 0);
+		statCheck[3] = (tablelength(bfhits) == 0);
 	end
 	
 	local barStats = SA_Data.BARS["Stat"]["obj"].stats
@@ -1125,7 +1128,6 @@ end
 
 function addon:SA_OnLoad()
 	addon:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED");
-	addon:RegisterEvent("UNIT_COMBO_POINTS");
 	addon:RegisterEvent("PLAYER_ENTERING_WORLD")
 	addon:RegisterEvent("PLAYER_REGEN_ENABLED")
 	addon:RegisterEvent("PLAYER_REGEN_DISABLED")
@@ -1240,11 +1242,12 @@ local function SA_UpdateBar(unit, spell, sa_sound)
 	local tickStart = sabars["tickStart"] - GetTime();
 	local lastTick = sabars["LastTick"]
 	local Showname = SAMod.ShowTimer.Options.ShowNames
+	local count = sabars["count"]
 	
 	if sa_time*10 > 1 and sabars then
 		sabars["obj"]:SetValue(sa_time);
 		sabars["obj"].text:SetFormattedText("%0.1f", sa_time);
-		sabars["obj"].count:SetFormattedText(sabars["count"] > 0 and Showname and string.format("%s (%d)",spell,sabars["count"]) or Showname and spell or "");
+		sabars["obj"].count:SetFormattedText(count > 0 and Showname and string.format("%s (%d)",spell,count) or Showname and spell or count > 0 and count or "");
 	else
 		sabars["obj"]:Hide();
 		sabars["Expires"] = 0;
@@ -1262,11 +1265,12 @@ local function SA_QuickUpdateBar(unit, spell)
 	local sabars = SA_Data.BARS[spell];
 	local sa_time = sabars["Expires"] - GetTime();
 	local Showname = SAMod.ShowTimer.Options.ShowNames
+	local count = sabars["count"]
 	
 	if sa_time*10 > 1 and sabars then		
 		sabars["obj"]:SetValue(sa_time);
 		sabars["obj"].text:SetFormattedText("%0.1f", sa_time);
-		sabars["obj"].count:SetFormattedText(sabars["count"] > 0 and Showname and string.format("%s (%d)",spell,sabars["count"]) or Showname and spell or "");
+		sabars["obj"].count:SetFormattedText(count > 0 and Showname and string.format("%s (%d)",spell,count) or Showname and spell or count > 0 and count or "");
 	else
 		sabars["obj"]:Hide();
 		sabars["Expires"] = 0;
