@@ -49,8 +49,7 @@ SADefault = {
 				ShowNames = false,
 			},
 			Colours = { 
-				[5171] = { r=255/255, g=74/255, b=18/255, a=0.9,},
-				[73651] = {r=10/255, g=10/255, b=150/255,},
+				[5171] = { r=255/255, g=74/255, b=18/255, a=0.9,},				
 				[2818] =  {r=96/255, g=116/255, b=65/255,},
 				[1943] = {r=130/255, g=15/255, b=0,},
 				[1966]  = {r=155/255, g=155/255, b=255/255,},
@@ -63,16 +62,9 @@ SADefault = {
 				[84617] =  {r=139/255, g=69/255, b=19/255,},
 				[13750] = {r=240/255,g=128/255,b=128/255,},
 				[186286] = {r=240/255,g=128/255,b=128/255,},
-				[84745] = {r=34/255, g=189/255, b=34/255,},
-				[84746] = {r=255/255, g=215/255, b=0/255,},
-				[84747] = {r=200/255, g=34/255, b=34/255,},
 				[16511] = {r=255/255, g=5/255, b=5/255,},
-				[122233] = {r=192/255,g=192/255,b=192/255},
-				[157562] = {r=192/255,g=192/255,b=192/255},
-				[51713] = {r=0/255, g=0/255, b=128/255,},
 				[91021] = {r=130/255, g=130/255, b=0,},
 				[31665] = {r=99/255, g=26/255, b=151/255,},
-				[137586] = {r=34/255, g=189/255, b=34/255,},
 				[61304] = {r=192/255,g=192/255,b=192/255},
 				[137619] = {r=0,g=0,b=0},
 				[74001] = {r=0,g=0,b=0},
@@ -88,12 +80,8 @@ SADefault = {
 			},
 			Timers = {
 				[5171] = 6.0, --Slice and Dice
-				[84745] = 6.0, -- BanditsGuile
-				[84746] = 6.0, -- BanditsGuile
-				[84747] = 6.0, -- BanditsGuile
 				[1943] = 6.0, --Rupture
-				[115189] = 6.0, -- Anticipation
-				[73651] = 6.0, -- Recuperate
+				[115189] = 6.0, -- Anticipation				
 				[32645] = 6.0, -- Envenom
 				[1966] = 5.0, -- Feint
 				[137573] = 4.0, -- Burst of Speed
@@ -105,12 +93,8 @@ SADefault = {
 				[13750] = 6.0, --Adrenaline Rush
 				[186286] = 4.0,
 				[154953] = 6.0, --InteralBleeding
-				[122233] = 6.0, -- Crimson Tempest
-				[157562] = 6.0, -- Crimson Poison
-				[51713] = 6.0, -- ShadowDance
 				[91021] = 6.0, --FindWeaknes
-				[31665]= 5.0, --Master of Subtlety
-				[137586] = 6.0,--Shuricken toss
+				[31665]= 5.0, --Master of Subtlety´
 				[61304] = 1.0, --GCD
 				[137619] = 6.0, --Marked for death
 				[74001] = 6.0,
@@ -125,12 +109,8 @@ SADefault = {
 				[115192] = 3.0,
 			},
 			[5171] = true, --Slice and Dice
-			[84745] = true, -- BanditsGuile, Shallow
-			[84746] = true, -- BanditsGuile, Moderate
-			[84747] = true, -- BanditsGuile, Deep
 			[1943] = true, --Rupture
-			[115189] = false, -- Anticipation
-			[73651] = true, -- Recuperate
+			[115189] = false, -- Anticipation			
 			[32645] = true, -- Envenom
 			[1966] = true, -- Feint
 			[137573] = false, -- Burst of Speed
@@ -143,11 +123,7 @@ SADefault = {
 			[13750] = true, --Adrenaline Rush
 			[186286] = true,
 			[154953] = false, --InteralBleeding
-			[122233] = true, -- Crimson Tempest
-			[157562] = true, -- Crimson Poison
-			[51713] = false, -- ShadowDance
 			[31665] = true, -- master of Subtlety
-			[137586] = false, -- Shuriken toss
 			[61304] = false, --GCD
 			[137619] = false, --Marked for death
 			[74001] = false,
@@ -185,18 +161,13 @@ SADefault = {
 			ComboTextColor = { r=1.0, g=1.0, b=1.0, a=0.8},
 		},
 		Sound = {
-			[5171] = {enabled=true, tick = "Tambourine", alert = "Waaaah",tickStart=3.0, }, --Slice and Dice
-			[73651] = {enabled=true, tick = "Tambourine", alert = "None",tickStart=3.0, }, -- Recuperate
+			[5171] = {enabled=true, tick = "Tambourine", alert = "Waaaah",tickStart=3.0, }, --Slice and Dice			
 			[1943] = {enabled=true, tick = "Shaker", alert = "BassDrum", tickStart=3.0, }, --Rupture
 			[79140] = {enabled=true, tick = "Ping", alert = "None", tickStart=3.0, }, --Vendetta
 			[84617] = {enabled=true, tick = "BassDrum", alert = "Shaker", tickStart=3.0, },--RevealingStrike
 			[16511] = {enabled=true, tick = "Ping", alert = "None", tickStart=3.0, }, --Hemorrhage
 			[84745] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
-			[157562] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
 			[115189] = {enabled=false, tick = "None", alert="None", tickStart=3.0, }, -- Anticipation
-			[84746] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
-			[84747] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
-			[32645] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
 			[1966] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
 			[186286] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
 			[137573] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
@@ -204,11 +175,8 @@ SADefault = {
 			[703] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
 			[13750] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
 			[154953] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
-			[122233] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
-			[51713] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
 			[91021] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
 			[31665] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
-			[137586] = {enabled=false, tick= "None", alert="None", tickStart=3.0, },
 			[61304] = {enabled=false, tick= "None", alert="None", tickStart=0.5, },
 			[137619] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
 			[74001] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
@@ -465,9 +433,7 @@ end
 function addon:PLAYER_REGEN_DISABLED(...) --enter combat
 	addon:SA_ResetBaseStats();
 	UIFrameFadeIn(SA, 0.4, SA:GetAlpha(), 1.0);	
-	if guileZero then
-		guileZero:Cancel()
-	end
+
 end
 
 function addon:ResetGuile()	
@@ -477,9 +443,7 @@ end
 
 function addon:PLAYER_REGEN_ENABLED(...) --exit combat
 	UIFrameFadeOut(SA, 0.4, SA:GetAlpha(), SAMod.Main.Fade/100)
-	if SAMod.ShowTimer.Options.guileCount then
-		guileZero = C_Timer.NewTimer(120,addon.ResetGuile) --two minutes outsidecombat
-	end
+
 end
 
 function addon:UNIT_AURA(Time, arg1)	
@@ -488,10 +452,6 @@ function addon:UNIT_AURA(Time, arg1)
 	end
 	if arg1 == "player" then
 		addon:BarUpdate(5171)
-		addon:BarUpdate(73651)
-		local name, rank, icon, count = UnitAura("player", SA_Spells[115189].name);
-		if not name then return end;
-		addon:BarUpdate(115189);
 		addon:SetComboPoints();
 	end
 end
@@ -706,9 +666,6 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, type, hideCaster, s
 			addon:UpdateBFText(true)
 		elseif spellId == 32645 or spellId == 53 or spellId == 8676 and multistrike then -- Sinister Calling / Envenom fix 
 			C_Timer.After(math.max(0.1, SA_Data.lag), addon.UpdateTarget); -- For some reason there must be a delay or it won't notice the new expiretime
-		elseif saTimerOp.guileCount and (spellId == 84745) or (spellId == 84746) or (spellId == 84747) or (spellId == 1752) and not (multistrike) then
-			-- bandits guile--
-			addon:GuileAdvance(spellId,type);
 		end
 	end	
 	if type == "SPELL_AURA_REFRESH" then C_Timer.After(0.2, addon.UpdateTarget) end
@@ -809,9 +766,9 @@ end
 
 function addon:SetComboPoints()
 	local points = UnitPower("player",4); 
-	local name, rank, icon, count = UnitAura("player", SA_Spells[115189].name)
+	--local name, rank, icon, count = UnitAura("player", SA_Spells[115189].name)
 	local cpBar = SA_Data.BARS["CP"]["obj"]
-	count = count or 0
+	local count = 0
 
 	local text = "0(0)" --string.format("%d(%d)",points,count) 
 	if count >= 0 and SAMod.Energy.AnticpationText and SAMod.Energy.ShowComboText then
@@ -1295,7 +1252,7 @@ function addon:OnUpdate(elapsed)
 	for k,v in pairs(SATimer) do
 		local spell = SA_Spells[k]
 		local sound = SAMod.Sound[k]
-		if v and sound and sound.enabled then
+		if v and spell and sound and sound.enabled then
 			SA_UpdateBar(spell.target,spell.name, LSM:Fetch("sound",sound.tick));
 		elseif v and spell then
 			SA_QuickUpdateBar(spell.target,spell.name);
