@@ -21,7 +21,7 @@ SADefault = {
 	data = {
 		Version = SliceAdmiralVer,
 		UpdateInterval = 0.05,
-		numStats = 3,
+		numStats = 3,		
 	},
 	Modules = {
 		Main = {
@@ -169,6 +169,7 @@ SADefault = {
 			[84745] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
 			[115189] = {enabled=false, tick = "None", alert="None", tickStart=3.0, }, -- Anticipation
 			[1966] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
+			[32645]  = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
 			[186286] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
 			[137573] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
 			[2818] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
@@ -237,7 +238,8 @@ local GetCritChance = GetCritChance
 local UnitPower = UnitPower
 local UnitPowerMax = UnitPowerMax
 local UnitAura = UnitAura
-local _,k,v,guileZero 
+local _,k,v,guileZero
+local maxCP = 5 
 local bfhits = {}
 local soundBuffer = {}
 
@@ -502,8 +504,20 @@ function addon:UNIT_POWER(Time,arg1,arg2)
 end
 
 function addon:UNIT_MAXPOWER(...)
+	local cpBar = SA_Data.BARS["CP"]["obj"]
 	if SAMod.Energy.ShowEnergy then
-		VTimerEnergy:SetMinMaxValues(0,UnitPowerMax("player"));
+		VTimerEnergy:SetMinMaxValues(0,UnitPowerMax("player",SPELL_POWER_ENERGY));
+	end
+	maxCP = UnitPowerMax("player",SPELL_POWER_COMBO_POINTS)
+	if maxCP == 8 then
+		cpBar.combo:SetMinMaxValues(0,5)		
+	else
+		cpBar.combo:SetMinMaxValues(0,maxCP)
+	end
+	if maxCP == 6 then
+		cpBar.overlay:SetTexCoord(0.015625,0.76,0.109375,0.13671875);
+	else
+		cpBar.overlay:SetTexCoord(0.015625,0.6328125,0.109375,0.13671875);
 	end
 end
 
@@ -765,16 +779,14 @@ end
 
 
 function addon:SetComboPoints()
-	local points = UnitPower("player",4); 
+	local points = UnitPower("player", SPELL_POWER_COMBO_POINTS); 
 	--local name, rank, icon, count = UnitAura("player", SA_Spells[115189].name)
 	local cpBar = SA_Data.BARS["CP"]["obj"]
-	local count = 0
+	local count = points%5
 
 	local text = "0(0)" --string.format("%d(%d)",points,count) 
-	if count >= 0 and SAMod.Energy.AnticpationText and SAMod.Energy.ShowComboText then
-		text = points .. "(" .. count.. ")" --string.format("%d(%d)",points,count)
-	elseif count >= 0 and SAMod.Energy.AnticpationText then
-		text = count
+	if maxCP == 8 then
+		text = string.format("%d(%d)",min(5,points),points == count and 0 or count)
 	else
 		text = points
 	end	
@@ -783,10 +795,10 @@ function addon:SetComboPoints()
 	end
 
 	if SAMod.Combo.AnticipationShow then
-		cpBar.anti:SetValue(count);
+		cpBar.anti:SetValue(points == count and 0 or maxCP==8 and count or 0);
 	end
 	if SAMod.Combo.PointShow then
-		cpBar.combo:SetValue(points);	
+		cpBar.combo:SetValue(maxCP == 8 and min(5,points) or points);	
 	end
 end
 
@@ -801,6 +813,7 @@ function addon:CreateComboFrame()
 	local width = VTimerEnergy:GetWidth();
 	local cpC = SAMod.Combo.CPColor
 	local cpA = SAMod.Combo.AnColor
+	local cpMax = UnitPowerMax("player",SPELL_POWER_COMBO_POINTS)
 	
 	f:ClearAllPoints();
 	f:SetSize(width, 10);
@@ -814,15 +827,18 @@ function addon:CreateComboFrame()
 	
 	overlay:SetTexture("Interface\\Archeology\\ArcheologyToast");
 	overlay:SetAllPoints(f);
-	overlay:SetTexCoord(0.015625,0.6328125,0.109375,0.13671875);
-	
+	if cpMax == 6 then
+		overlay:SetTexCoord(0.015625,0.76,0.109375,0.13671875);
+	else
+		overlay:SetTexCoord(0.015625,0.6328125,0.109375,0.13671875);
+	end
 	combo:SetSize(width, 10);
 	combo:SetScale(scaleUI);
 	combo:SetFrameLevel(flvl+1)
 	combo:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 0, 0);
 	combo:SetStatusBarTexture(addon:SA_BarTexture("combo"));
 	combo:SetStatusBarColor(cpC.r, cpC.g, cpC.b);
-	combo:SetMinMaxValues(0, 5);
+	combo:SetMinMaxValues(0, cpMax);
 	combo:SetValue(0);
 	combo:Show();
 	
@@ -832,7 +848,7 @@ function addon:CreateComboFrame()
 	anti:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 0, 0);
 	anti:SetStatusBarTexture(addon:SA_BarTexture("combo"));
 	anti:SetStatusBarColor(cpA.r, cpA.g, cpA.b);
-	anti:SetMinMaxValues(0, 5);
+	anti:SetMinMaxValues(0, 3);
 	anti:SetValue(0);
 	anti:Show()	
 	
