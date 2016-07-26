@@ -52,13 +52,12 @@ lib.smoothing = lib.smoothing or {}
 
 -------------------------------------------------------------------------------
 
-local min, max = math.min, math.max
+local abs = math.abs
 
 local function AnimationTick()
-	local limit = 30 / GetFramerate()
 	for bar, value in pairs(lib.smoothing) do
 		local cur = bar:GetValue()
-		local new = cur + min((value - cur) / 3, max(value-cur, limit))
+		local new = cur + ((value - cur) / 3)
 		if new ~= new then
 			new = value
 		end

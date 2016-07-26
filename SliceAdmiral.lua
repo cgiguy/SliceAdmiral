@@ -211,9 +211,9 @@ SAGlobals = {Version = SliceAdmiralVer}
 
 SA_Data = {	
 	guile = 0,
-	sortPeriod = 0.5, -- Only sort bars every sortPeriod seconds
-	tNow = 0,
+	sortPeriod = 0.2, -- Only sort bars every sortPeriod seconds
 	lag = 0.1, -- not everyone plays with 50ms ping
+	tNow = 0,
 	sinister = true,
 	BARS = { --TEH BARS
 		["CP"] = {
@@ -230,6 +230,7 @@ SA_Data = {
 
 local scaleUI = 0
 local widthUI = 0
+local lastSort = 0
 
 local UnitAffectingCombat = UnitAffectingCombat
 local UnitAttackPower = UnitAttackPower
@@ -247,7 +248,10 @@ local Sa_filter = {	["player"] = "PLAYER",
 					["target"] = "PLAYER HARMFUL", };
 
 local function Lsort(a,b)
-	return a["Expires"] < b["Expires"];
+	return floor(a["Expires"]) < floor(b["Expires"]); -- No need for decimals
+end
+local function idSort(a,b)
+	return a["id"] < b["id"];
 end
 
 local function tablelength(T)
@@ -255,6 +259,7 @@ local function tablelength(T)
   for _ in pairs(T) do count = count + 1 end
   return count
 end
+
 function addon:SA_SetScale(NewScale)
   if (NewScale >= 50) then
     SA:SetScale ( NewScale / 100 );
@@ -275,7 +280,7 @@ function addon:SA_SetWidth(w)
 	end	
 	if SAMod.Energy.ShowEnergy then
 		VTimerEnergy:Show();
-		local UnitPowerMax = UnitPowerMax("player")
+		local UnitPowerMax = UnitPowerMax("player",SPELL_POWER_ENERGY)
 		if (UnitPowerMax == 0) then
 			UnitPowerMax = 100;
 		end
@@ -307,7 +312,7 @@ function addon:RetextureBars(texture, object)
 		SA_Data.BARS["CP"]["obj"].anti:SetStatusBarTexture(texture);
 	end
 	if object == "stats" then		
-		SA_Data.BARS["CP"]["obj"].bg:SetTexture(texture);		
+		SA_Data.BARS["CP"]["obj"].bg:SetTexture(texture);
 		SA_Data.BARS["Stat"]["obj"].bg:SetTexture(texture);
 	end	
 end
@@ -355,6 +360,8 @@ function addon:SA_ChangeAnchor()
  local opt = SAMod.ShowTimer.Options
  local statsBar = SA_Data.BARS["Stat"]["obj"]
  local cpBar = SA_Data.BARS["CP"]["obj"]
+ table.sort(SA_Data.BARORDER, idSort) --Fix for Roll the bone
+ table.sort(SA_Data.BARORDER, Lsort)
  
  -- Stat bar goes first, because it's fucking awesome like that
  if SAMod.Combo.ShowStatBar then 	
@@ -389,9 +396,8 @@ end
 	end
 	LastAnchor = tmp 
 	
-	for i = 1, #SA_Data.BARORDER do 
-		local SortBar = SA_Data.BARORDER[i]
-		if (SortBar["Expires"] > 0) then
+	local function sortBar(SortBar)
+		if (SortBar["Expires"] > SA_Data.tNow) and SortBar["obj"]:IsShown() then
 			SortBar["obj"]:ClearAllPoints();
 			if opt.Barsup then
 				SortBar["obj"]:SetPoint("BOTTOMLEFT", LastAnchor, "TOPLEFT", 0, offSetSize); --bar on top
@@ -401,18 +407,14 @@ end
 			LastAnchor = SortBar["obj"];
 		end
 	end
+	
+	for i = 1, #SA_Data.BARORDER do 
+		sortBar(SA_Data.BARORDER[i])		
+	end
 	for i = 1, #SA_Data.TOPORDER do
-		local SortBar = SA_Data.TOPORDER[i]
-		if (SortBar["Expires"] > 0) then
-			SortBar["obj"]:ClearAllPoints();
-			if opt.Barsup then
-				SortBar["obj"]:SetPoint("BOTTOMLEFT", LastAnchor, "TOPLEFT", 0, offSetSize); --bar on top
-			else
-				SortBar["obj"]:SetPoint("TOPLEFT", LastAnchor, "BOTTOMLEFT", 0, -1 * offSetSize);
-			end
-			LastAnchor = SortBar["obj"];
-		 end
+		sortBar(SA_Data.TOPORDER[i])
 	end 
+	
 end
 
 function addon:PET_BATTLE_OPENING_START()
@@ -436,11 +438,6 @@ function addon:PLAYER_REGEN_DISABLED(...) --enter combat
 	addon:SA_ResetBaseStats();
 	UIFrameFadeIn(SA, 0.4, SA:GetAlpha(), 1.0);	
 
-end
-
-function addon:ResetGuile()	
-	SA_Data.guile = 0; 
-	addon:SA_UpdateStats();		
 end
 
 function addon:PLAYER_REGEN_ENABLED(...) --exit combat
@@ -485,21 +482,22 @@ function addon:UNIT_ATTACK_SPEED(...)
 	end
 end
 
-function addon:UNIT_POWER(Time,arg1,arg2)
-	if not arg1 == "player" then return end;
+function addon:UNIT_POWER_FREQUENT(Time,arg1,arg2)
+	if not arg1 == "player" then return false end;
 	if SAMod.Energy.ShowEnergy and arg2 == "ENERGY" then
 		local alpha = VTimerEnergy:GetAlpha()
 		local eTransp = SAMod.Energy.EnergyTrans / 100.0;
-		
-		if  (UnitPowerMax("player") == UnitPower("player")) and not (alpha == eTransp) then
+		VTimerEnergy:SetValue(UnitPower("player",SPELL_POWER_ENERGY));
+		if  (UnitPowerMax("player",SPELL_POWER_ENERGY) == UnitPower("player",SPELL_POWER_ENERGY)) and not (alpha == eTransp) then
 			UIFrameFadeOut(VTimerEnergy, 0.4, alpha, eTransp)
-		elseif not (UnitPowerMax("player") == UnitPower("player")) and not (alpha == 1.0) then
+		elseif not (UnitPowerMax("player") == UnitPower("player",SPELL_POWER_ENERGY)) and not (alpha == 1.0) then
 			UIFrameFadeIn(VTimerEnergy, 0.4, alpha, 1.0);
 		end
-		return
+		return true
 	end
 	if arg2 == "COMBO_POINTS" then
 		addon:SetComboPoints();
+		return true
 	end
 end
 
@@ -522,8 +520,9 @@ function addon:UNIT_MAXPOWER(...)
 end
 
 local function MasterOfSubtley()
-	local name, _, _, _, _, _, expirationTime = UnitAura("player", SA_Spells[31665].name);
-	local MOSBar = SA_Data.BARS[SA_Spells[31665].name]
+	local subtlety = SA_Spells[31665].name
+	local name, _, _, _, _, _, expirationTime = UnitAura("player", subtlety);
+	local MOSBar = SA_Data.BARS[subtlety]
 	
 	if name then		
 		MOSBar["Expires"] = expirationTime;		
@@ -579,6 +578,10 @@ local function GCD()
 	end
 end
 
+local function Ghostly()
+	addon:BarUpdate(196937)
+end
+
 function addon:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, type, hideCaster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId, ...)
 	if deathEvent[type] then
 		soundBuffer = {};
@@ -586,6 +589,9 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, type, hideCaster, s
 	end	
 	local isOnMe = (destGUID  == UnitGUID("player"))	
 	if type == "SPELL_ENERGIZE" then
+		if spellId == 196937 then
+			C_Timer.After(0.2, Ghostly) --Ghostly Strike wants to be special.
+		end
 		if spellId == 51699 and isOnMe then	--- 51699 HaT
 			addon:SetComboPoints("SPELL_ENERGIZE")
 		end
@@ -621,10 +627,7 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, type, hideCaster, s
 			addon:SA_ChangeAnchor();
 		end
 		if isOnMe then
-			-- Anticipation event --
-			if (spellId == 115189 and SAMod.Combo.PointShow and type == "SPELL_AURA_REMOVED") then
-				addon:SetComboPoints("SPELL_AURA_REMOVED");
-			end
+
 			-- BladeFlurry Switch --
 			if spellId == 13877 and type == "SPELL_AURA_REMOVED" then
 				SA_Data.BARS["Stat"]["obj"].stats[3].lable:SetFormattedText("Speed")
@@ -699,32 +702,6 @@ function addon:UpdateMaxValue(spellId,duration)
 	return
 end
 
-function addon:GuileAdvance(spellId,event)
-	local insightBar = SA_Data.BARS["Stat"]["obj"].stats[4]
-	if SA_Data.sinister and (spellId == 1752) then
-		SA_Data.guile = SA_Data.guile + 1;
-		addon:SA_UpdateStats();
-	end
-	if 	("SPELL_AURA_APPLIED" == event) then
-		SA_Data.guile = 1;
-		SA_Data.sinister = false;
-		if (spellId == 84747) then
-			SA_Data.guile = 0;
-			insightBar:Hide();
-		end
-	end
-	if ("SPELL_AURA_REFRESH" == event) then
-		SA_Data.guile = SA_Data.guile + 1;
-	end
-	if ("SPELL_AURA_REMOVED" == event) then
-		SA_Data.guile = 0;
-		SA_Data.sinister = true;
-		if (spellId == 84747) then
-			insightBar:Show();
-		end
-	end	
-end
-
 function addon:UpdateTarget()
 	local showT = SAMod.ShowTimer
 	local saTimerOp = SAMod.ShowTimer.Options
@@ -734,8 +711,7 @@ function addon:UpdateTarget()
 		if v and spell then
 			local spellBar = SA_Data.BARS[spell.name]
 			local name, _, _, count, _, duration, expirationTime, _ = UnitAura(spell.target, spell.name, nil, Sa_filter[spell.target]);
-			if not (name) then
-				spellBar["Expires"] = 0;
+			if not (name) then				
 				spellBar["tickStart"] = 0;
 				spellBar["count"] = 0;
 				spellBar["obj"]:Hide();
@@ -744,7 +720,7 @@ function addon:UpdateTarget()
 				spellBar["tickStart"] = (expirationTime or 0) - SAMod.Sound[spell.id].tickStart;
 				spellBar["LastTick"] = spellBar["tickStart"] - 1.0;
 				spellBar["count"] = count or 0;
-				if expirationTime > 0 then
+				if expirationTime > SA_Data.tNow then
 					spellBar["obj"]:Show();
 				end
 				if saTimerOp.Dynamic then addon:UpdateMaxValue(spell.id,duration) end
@@ -759,8 +735,7 @@ function addon:BarUpdate(id)
 	if SAMod.ShowTimer[id] then
 		local spellBar = SA_Data.BARS[spell.name]
 		local name, _, _, count, _, duration, expirationTime, _ = UnitAura(spell.target, spell.name, nil, Sa_filter[spell.target]);
-		if not (name) then
-			spellBar["Expires"] = 0;
+		if not (name) then			
 			spellBar["tickStart"] = 0;
 			spellBar["count"] = 0;
 			spellBar["obj"]:Hide();
@@ -769,7 +744,7 @@ function addon:BarUpdate(id)
 			spellBar["tickStart"] = (expirationTime or 0) - SAMod.Sound[spell.id].tickStart;
 			spellBar["LastTick"] = spellBar["tickStart"] - 1.0;
 			spellBar["count"] = count or 0;
-			if expirationTime > 0 then
+			if expirationTime > SA_Data.tNow then
 				spellBar["obj"]:Show();
 			end
 			if SAMod.ShowTimer.Options.Dynamic then addon:UpdateMaxValue(spell.id,duration) end
@@ -1108,8 +1083,9 @@ function addon:SA_OnLoad()
 	addon:RegisterEvent("PLAYER_TARGET_CHANGED")
 	addon:RegisterEvent("PET_BATTLE_CLOSE")
 	addon:RegisterEvent("PET_BATTLE_OPENING_START")
-	addon:RegisterEvent("UNIT_POWER")
-	addon:RegisterEvent("UNIT_MAXPOWER")
+	--addon:RegisterEvent("UNIT_POWER")
+	addon:RegisterEvent("UNIT_POWER_FREQUENT");
+	addon:RegisterEvent("UNIT_MAXPOWER");
 	addon:RegisterEvent("UNIT_ATTACK_POWER")
 	addon:RegisterEvent("UNIT_ATTACK_SPEED")
 	SA_Data.BarFont = CreateFont("VTimerFont");
@@ -1211,19 +1187,18 @@ end
 local function SA_UpdateBar(unit, spell, sa_sound)
 	local GetTime = GetTime
 	local sabars = SA_Data.BARS[spell]
-	local sa_time = sabars["Expires"] - GetTime();
-	local tickStart = sabars["tickStart"] - GetTime();
+	local sa_time = sabars["Expires"];
+	local tickStart = sabars["tickStart"];
 	local lastTick = sabars["LastTick"]
 	local Showname = SAMod.ShowTimer.Options.ShowNames
 	local count = sabars["count"]
 	
-	if sa_time*10 > 1 and sabars then
-		sabars["obj"]:SetValue(sa_time);
-		sabars["obj"].text:SetFormattedText("%0.1f", sa_time);
+	if sa_time > SA_Data.tNow and sabars then
+		sabars["obj"]:SetValue(sa_time-SA_Data.tNow);
+		sabars["obj"].text:SetFormattedText("%0.1f", sa_time-SA_Data.tNow);
 		sabars["obj"].count:SetFormattedText(count > 0 and Showname and string.format("%s (%d)",spell,count) or Showname and spell or count > 0 and count or "");
 	else
-		sabars["obj"]:Hide();
-		sabars["Expires"] = 0;
+		sabars["obj"]:Hide();		
 		sabars["LastTick"] = 0;
 		sabars["count"] = 0;		
 		return
@@ -1236,34 +1211,26 @@ end
 
 local function SA_QuickUpdateBar(unit, spell)
 	local sabars = SA_Data.BARS[spell];
-	local sa_time = sabars["Expires"] - GetTime();
+	local sa_time = sabars["Expires"];
 	local Showname = SAMod.ShowTimer.Options.ShowNames
 	local count = sabars["count"]
 	
-	if sa_time*10 > 1 and sabars then		
-		sabars["obj"]:SetValue(sa_time);
-		sabars["obj"].text:SetFormattedText("%0.1f", sa_time);
+	if sa_time > SA_Data.tNow and sabars then
+		sabars["obj"]:SetValue(sa_time-SA_Data.tNow);
+		sabars["obj"].text:SetFormattedText("%0.1f", sa_time - SA_Data.tNow);
 		sabars["obj"].count:SetFormattedText(count > 0 and Showname and string.format("%s (%d)",spell,count) or Showname and spell or count > 0 and count or "");
 	else
 		sabars["obj"]:Hide();
-		sabars["Expires"] = 0;
 	end	 
 end
 
 function addon:OnUpdate(elapsed)
 	local SATimer = SAMod.ShowTimer
-	
+	SA_Data.tNow = GetTime()
 	if SAMod.Main.PadLatency then
 		local down, up, lag = GetNetStats();
-		SA_Data.tNow = GetTime() + (lag*2/1000);
 		SA_Data.lag = (lag*2/1000)
-	else
-		SA_Data.tNow = GetTime();
 	end 
-	
-	if SAMod.Energy.ShowEnergy then
-		VTimerEnergy:SetValue(UnitPower("player"));
-	end
 	
 	for k,v in pairs(SATimer) do
 		local spell = SA_Spells[k]
@@ -1281,12 +1248,14 @@ function addon:OnUpdate(elapsed)
 	-- non-zero timers 
 	
 	if SATimer.Options.SortBars then
+		if (lastSort > SA_Data.tNow ) then return end
 		for i = 1, #SA_Data.BARORDER do
-			if (SA_Data.BARORDER[i]["Expires"] > 0) then
-				table.sort(SA_Data.BARORDER, Lsort);
-				addon:SA_ChangeAnchor();
+			if (SA_Data.BARORDER[i]["Expires"] > SA_Data.tNow) then
+				addon:SA_ChangeAnchor()
+				lastSort = SA_Data.tNow + SA_Data.sortPeriod
+				return
 			end
-		end
+		end		
 	end 
 
 end
@@ -1306,10 +1275,10 @@ function addon:SA_Config_VarsChanged()
 	if SAMod.Energy.ShowEnergy then
 		VTimerEnergy:Show();
 	else
-		VTimerEnergy:Hide();    
+		VTimerEnergy:Hide();
 	end
 	
-	local lManaMax = UnitPowerMax("player");
+	local lManaMax = UnitPowerMax("player",SPELL_POWER_ENERGY);
 	if (lManaMax == 0) then
 		lManaMax = 100
 	end
@@ -1452,6 +1421,7 @@ function addon:OnEnable()
 					["LastTick"] = 0,
 					["tickStart"] = 0,
 					["count"] = 0,
+					["id"]=SA_Spells[k].id or 0,
 			}
 		end
 		addon:SA_OnLoad()
