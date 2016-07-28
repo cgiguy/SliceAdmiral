@@ -245,7 +245,8 @@ local bfhits = {}
 local soundBuffer = {}
 
 local Sa_filter = {	["player"] = "PLAYER", 
-					["target"] = "PLAYER HARMFUL", };
+					["target"] = "PLAYER HARMFUL",
+					["pet"] = "PLAYER HARMFUL", };
 
 local function Lsort(a,b)
 	return floor(a["Expires"]) < floor(b["Expires"]); -- No need for decimals
@@ -450,7 +451,7 @@ function addon:UNIT_AURA(Time, arg1)
 		addon:SA_UpdateStats();
 	end
 	if arg1 == "player" then
-		addon:BarUpdate(5171)
+		addon:UpdateTarget()
 		addon:SetComboPoints();
 	end
 end
@@ -751,7 +752,6 @@ function addon:BarUpdate(id)
 		end
 	end
 end
-
 
 function addon:SetComboPoints()
 	local points = UnitPower("player", SPELL_POWER_COMBO_POINTS); 
@@ -1196,7 +1196,7 @@ local function SA_UpdateBar(unit, spell, sa_sound)
 	if sa_time > SA_Data.tNow and sabars then
 		sabars["obj"]:SetValue(sa_time-SA_Data.tNow);
 		sabars["obj"].text:SetFormattedText("%0.1f", sa_time-SA_Data.tNow);
-		sabars["obj"].count:SetFormattedText(count > 0 and Showname and string.format("%s (%d)",spell,count) or Showname and spell or count > 0 and count or "");
+		sabars["obj"].count:SetFormattedText(count > 1 and Showname and string.format("%s (%d)",spell,count) or Showname and spell or count > 1 and count or "");
 	else
 		sabars["obj"]:Hide();		
 		sabars["LastTick"] = 0;
@@ -1218,7 +1218,7 @@ local function SA_QuickUpdateBar(unit, spell)
 	if sa_time > SA_Data.tNow and sabars then
 		sabars["obj"]:SetValue(sa_time-SA_Data.tNow);
 		sabars["obj"].text:SetFormattedText("%0.1f", sa_time - SA_Data.tNow);
-		sabars["obj"].count:SetFormattedText(count > 0 and Showname and string.format("%s (%d)",spell,count) or Showname and spell or count > 0 and count or "");
+		sabars["obj"].count:SetFormattedText(count > 1 and Showname and string.format("%s (%d)",spell,count) or Showname and spell or count > 1 and count or "");
 	else
 		sabars["obj"]:Hide();
 	end	 

@@ -49,6 +49,7 @@ SA_Spells = { [5171] = { target = "player", sort = true,duration=36, pandemic=tr
 	[212283] = {target="player",sort=false, duration=35, pandemic=false, spec=3,}, --Symbols of Death
 	[195627] = {target="player", sort=false, duration=10, pandemic=false, spec=2,}, --QuickDraw/Oppurtunity
 	[193538] = {target="player", sort=false, duration=20, pandemic=false, spec=4,}, --Aclarity
+	[199740] = {target="pet",sort=true,duration=300, pandemic=false, spec=2,}, --Bribe
 	};
 
 for k in pairs(SA_Spells) do
