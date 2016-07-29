@@ -1430,9 +1430,9 @@ function addon:OnEnable()
 		SA:SetScript("OnMouseDown", function(self) if (not SAMod.Main.IsLocked) then self:StartMoving() end end);
 		SA:SetScript("OnMouseUp", function(self) self:StopMovingOrSizing(); SAMod.Main.point, _l, _l, SAMod.Main.xOfs, SAMod.Main.yOfs = SA:GetPoint(); end );
 		SA:EnableMouse(not SAMod.Main.IsLocked);
-		VTimerEnergy:EnableMouse(not SAMod.Main.IsLocked);
 		VTimerEnergy:SetScript("OnMouseDown", function(self) if (not SAMod.Main.IsLocked) then SA:StartMoving() end end);
 		VTimerEnergy:SetScript("OnMouseUp", function(self) SA:StopMovingOrSizing(); SAMod.Main.point, _l, _l, SAMod.Main.xOfs, SAMod.Main.yOfs = SA:GetPoint(); end );
+		VTimerEnergy:EnableMouse(not SAMod.Main.IsLocked);
 		addon:SA_SetScale(SAMod.Main.Scale);
 		addon:SA_SetWidth(SAMod.Main.Width);
 	else
