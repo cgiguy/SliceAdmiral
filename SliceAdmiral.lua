@@ -488,10 +488,12 @@ function addon:UNIT_POWER_FREQUENT(Time,arg1,arg2)
 	if SAMod.Energy.ShowEnergy and arg2 == "ENERGY" then
 		local alpha = VTimerEnergy:GetAlpha()
 		local eTransp = SAMod.Energy.EnergyTrans / 100.0;
+		local power = UnitPower("player",SPELL_POWER_ENERGY)
+		local powermax = UnitPowerMax("player",SPELL_POWER_ENERGY)
 		VTimerEnergy:SetValue(UnitPower("player",SPELL_POWER_ENERGY));
-		if  (UnitPowerMax("player",SPELL_POWER_ENERGY) == UnitPower("player",SPELL_POWER_ENERGY)) and not (alpha == eTransp) then
+		if (powermax == power) and not (alpha == eTransp) then
 			UIFrameFadeOut(VTimerEnergy, 0.4, alpha, eTransp)
-		elseif not (UnitPowerMax("player") == UnitPower("player",SPELL_POWER_ENERGY)) and not (alpha == 1.0) then
+		elseif not (powermax == power) and not (alpha == 1.0) then
 			UIFrameFadeIn(VTimerEnergy, 0.4, alpha, 1.0);
 		end
 		return true
@@ -506,6 +508,7 @@ function addon:UNIT_MAXPOWER(...)
 	local cpBar = SA_Data.BARS["CP"]["obj"]
 	if SAMod.Energy.ShowEnergy then
 		VTimerEnergy:SetMinMaxValues(0,UnitPowerMax("player",SPELL_POWER_ENERGY));
+		VTimerEnergy:SetValue(UnitPower("player",SPELL_POWER_ENERGY))		
 	end
 	maxCP = UnitPowerMax("player",SPELL_POWER_COMBO_POINTS)
 	if maxCP == 8 then
@@ -755,11 +758,10 @@ end
 
 function addon:SetComboPoints()
 	local points = UnitPower("player", SPELL_POWER_COMBO_POINTS); 
-	--local name, rank, icon, count = UnitAura("player", SA_Spells[115189].name)
 	local cpBar = SA_Data.BARS["CP"]["obj"]
 	local count = points%5
-
-	local text = "0(0)" --string.format("%d(%d)",points,count) 
+	local text = "0(0)"
+	
 	if maxCP == 8 then
 		text = string.format("%d(%d)",min(5,points),points == count and 0 or count)
 	else
@@ -1083,7 +1085,6 @@ function addon:SA_OnLoad()
 	addon:RegisterEvent("PLAYER_TARGET_CHANGED")
 	addon:RegisterEvent("PET_BATTLE_CLOSE")
 	addon:RegisterEvent("PET_BATTLE_OPENING_START")
-	--addon:RegisterEvent("UNIT_POWER")
 	addon:RegisterEvent("UNIT_POWER_FREQUENT");
 	addon:RegisterEvent("UNIT_MAXPOWER");
 	addon:RegisterEvent("UNIT_ATTACK_POWER")
@@ -1118,7 +1119,7 @@ function addon:SA_OnLoad()
 	SA_Combo:SetFontObject(SA_Data.BarFont3);
 	SA_Combo:SetTextColor(Co.r,Co.g,Co.b,Co.a)
 
-	VTimerEnergy:SetMinMaxValues(0,UnitPowerMax("player"));
+	VTimerEnergy:SetMinMaxValues(0,UnitPowerMax("player",SPELL_POWER_ENERGY));
 	VTimerEnergy:SetBackdrop({
 				bgFile="Interface\\AddOns\\SliceAdmiral\\Images\\winco_stripe_128.tga",
 				edgeFile="",
@@ -1134,7 +1135,8 @@ function addon:SA_OnLoad()
 	VTimerEnergy:SetScript("OnShow", addon.SA_ChangeAnchor);
 	local oEner = SAMod.Energy.Color
 	VTimerEnergy:SetStatusBarColor(oEner.r, oEner.g, oEner.b); 
-	VTimerEnergy:SetScript("OnValueChanged",function(self,value)local mi, ma = self:GetMinMaxValues() VTimerEnergyTxt:SetFormattedText(value == ma and "" or UnitPower("player",3)) end) 
+	VTimerEnergy:SetScript("OnValueChanged",function(self,value)local mi, ma = self:GetMinMaxValues() VTimerEnergyTxt:SetFormattedText(value == ma and "" or UnitPower("player",SPELL_POWER_ENERGY)) end) 
+	VTimerEnergy:SetValue(UnitPower("player",SPELL_POWER_ENERGY));
 	scaleUI = VTimerEnergy:GetScale();
 	widthUI = VTimerEnergy:GetWidth();
 		
@@ -1404,6 +1406,15 @@ function addon:AddOption(name, Table, displayName)
 	AceConfigDialog:AddToBlizOptions("SliceAdmiral"..name, displayName, "SliceAdmiral");
 end
 
+function addon:SlashCommand(Arg)	
+	SAMod.Main.IsLocked = not SAMod.Main.IsLocked;
+	SA:EnableMouse(not SAMod.Main.IsLocked); 
+	VTimerEnergy:EnableMouse(not SAMod.Main.IsLocked);
+	for k in pairs(SA_Data.BARS) do
+		SA_Data.BARS[k]["obj"]:EnableMouse(not SAMod.Main.IsLocked); 
+	end
+end
+
 function addon:OnEnable()
 	AceConfig:RegisterOptionsTable("SliceAdmiral", addon.opt.Main);
 	self.optionsFrame = AceConfigDialog:AddToBlizOptions("SliceAdmiral");
@@ -1435,6 +1446,8 @@ function addon:OnEnable()
 		VTimerEnergy:EnableMouse(not SAMod.Main.IsLocked);
 		addon:SA_SetScale(SAMod.Main.Scale);
 		addon:SA_SetWidth(SAMod.Main.Width);
+		SlashCmdList["SliceAdmiral_Command"] = addon.SlashCommand;
+		SLASH_SliceAdmiral_Command1 = "/SliceAdmiral";
 	else
 		addon:UnregisterAllEvents();
 		SA:Hide();
