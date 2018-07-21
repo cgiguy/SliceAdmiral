@@ -45,7 +45,7 @@ SA_Spells = { [5171] = { target = "player", sort = true,duration=36, pandemic=tr
 	[206237] = {target="player", sort=true, duration=36, pandemic=true, spec=3,}, --Enveloping Shadows
 	[193641] = {target="player", sort=false, duration=5, pandemic=false, spec=1,}, --Elaborate Planing
 	[3409] = {target="target", sort=false, duration=12, pandemic=false, spec=1,}, --Agonizing Poison
-	[196937] = {target="target", sort=true, duration=15, pandemic=false, spec=2,}, --Ghostly Strike
+	[196937] = {target="target", sort=true, duration=10, pandemic=false, spec=2,}, --Ghostly Strike
 	[212283] = {target="player",sort=false, duration=35, pandemic=false, spec=3,}, --Symbols of Death
 	[195627] = {target="player", sort=false, duration=10, pandemic=false, spec=2,}, --QuickDraw/Oppurtunity
 	[193538] = {target="player", sort=false, duration=20, pandemic=false, spec=4,}, --Aclarity

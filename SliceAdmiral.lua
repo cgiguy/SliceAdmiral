@@ -281,7 +281,7 @@ function addon:SA_SetWidth(w)
 	end	
 	if SAMod.Energy.ShowEnergy then
 		VTimerEnergy:Show();
-		local UnitPowerMax = UnitPowerMax("player",SPELL_POWER_ENERGY)
+		local UnitPowerMax = UnitPowerMax("player",Enum.PowerType.Energy)
 		if (UnitPowerMax == 0) then
 			UnitPowerMax = 100;
 		end
@@ -334,7 +334,7 @@ end
 
 function addon:SA_Sound(sound,bufferd)
 	if not UnitAffectingCombat("player") and not SAMod.Sound.OutOfCombat then return end
-	if not sound then return end
+	if not sound then return end;
 	soundBuffer[#soundBuffer+1] = sound;
 	if bufferd then
 		C_Timer.After(math.max(0.3, SA_Data.lag),addon.PlayBuffer)
@@ -488,9 +488,9 @@ function addon:UNIT_POWER_FREQUENT(Time,arg1,arg2)
 	if SAMod.Energy.ShowEnergy and arg2 == "ENERGY" then
 		local alpha = VTimerEnergy:GetAlpha()
 		local eTransp = SAMod.Energy.EnergyTrans / 100.0;
-		local power = UnitPower("player",SPELL_POWER_ENERGY)
-		local powermax = UnitPowerMax("player",SPELL_POWER_ENERGY)
-		VTimerEnergy:SetValue(UnitPower("player",SPELL_POWER_ENERGY));
+		local power = UnitPower("player",Enum.PowerType.Energy)
+		local powermax = UnitPowerMax("player",Enum.PowerType.Energy)
+		VTimerEnergy:SetValue(UnitPower("player",Enum.PowerType.Energy));
 		if (powermax == power) and not (alpha == eTransp) then
 			UIFrameFadeOut(VTimerEnergy, 0.4, alpha, eTransp)
 		elseif not (powermax == power) and not (alpha == 1.0) then
@@ -507,10 +507,10 @@ end
 function addon:UNIT_MAXPOWER(...)
 	local cpBar = SA_Data.BARS["CP"]["obj"]
 	if SAMod.Energy.ShowEnergy then
-		VTimerEnergy:SetMinMaxValues(0,UnitPowerMax("player",SPELL_POWER_ENERGY));
-		VTimerEnergy:SetValue(UnitPower("player",SPELL_POWER_ENERGY))		
+		VTimerEnergy:SetMinMaxValues(0,UnitPowerMax("player",Enum.PowerType.Energy));
+		VTimerEnergy:SetValue(UnitPower("player",Enum.PowerType.Energy))		
 	end
-	maxCP = UnitPowerMax("player",SPELL_POWER_COMBO_POINTS)
+	maxCP = UnitPowerMax("player",Enum.PowerType.ComboPoints)
 	if maxCP == 8 then
 		cpBar.combo:SetMinMaxValues(0,5)		
 	else
@@ -523,9 +523,27 @@ function addon:UNIT_MAXPOWER(...)
 	end
 end
 
+DebugPrint = function (str, ...)
+  if ... then str = string.format(str,...)end
+  DEFAULT_CHAT_FRAME:AddMessage(("SA: %s"):format(str));
+end
+
+function UnitAuraBySpellName(target,spellname,filter)
+--  DebugPrint("Looking for spellname: %s on %s [filter = %s]",spellname,target,filter or "None")
+  for i = 1,40 do
+    name, icon, count, debuffType, duration, expirationTime, unitCaster, canStealOrPurge, nameplateShowPersonal, spellId, canApplyAura, isBossDebuff,isCastByPlayer,nameplateShowAll,timeMod = UnitAura(target, i, filter);
+    if name == spellname then
+--      DebugPrint("Found spellname: %s on %s",spellname,target);
+      return name, icon, count, debuffType, duration, expirationTime, unitCaster, canStealOrPurge, nameplateShowPersonal, spellId, canApplyAura, isBossDebuff,isCastByPlayer,nameplateShowAll,timeMod;
+    end
+  end
+  return nil,nil,nil,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil;
+end
+
 local function MasterOfSubtley()
 	local subtlety = SA_Spells[31665].name
-	local name, _, _, _, _, _, expirationTime = UnitAura("player", subtlety);
+--	local name, _, _, _, _, _, expirationTime = UnitAura("player", subtlety);
+	local name, _, _, _, _, expirationTime = UnitAuraBySpellName("player", subtlety);
 	local MOSBar = SA_Data.BARS[subtlety]
 	
 	if name then		
@@ -587,6 +605,61 @@ local function Ghostly()
 end
 
 function addon:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, type, hideCaster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId, ...)
+	local timestamp, type, hideCaster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId, extraArg2, extraArg3, extraArg4, extraArg5, extraArg6, extraArg7, extraArg8, extraArg9, extraArg10 = CombatLogGetCurrentEventInfo()
+--        DebugPrint("CLE:%s,%d",type,spellId);
+--        DebugPrint("  destName:%s, spellId:%d",destName,spellId)
+--	DebugPrint("CLE: (%s,%s,%d,%s,%s,%x,%x,%s,%s,%x,%x,%d,%s (%d),%s (%d),%s (%d),%s (%d),%s (%d),%s (%d),%s (%d),%s (%d),%s (%d)",
+--		   timestamp,
+--		   type,
+--		   hideCaster,
+--		   sourceGUID,
+--		   sourceName,
+--		   sourceFlags,
+--		   sourceRaidFlags,
+--		   destGUID,
+--		   destName,
+--		   destFlags,
+--		   destRaidFlags,
+--		   spellId,
+--		   extraArg2 or "None",
+--		   extraArg2 or 0,
+--		   extraArg3 or "None",
+--		   extraArg3 or 0,
+--		   extraArg4 or "None",
+--		   extraArg4 or 0,
+--		   extraArg5 or "None",
+--		   extraArg5 or 0,
+--		   extraArg6 or "None",
+--		   extraArg6 or 0,
+--		   extraArg7 or "None",
+--		   extraArg7 or 0,
+--		   extraArg8 or "None",
+--		   extraArg8 or 0,
+--		   extraArg9 or "None",
+--		   extraArg9 or 0,
+--		   extraArg10 or "None",
+--		   extraArg10 or 0);
+--	DebugPrint("  timestamp: %s",timestamp);
+--	DebugPrint("  type: %s",type);
+--	DebugPrint("  hideCaster: %d", hideCaster);
+--	DebugPrint("  sourceGUID: %s", sourceGUID);
+--	DebugPrint("  sourceName: %s", sourceName);
+--	DebugPrint("  sourceFlags: %x",sourceFlags);
+--	DebugPrint("  sourceRaidFlags: %x",sourceRaidFlags);
+--	DebugPrint("  destGUID: %s", destGUID);
+--	DebugPrint("  destName: %s", destName);
+--	DebugPrint("  destFlags: %x",destFlags);
+--	DebugPrint("  destRaidFlags: %x",destRaidFlags);
+--	DebugPrint("  spellId: %d",spellId);
+--	DebugPrint("  extraArg2: %s (%d)", extraArg2 or "None", extraArg2 or 0);
+--	DebugPrint("  extraArg3: %s (%d)", extraArg3 or "None", extraArg3 or 0);
+--	DebugPrint("  extraArg4: %s (%d)", extraArg4 or "None", extraArg4 or 0);
+--	DebugPrint("  extraArg5: %s (%d)", extraArg5 or "None", extraArg5 or 0);
+--	DebugPrint("  extraArg6: %s (%d)", extraArg6 or "None", extraArg6 or 0);
+--	DebugPrint("  extraArg7: %s (%d)", extraArg7 or "None", extraArg7 or 0);
+--	DebugPrint("  extraArg8: %s (%d)", extraArg8 or "None", extraArg8 or 0);
+--	DebugPrint("  extraArg9: %s (%d)", extraArg9 or "None", extraArg9 or 0);
+--	DebugPrint("  extraArg10: %s (%d)", extraArg10 or "None", extraArg10 or 0);
 	if deathEvent[type] then
 		soundBuffer = {};
 		return
@@ -606,15 +679,17 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, type, hideCaster, s
 	local saTimerOp = SAMod.ShowTimer.Options
 	local select = select
 	local SA_Spells = SA_Spells
-	local SABars = SA_Data.BARS	
-	local isOnTarget = (destGUID == UnitGUID("target"))	
+	local SABars = SA_Data.BARS
+	local isOnTarget = (destGUID == UnitGUID("target"))
 	GCD();
 	if dbtypes[type] then
 		--Buffs EVENT --
 		if SAMod.ShowTimer[spellId] then
 			local BuffBar = SA_Data.BARS[SA_Spells[spellId].name]
 			local spell = SA_Spells[spellId]
-			local name, rank, icon, count, debuffType, duration, expirationTime = UnitAura(spell.target, spell.name, nil, Sa_filter[spell.target])
+			local name, icon, count, debuffType, duration, expirationTime = UnitAuraBySpellName(spell.target, spell.name, Sa_filter[spell.target])
+--			local name, rank, icon, count, debuffType, duration, expirationTime = UnitAura(spell.target, spell.name, nil, Sa_filter[spell.target])
+
 			BuffBar["Expires"] = expirationTime or 0;
 			BuffBar["tickStart"] = (expirationTime or 0) - SAMod.Sound[spellId].tickStart;
 			BuffBar["LastTick"] = BuffBar["tickStart"] - 1.0;
@@ -626,7 +701,7 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, type, hideCaster, s
 				BuffBar["obj"]:Show();
 			end
 			if SAMod.Sound[spellId].enabled and (type == "SPELL_AURA_REMOVED") and not (name) and (isOnMe or isOnTarget) then
-				addon:SA_Sound(LSM:Fetch("sound",SAMod.Sound[spellId].alert),true)
+			  addon:SA_Sound(LSM:Fetch("sound",SAMod.Sound[spellId].alert),true)
 			end			
 			addon:SA_ChangeAnchor();
 		end
@@ -656,8 +731,11 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, type, hideCaster, s
 	-- DOT monitors
 	if saTimerOp.ShowDoTDmg and dotEvents[type] and (isOnTarget or isOnMe) then
 		if SAMod.ShowTimer[spellId] or (spellId == 113780 and SAMod.ShowTimer[2818]) then
-			local amount, _, _, _, _, _, critical,_ = select(3, ...)
+--                      8.0.1 idiocy
+		        local amount = extraArg4;
+			local critical = extraArg8;
 			local dotText
+--			DebugPrint("Type: %s, Amount: %d",type,amount);
 			if spellId == 113780 then
 				dotText = SABars[SA_Spells[2818].name]["obj"].DoTtext
 			else
@@ -674,14 +752,15 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, type, hideCaster, s
 		end
 	end
 	if specialEvent[type] then		
-		local multistrike = select(13,...)
+--		local multistrike = select(13,...)
+	        local multistrike = extraArg2;
 		if 113780 == spellId then
 			local eventDeadlyPoison = SA_Spells[2818].name
-			local name, rank, icon, count, debuffType, duration, expirationTime = UnitDebuff("target", eventDeadlyPoison, nil, "PLAYER");
+--			local name, rank, icon, count, debuffType, duration, expirationTime = UnitDebuff("target", eventDeadlyPoison, nil, "PLAYER");
+			local name, _, count, _, duration, expirationTime = UnitAuraBySpellName("target", eventDeadlyPoison, "PLAYER HARMFUL");
 			SABars[eventDeadlyPoison]["Expires"] = expirationTime or 0;
 			SABars[eventDeadlyPoison]["tickStart"] = (expirationTime or 0) - SAMod.Sound[2818].tickStart;
 			SABars[eventDeadlyPoison]["LastTick"] = SABars[eventDeadlyPoison]["tickStart"] - 1.0;
-		
 		elseif spellId == 22482 and saTimerOp.BladeFlurry then
 			bfhits[destGUID] = true
 			addon:UpdateBFText(true)
@@ -714,7 +793,8 @@ function addon:UpdateTarget()
 		local spell = SA_Spells[k]
 		if v and spell then
 			local spellBar = SA_Data.BARS[spell.name]
-			local name, _, _, count, _, duration, expirationTime, _ = UnitAura(spell.target, spell.name, nil, Sa_filter[spell.target]);
+--			local name, _, _, count, _, duration, expirationTime, _ = UnitAura(spell.target, spell.name, nil, Sa_filter[spell.target]);
+			local name, _, count, _, duration, expirationTime = UnitAuraBySpellName(spell.target, spell.name, Sa_filter[spell.target])
 			if not (name) then				
 				spellBar["tickStart"] = 0;
 				spellBar["count"] = 0;
@@ -738,7 +818,8 @@ function addon:BarUpdate(id)
 	local spell = SA_Spells[id]
 	if SAMod.ShowTimer[id] then
 		local spellBar = SA_Data.BARS[spell.name]
-		local name, _, _, count, _, duration, expirationTime, _ = UnitAura(spell.target, spell.name, nil, Sa_filter[spell.target]);
+		local name, _, count, _, duration, expirationTime = UnitAuraBySpellName(spell.target, spell.name, Sa_filter[spell.target]);
+--		local name, _, _, count, _, duration, expirationTime, _ = UnitAura(spell.target, spell.name, nil, Sa_filter[spell.target]);
 		if not (name) then			
 			spellBar["tickStart"] = 0;
 			spellBar["count"] = 0;
@@ -757,7 +838,7 @@ function addon:BarUpdate(id)
 end
 
 function addon:SetComboPoints()
-	local points = UnitPower("player", SPELL_POWER_COMBO_POINTS); 
+	local points = UnitPower("player", Enum.PowerType.ComboPoints); 
 	local cpBar = SA_Data.BARS["CP"]["obj"]
 	local count = points%5
 	local text = "0(0)"
@@ -790,7 +871,7 @@ function addon:CreateComboFrame()
 	local width = VTimerEnergy:GetWidth();
 	local cpC = SAMod.Combo.CPColor
 	local cpA = SAMod.Combo.AnColor
-	local cpMax = UnitPowerMax("player",SPELL_POWER_COMBO_POINTS)
+	local cpMax = UnitPowerMax("player",Enum.PowerType.ComboPoints)
 	
 	f:ClearAllPoints();
 	f:SetSize(width, 10);
@@ -1119,7 +1200,7 @@ function addon:SA_OnLoad()
 	SA_Combo:SetFontObject(SA_Data.BarFont3);
 	SA_Combo:SetTextColor(Co.r,Co.g,Co.b,Co.a)
 
-	VTimerEnergy:SetMinMaxValues(0,UnitPowerMax("player",SPELL_POWER_ENERGY));
+	VTimerEnergy:SetMinMaxValues(0,UnitPowerMax("player",Enum.PowerType.Energy));
 	VTimerEnergy:SetBackdrop({
 				bgFile="Interface\\AddOns\\SliceAdmiral\\Images\\winco_stripe_128.tga",
 				edgeFile="",
@@ -1135,8 +1216,8 @@ function addon:SA_OnLoad()
 	VTimerEnergy:SetScript("OnShow", addon.SA_ChangeAnchor);
 	local oEner = SAMod.Energy.Color
 	VTimerEnergy:SetStatusBarColor(oEner.r, oEner.g, oEner.b); 
-	VTimerEnergy:SetScript("OnValueChanged",function(self,value)local mi, ma = self:GetMinMaxValues() VTimerEnergyTxt:SetFormattedText(value == ma and "" or UnitPower("player",SPELL_POWER_ENERGY)) end) 
-	VTimerEnergy:SetValue(UnitPower("player",SPELL_POWER_ENERGY));
+	VTimerEnergy:SetScript("OnValueChanged",function(self,value)local mi, ma = self:GetMinMaxValues() VTimerEnergyTxt:SetFormattedText(value == ma and "" or UnitPower("player",Enum.PowerType.Energy)) end) 
+	VTimerEnergy:SetValue(UnitPower("player",Enum.PowerType.Energy));
 	scaleUI = VTimerEnergy:GetScale();
 	widthUI = VTimerEnergy:GetWidth();
 		
@@ -1280,7 +1361,7 @@ function addon:SA_Config_VarsChanged()
 		VTimerEnergy:Hide();
 	end
 	
-	local lManaMax = UnitPowerMax("player",SPELL_POWER_ENERGY);
+	local lManaMax = UnitPowerMax("player",Enum.PowerType.Energy);
 	if (lManaMax == 0) then
 		lManaMax = 100
 	end
