@@ -531,13 +531,13 @@ end
 function UnitAuraBySpellName(target,spellname,filter)
 --  DebugPrint("Looking for spellname: %s on %s [filter = %s]",spellname,target,filter or "None")
   for i = 1,40 do
-    name, icon, count, debuffType, duration, expirationTime, unitCaster, canStealOrPurge, nameplateShowPersonal, spellId, canApplyAura, isBossDebuff,isCastByPlayer,nameplateShowAll,timeMod = UnitAura(target, i, filter);
+    name = UnitAura(target, i, filter);
+    if not name then return end
     if name == spellname then
 --      DebugPrint("Found spellname: %s on %s",spellname,target);
-      return name, icon, count, debuffType, duration, expirationTime, unitCaster, canStealOrPurge, nameplateShowPersonal, spellId, canApplyAura, isBossDebuff,isCastByPlayer,nameplateShowAll,timeMod;
+      return UnitAura(target, i, filter);
     end
   end
-  return nil,nil,nil,nil,nil,0,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil;
 end
 
 local function MasterOfSubtley()
