@@ -1,4 +1,4 @@
--- Author      : Haghala
+-- Author      : Haghala/cgiguy
 -- Create Date : 13/10/2014
 local addon = LibStub("AceAddon-3.0"):NewAddon("SliceAdmiral","AceConsole-3.0","AceEvent-3.0");
 local AceConfig = LibStub("AceConfig-3.0");
@@ -48,94 +48,94 @@ SADefault = {
 				BladeFlurry = false,
 				ShowNames = false,
 			},
-			Colours = { 
-				[5171] = { r=255/255, g=74/255, b=18/255, a=0.9,},				
-				[2818] =  {r=96/255, g=116/255, b=65/255,},
-				[1943] = {r=130/255, g=15/255, b=0,},
-				[1966]  = {r=155/255, g=155/255, b=255/255,},
-				[703] = {r=130/255, g=15/255, b=0,},
-				[115189] = {r=121/255,g=30/255,b=28/255,},
-				[137573] = {r=135/255, g=135/255, b=255/255,},
-				[154953] = {r=205/255, g=92/255, b=92/255,},
-				[79140] = {r=130/255, g=130/255, b=0,},
-				[32645] = {r=66/255, g=86/255, b=35/255,},
-				[84617] =  {r=139/255, g=69/255, b=19/255,},
-				[13750] = {r=240/255,g=128/255,b=128/255,},
-				[186286] = {r=240/255,g=128/255,b=128/255,},
-				[16511] = {r=255/255, g=5/255, b=5/255,},
-				[91021] = {r=130/255, g=130/255, b=0,},
-				[31665] = {r=99/255, g=26/255, b=151/255,},
-				[61304] = {r=192/255,g=192/255,b=192/255},
-				[137619] = {r=0,g=0,b=0},
-				[74001] = {r=0,g=0,b=0},
-				[408] = {r=0,g=0,b=0},
-				[26679] = {r=0,g=0,b=0},
-				[31224] = {r=0,g=0,b=0},
-				[152151] = {r=0,g=0,b=0},
-				[5277] = {r=0,g=0,b=0},
-				[1776] = {r=0,g=0,b=0},
-				[2983]  = {r=0,g=0,b=0},
-				[2094]  = {r=0,g=0,b=0},
-				[115192] = {r=0,g=0,b=0},
+			Colours = {
+				[SID_SND] = { r=255/255, g=74/255, b=18/255, a=0.9,},
+				[SID_DEADLY_POISON] =  {r=96/255, g=116/255, b=65/255,},
+				[SID_RUPTURE] = {r=130/255, g=15/255, b=0,},
+				[SID_FEINT]  = {r=155/255, g=155/255, b=255/255,},
+				[SID_GARROTE] = {r=130/255, g=15/255, b=0,},
+				[SID_ANTICIPATION] = {r=121/255,g=30/255,b=28/255,},
+				[SID_BURST_SPEED] = {r=135/255, g=135/255, b=255/255,},
+				[SID_INTERNAL_BLEEDING] = {r=205/255, g=92/255, b=92/255,},
+				[SID_VENDETTA] = {r=130/255, g=130/255, b=0,},
+				[SID_ENVENOM] = {r=66/255, g=86/255, b=35/255,},
+				[SID_ADRENALINE_RUSH] = {r=240/255,g=128/255,b=128/255,},
+				[SID_ADRENALINE_RUSH_T18] = {r=240/255,g=128/255,b=128/255,},
+				[SID_HEMORRHAGE] = {r=255/255, g=5/255, b=5/255,},
+				[SID_FIND_WEAKNESS] = {r=130/255, g=130/255, b=0,},
+				[SID_MASTER_SUBTLETY] = {r=99/255, g=26/255, b=151/255,},
+				[SID_GCD] = {r=192/255,g=192/255,b=192/255},
+				[SID_MARKED_FOR_DEATH] = {r=0,g=0,b=0},
+				[SID_COMBAT_READINESS] = {r=0,g=0,b=0},
+				[SID_KIDNEY_SHOT] = {r=0,g=0,b=0},
+				[SID_DEADLY_THROW] = {r=0,g=0,b=0},
+				[SID_CLOAK_SHADOWS] = {r=0,g=0,b=0},
+				[SID_SHADOW_REFLECTION] = {r=0,g=0,b=0},
+				[SID_EVASION] = {r=0,g=0,b=0},
+				[SID_GOUGE] = {r=0,g=0,b=0},
+				[SID_SPRINT]  = {r=0,g=0,b=0},
+				[SID_BLIND]  = {r=0,g=0,b=0},
+				[SID_SUBTERFUGE] = {r=0,g=0,b=0},
+				[SID_BETWEEN_EYES] = {r=0,g=0,b=0},
 			},
 			Timers = {
-				[5171] = 6.0, --Slice and Dice
-				[1943] = 6.0, --Rupture
-				[115189] = 6.0, -- Anticipation				
-				[32645] = 6.0, -- Envenom
-				[1966] = 5.0, -- Feint
-				[137573] = 4.0, -- Burst of Speed
-				[16511] = 6.0, --Hemorrhage
-				[2818] = 6.0, --DeadlyPoison
-				[79140] = 6.0, --Vendetta
-				[84617] = 6.0, --RevealingStrike
-				[703] = 6.0, -- Garrote
-				[13750] = 6.0, --Adrenaline Rush
-				[186286] = 4.0,
-				[154953] = 6.0, --InteralBleeding
-				[91021] = 6.0, --FindWeaknes
-				[31665]= 5.0, --Master of Subtlety´
-				[61304] = 1.0, --GCD
-				[137619] = 6.0, --Marked for death
-				[74001] = 6.0,
-				[408] = 6.0,
-				[26679] = 6.0,
-				[31224] = 5.0,
-				[152151] = 6.0,
-				[5277] = 6.0,
-				[1776] = 4.0,
-				[2983]= 6.0,
-				[2094] = 6.0,
-				[115192] = 3.0,
+				[SID_SND] = 6.0, --Slice and Dice
+				[SID_RUPTURE] = 6.0, --Rupture
+				[SID_ANTICIPATION] = 6.0, -- Anticipation
+				[SID_ENVENOM] = 6.0, -- Envenom
+				[SID_FEINT] = 5.0, -- Feint
+				[SID_BURST_SPEED] = 4.0, -- Burst of Speed
+				[SID_HEMORRHAGE] = 6.0, --Hemorrhage
+				[SID_DEADLY_POISON] = 6.0, --DeadlyPoison
+				[SID_VENDETTA] = 6.0, --Vendetta
+				[SID_GARROTE] = 6.0, -- Garrote
+				[SID_ADRENALINE_RUSH] = 6.0, --Adrenaline Rush
+				[SID_ADRENALINE_RUSH_T18] = 4.0,
+				[SID_INTERNAL_BLEEDING] = 6.0, --InternalBleeding
+				[SID_FIND_WEAKNESS] = 6.0, --FindWeaknes
+				[SID_MASTER_SUBTLETY]= 5.0, --Master of Subtlety
+				[SID_GCD] = 1.0, --GCD
+				[SID_MARKED_FOR_DEATH] = 6.0, --Marked for death
+				[SID_COMBAT_READINESS] = 6.0,
+				[SID_KIDNEY_SHOT] = 6.0,
+				[SID_DEADLY_THROW] = 6.0,
+				[SID_CLOAK_SHADOWS] = 5.0,
+				[SID_SHADOW_REFLECTION] = 6.0,
+				[SID_EVASION] = 6.0,
+				[SID_GOUGE] = 4.0,
+				[SID_SPRINT]= 6.0,
+				[SID_BLIND] = 6.0,
+				[SID_SUBTERFUGE] = 3.0,
+				[SID_BETWEEN_EYES] = 5.0,
 			},
-			[5171] = true, --Slice and Dice
-			[1943] = true, --Rupture
-			[115189] = false, -- Anticipation			
-			[32645] = true, -- Envenom
-			[1966] = true, -- Feint
-			[137573] = false, -- Burst of Speed
-			[91021] = true, --FindWeaknes
-			[16511] = true, --Hemorrhage
-			[2818] = true, --DeadlyPoison
-			[79140] = false, --Vendetta
-			[84617] = true, --RevealingStrike
-			[703] = true, -- Garrote
-			[13750] = true, --Adrenaline Rush
-			[186286] = true,
-			[154953] = false, --InteralBleeding
-			[31665] = true, -- master of Subtlety
-			[61304] = false, --GCD
-			[137619] = false, --Marked for death
-			[74001] = false,
-			[408] = false,
-			[26679] = false,
-			[31224] = false,
-			[152151] = false,
-			[5277] = false,
-			[1776] = false,
-			[2983]= false,
-			[2094] = false,
-			[115192] = false,
+			[SID_SND] = true, --Slice and Dice
+			[SID_RUPTURE] = true, --Rupture
+			[SID_ANTICIPATION] = false, -- Anticipation
+			[SID_ENVENOM] = true, -- Envenom
+			[SID_FEINT] = true, -- Feint
+			[SID_BURST_SPEED] = false, -- Burst of Speed
+			[SID_FIND_WEAKNESS] = true, --FindWeaknes
+			[SID_HEMORRHAGE] = true, --Hemorrhage
+			[SID_DEADLY_POISON] = true, --DeadlyPoison
+			[SID_VENDETTA] = false, --Vendetta
+			[SID_GARROTE] = true, -- Garrote
+			[SID_ADRENALINE_RUSH] = true, --Adrenaline Rush
+			[SID_ADRENALINE_RUSH_T18] = true,
+			[SID_INTERNAL_BLEEDING] = false, --InteralBleeding
+			[SID_MASTER_SUBTLETY] = true, -- master of Subtlety
+			[SID_GCD] = false, --GCD
+			[SID_MARKED_FOR_DEATH] = false, --Marked for death
+			[SID_COMBAT_READINESS] = false,
+			[SID_KIDNEY_SHOT] = false,
+			[SID_DEADLY_THROW] = false,
+			[SID_CLOAK_SHADOWS] = false,
+			[SID_SHADOW_REFLECTION] = false,
+			[SID_EVASION] = false,
+			[SID_GOUGE] = false,
+			[SID_SPRINT]= false,
+			[SID_BLIND] = false,
+			[SID_SUBTERFUGE] = false,
+			[SID_BETWEEN_EYES] = false,
 		},
 		Combo = {
 			PointShow = true,
@@ -161,35 +161,34 @@ SADefault = {
 			ComboTextColor = { r=1.0, g=1.0, b=1.0, a=0.8},
 		},
 		Sound = {
-			[5171] = {enabled=true, tick = "Tambourine", alert = "Waaaah",tickStart=3.0, }, --Slice and Dice			
-			[1943] = {enabled=true, tick = "Shaker", alert = "BassDrum", tickStart=3.0, }, --Rupture
-			[79140] = {enabled=true, tick = "Ping", alert = "None", tickStart=3.0, }, --Vendetta
-			[84617] = {enabled=true, tick = "BassDrum", alert = "Shaker", tickStart=3.0, },--RevealingStrike
-			[16511] = {enabled=true, tick = "Ping", alert = "None", tickStart=3.0, }, --Hemorrhage
-			[84745] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
-			[115189] = {enabled=false, tick = "None", alert="None", tickStart=3.0, }, -- Anticipation
-			[1966] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
-			[32645]  = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
-			[186286] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
-			[137573] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
-			[2818] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
-			[703] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
-			[13750] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
-			[154953] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
-			[91021] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
-			[31665] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
-			[61304] = {enabled=false, tick= "None", alert="None", tickStart=0.5, },
-			[137619] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
-			[74001] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
-			[408] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
-			[26679] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
-			[31224] ={enabled=false, tick = "None", alert="None", tickStart=3.0, },
-			[152151]= {enabled=false, tick = "None", alert="None", tickStart=3.0, },
-			[5277] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
-			[1776] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
-			[2983] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
-			[2094] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
-			[115192] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
+			[SID_SND] = {enabled=true, tick = "Tambourine", alert = "Waaaah",tickStart=3.0, }, --Slice and Dice
+			[SID_RUPTURE] = {enabled=true, tick = "Shaker", alert = "BassDrum", tickStart=3.0, }, --Rupture
+			[SID_VENDETTA] = {enabled=true, tick = "Ping", alert = "None", tickStart=3.0, }, --Vendetta
+			[SID_HEMORRHAGE] = {enabled=true, tick = "Ping", alert = "None", tickStart=3.0, }, --Hemorrhage
+			[SID_ANTICIPATION] = {enabled=false, tick = "None", alert="None", tickStart=3.0, }, -- Anticipation
+			[SID_FEINT] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
+			[SID_ENVENOM]  = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
+			[SID_BURST_SPEED] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
+			[SID_DEADLY_POISON] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
+			[SID_GARROTE] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
+			[SID_ADRENALINE_RUSH] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
+			[SID_ADRENALINE_RUSH_T18] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
+			[SID_INTERNAL_BLEEDING] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
+			[SID_FIND_WEAKNESS] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
+			[SID_MASTER_SUBTLETY] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
+			[SID_GCD] = {enabled=false, tick= "None", alert="None", tickStart=0.5, },
+			[SID_MARKED_FOR_DEATH] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
+			[SID_COMBAT_READINESS] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
+			[SID_KIDNEY_SHOT] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
+			[SID_DEADLY_THROW] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
+			[SID_CLOAK_SHADOWS] ={enabled=false, tick = "None", alert="None", tickStart=3.0, },
+			[SID_SHADOW_REFLECTION]= {enabled=false, tick = "None", alert="None", tickStart=3.0, },
+			[SID_EVASION] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
+			[SID_GOUGE] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
+			[SID_SPRINT] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
+			[SID_BLIND] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
+			[SID_SUBTERFUGE] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
+			[SID_BETWEEN_EYES] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
 			MasterVolume = false,
 			OutOfCombat = false,
 			none = "none",
@@ -541,14 +540,14 @@ function UnitAuraBySpellName(target,spellname,filter)
 end
 
 local function MasterOfSubtley()
-	local subtlety = SA_Spells[31665].name
+	local subtlety = SA_Spells[SID_MASTER_SUBTLETY].name
 --	local name, _, _, _, _, _, expirationTime = UnitAura("player", subtlety);
 	local name, _, _, _, _, expirationTime = UnitAuraBySpellName("player", subtlety);
 	local MOSBar = SA_Data.BARS[subtlety]
 	
 	if name then		
 		MOSBar["Expires"] = expirationTime;		
-		MOSBar["tickStart"] = (expirationTime or 0) - SAMod.Sound[31665].tickStart;					
+		MOSBar["tickStart"] = (expirationTime or 0) - SAMod.Sound[SID_MASTER_SUBTLETY].tickStart;
 		MOSBar["LastTick"] = MOSBar["tickStart"] - 1.0;
 		--MOSBar["count"] = count or 0;
 		MOSBar["obj"]:Show();
@@ -557,10 +556,10 @@ end
 
 local function Subterfuge()    
 	local expirationTime = GetTime() + 3.0
-	local SubBar = SA_Data.BARS[SA_Spells[115192].name]
+	local SubBar = SA_Data.BARS[SA_Spells[SID_SUBTERFUGE].name]
 	
 	SubBar["Expires"] = expirationTime;		
-	SubBar["tickStart"] = (expirationTime or 0) - SAMod.Sound[115192].tickStart;					
+	SubBar["tickStart"] = (expirationTime or 0) - SAMod.Sound[SID_SUBTERFUGE].tickStart;
 	SubBar["LastTick"] = SubBar["tickStart"] - 1.0;	
 	SubBar["obj"]:Show();
 end
@@ -588,20 +587,20 @@ local deathEvent = { UNIT_DIED = true,
 	UNIT_DISSIPATES = true,
 };
 local function GCD()
-	if not SAMod.ShowTimer[61304] then return end
-	local start, duration, enabled = GetSpellCooldown(61304) 
-	local GCD = SA_Data.BARS[SA_Spells[61304].name]
+	if not SAMod.ShowTimer[SID_GCD] then return end
+	local start, duration, enabled = GetSpellCooldown(SID_GCD)
+	local GCD = SA_Data.BARS[SA_Spells[SID_GCD].name]
 	
 	if start > 0 then
 		GCD["Expires"] = start + duration;
-		GCD["tickStart"] = (start + duration or 0) - SAMod.Sound[61304].tickStart;
+		GCD["tickStart"] = (start + duration or 0) - SAMod.Sound[SID_GCD].tickStart;
 		GCD["LastTick"] = GCD["tickStart"] - 1.0;
 		GCD["obj"]:Show();
 	end
 end
 
 local function Ghostly()
-	addon:BarUpdate(196937)
+	addon:BarUpdate(SID_GHOSTLY_STRIKE)
 end
 
 function addon:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, type, hideCaster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId, ...)
@@ -666,10 +665,10 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, type, hideCaster, s
 	end	
 	local isOnMe = (destGUID  == UnitGUID("player"))	
 	if type == "SPELL_ENERGIZE" then
-		if spellId == 196937 then
+		if spellId == SID_GHOSTLY_STRIKE then
 			C_Timer.After(0.2, Ghostly) --Ghostly Strike wants to be special.
 		end
-		if spellId == 51699 and isOnMe then	--- 51699 HaT
+		if spellId == SID_HONOR_AMONG_THIEVES and isOnMe then	--- SID_HONOR_AMONG_THIEVES HaT
 			addon:SetComboPoints("SPELL_ENERGIZE")
 		end
 		return
@@ -708,36 +707,37 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, type, hideCaster, s
 		if isOnMe then
 
 			-- BladeFlurry Switch --
-			if spellId == 13877 and type == "SPELL_AURA_REMOVED" then
+			if spellId == SID_BLADE_FLURRY and type == "SPELL_AURA_REMOVED" then
 				SA_Data.BARS["Stat"]["obj"].stats[3].lable:SetFormattedText("Speed")
 				SA_Data.BFActive = false
 				bfticker:Cancel()
-			elseif spellId == 13877 and type == "SPELL_AURA_APPLIED" and saTimerOp.BladeFlurry then				
+			elseif spellId == SID_BLADE_FLURRY and type == "SPELL_AURA_APPLIED" and saTimerOp.BladeFlurry then
 				SA_Data.BARS["Stat"]["obj"].stats[3].lable:SetFormattedText("Flurry")
 				SA_Data.BFActive = true
 				bfticker:Cancel()
 				bfticker = C_Timer.NewTicker(math.max(UnitAttackSpeed("player") or 0.1,1),addon.UpdateBFText)
 			end
 			-- Master of Subtlety Work around-- 
-			if type == "SPELL_AURA_REMOVED" and (spellId == 1784 or spellId == 115191) and SAMod.ShowTimer[31665] then
+			if type == "SPELL_AURA_REMOVED" and (spellId == SID_STEALTH or spellId == SID_STEALTH_NEW) and SAMod.ShowTimer[SID_MASTER_SUBTLETY] then
 				C_Timer.After(math.max(0.1, SA_Data.lag), MasterOfSubtley);
 			end
 			-- Subterfuge Work around-- 
-			if type == "SPELL_AURA_REMOVED" and spellId == 115191 and SAMod.ShowTimer[115192] then
+			if type == "SPELL_AURA_REMOVED" and spellId == SID_STEALTH_NEW and SAMod.ShowTimer[SID_SUBTERFUGE] then
 				C_Timer.After(math.max(0.1, SA_Data.lag), Subterfuge);
 			end
 		end
 	end
 	-- DOT monitors
 	if saTimerOp.ShowDoTDmg and dotEvents[type] and (isOnTarget or isOnMe) then
-		if SAMod.ShowTimer[spellId] or (spellId == 113780 and SAMod.ShowTimer[2818]) then
---                      8.0.1 idiocy
+		if SAMod.ShowTimer[spellId] or (spellId == SID_DEADLY_POISON_NEW and SAMod.ShowTimer[SID_DEADLY_POISON]) then
+--                      Combatlog idiocy
 		        local amount = extraArg4;
-			local critical = extraArg8;
+--		        local overkill = extraArg5;   -- Amount of overheal/overkill
+			local critical = extraArg10;
 			local dotText
---			DebugPrint("Type: %s, Amount: %d",type,amount);
-			if spellId == 113780 then
-				dotText = SABars[SA_Spells[2818].name]["obj"].DoTtext
+--			DebugPrint("Type: %s, Amount: %d, OK: %d, crit: %d",type,amount,overkill,critical);
+			if spellId == SID_DEADLY_POISON_NEW then
+				dotText = SABars[SA_Spells[SID_DEADLY_POISON].name]["obj"].DoTtext
 			else
 				dotText = SABars[SA_Spells[spellId].name]["obj"].DoTtext
 			end
@@ -754,17 +754,17 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, type, hideCaster, s
 	if specialEvent[type] then		
 --		local multistrike = select(13,...)
 	        local multistrike = extraArg2;
-		if 113780 == spellId then
-			local eventDeadlyPoison = SA_Spells[2818].name
+		if SID_DEADLY_POISON_NEW == spellId then
+			local eventDeadlyPoison = SA_Spells[SID_DEADLY_POISON].name
 --			local name, rank, icon, count, debuffType, duration, expirationTime = UnitDebuff("target", eventDeadlyPoison, nil, "PLAYER");
 			local name, _, count, _, duration, expirationTime = UnitAuraBySpellName("target", eventDeadlyPoison, "PLAYER HARMFUL");
 			SABars[eventDeadlyPoison]["Expires"] = expirationTime or 0;
-			SABars[eventDeadlyPoison]["tickStart"] = (expirationTime or 0) - SAMod.Sound[2818].tickStart;
+			SABars[eventDeadlyPoison]["tickStart"] = (expirationTime or 0) - SAMod.Sound[SID_DEADLY_POISON].tickStart;
 			SABars[eventDeadlyPoison]["LastTick"] = SABars[eventDeadlyPoison]["tickStart"] - 1.0;
 		elseif spellId == 22482 and saTimerOp.BladeFlurry then
 			bfhits[destGUID] = true
 			addon:UpdateBFText(true)
-		elseif spellId == 32645 or spellId == 53 or spellId == 8676 and multistrike then -- Sinister Calling / Envenom fix 
+		elseif spellId == SID_ENVENOM or spellId == SID_BACKSTAB or spellId == SID_AMBUSH and multistrike then -- Sinister Calling / Envenom fix
 			C_Timer.After(math.max(0.1, SA_Data.lag), addon.UpdateTarget); -- For some reason there must be a delay or it won't notice the new expiretime
 		end
 	end	

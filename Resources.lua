@@ -1,60 +1,123 @@
--- Author      : Administrator
+-- Author      : Haghala/cgiguy
 -- Create Date : 9/13/2008 10:16:36 AM
+
+-- cgiguy: I don't like "random" numbers in code.  So, define a few Spell IDs
+-- that we use here.  Note: If they change, you need to change these!
+
+SID_SUBTERFUGE = 115192;        -- Subterfuge
+SID_SND = 5171;			-- Slice and Dice
+SID_RUPTURE = 1943;		-- Rupture
+SID_FEINT = 1966;		-- Feint
+SID_GARROTE = 703;		-- Garrote
+-- SID_ANTICIPATION = 115189;	-- (this is probably wrong should be 114015)
+SID_ANTICIPATION = 114015;	-- Anticipation
+SID_BURST_SPEED = 137573;	-- Burst of Speed
+SID_INTERNAL_BLEEDING = 154953;	-- Internal Bleeding
+SID_VENDETTA = 79140;		-- Vendetta
+SID_ENVENOM = 32645;		-- Envenom
+SID_ADRENALINE_RUSH = 13750;	-- Adrenaline Rush
+SID_ADRENALINE_RUSH_T18 = 186286; -- Adrenaline Rush (w/ T18)
+SID_HEMORRHAGE = 16511;	        -- Hemorrhage
+SID_FIND_WEAKNESS = 91021;	-- Find Weakness
+SID_MASTER_SUBTLETY = 31665;	-- Master of Subtlety
+SID_GCD = 61304;		-- Global Cooldown
+SID_MARKED_FOR_DEATH = 137619;  -- Marked for Death
+SID_COMBAT_READINESS = 74001;	-- Combat Readiness
+SID_KIDNEY_SHOT = 408;		-- Kidney Shot
+SID_DEADLY_THROW = 26679;	-- Deadly Throw
+SID_CLOAK_SHADOWS = 31224;	-- Cloak of Shadows
+SID_SHADOW_REFLECTION = 152151;	-- Shadow Reflection
+SID_EVASION = 5277;		-- Evasion
+SID_GOUGE = 1776;		-- Gouge
+SID_SPRINT = 2983;		-- Sprint
+SID_BLIND = 2094;		-- Blind
+
+SID_DEADLY_POISON = 2818;       -- Deadly Poison
+SID_DEADLY_POISON_NEW = 113780; -- Deadly Poison (alt)
+SID_BLADE_FLURRY = 13877;	-- Blade Flurry
+SID_STEALTH = 1784;		-- Stealth
+SID_STEALTH_NEW = 115191;	-- Stealth (alt)
+SID_GHOSTLY_STRIKE = 196937;	-- Ghostly Strike
+SID_HONOR_AMONG_THIEVES = 51699; -- Honor Among Thieves
+SID_BACKSTAB = 53;		 -- Backstab
+SID_AMBUSH = 8676;		 -- Ambush
+SID_WOUND_POISON = 8680;	 -- Wound Poison
+SID_CRIPPLING_POISON = 3409;	 -- Crippling Poison
+SID_NERVE_STRIKE = 112947;	 -- Nerve Strike
+SID_ROLL_BONES = 199603;	 -- Roll the Bones
+SID_GRAND_MELEE = 193358;	 -- RtB Grand Melee
+SID_SHARK_INFESTED = 193357;	 -- RtB Shark Infested Waters
+SID_TRUE_BEARING = 193359;	 -- RtB True Bearing
+SID_BURIED_TREASURE = 199600;	 -- RtB Buried Treasure
+SID_BROADSIDES = 193356;	 -- RtB Broadsides
+SID_RIPOSTE = 199754;		 -- Riposte
+SID_CRIMSON_VIAL = 185311;	 -- Crimson Vial
+SID_NIGHT_TERRORS = 206760;	 -- Night Terrors
+SID_NIGHTBLADE = 195452;	 -- Nightblade
+SID_SHADOW_DANCE = 185422;	 -- Shadow Dance
+SID_SHADOW_BLADES = 121471;	 -- Shadow Blades
+SID_ELABORATE_PLANNING = 193641; -- Elaborate Planning
+SID_SYMBOLS_DEATH = 212283;	 -- Symbols of Death
+SID_OPPORTUNITY = 195627;	 -- Opportunity
+SID_ALACRITY = 193538;		 -- Alacrity
+SID_BETWEEN_EYES = 199804;	 -- Between the Eyes
+
 --0 Shared 1 Assassination, 2 Combat, 3 Subtlety 4 Talents
-SA_Spells = { [5171] = { target = "player", sort = true,duration=36, pandemic=true,spec=2,}, --Slice and Dice
-	[2818] = { target = "target", sort = false, duration=12,pandemic=true,spec=1,}, --DeadlyPoison
-	[1943] = { target = "target", sort = true,duration=24, pandemic=true, spec=1,},  --Rupture
-	[1966]  = { target = "player", sort = false,duration=5,pandemic=false,spec=0, }, --Feint
-	[703] = { target = "target", sort = true,duration=18, pandemic=true,spec=1, }, --Garrote
-	--[137573] = { target = "player",sort = true,duration=4,pandemic=false,spec=4, }, --BurstOfSpeed
-	[154953] = { target = "target", sort = true,duration=12,pandemic=false,spec=1, }, --InternalBleeding
-	[79140] = { target = "target", sort=false,duration=20,pandemic=false,spec=1, }, --Vendetta
-	[32645] = { target = "player",sort = true,duration=6,pandemic=false,spec=1,}, --Envenom
-	[13750] = { target = "player",sort=true,duration=15,pandemic=false,spec=2,altId=186286,}, --Adrenaline Rush	\w T18 p2
-	[186286] = { target = "player",sort=true,duration=4,pandemic=false,spec=2,hidden=true,}, --T18 2 set
-	[16511] = { target = "target",sort=true,duration=24,pandemic=true,spec=1, }, -- Hemorrhage
-	[91021] = { target = "target",sort=true, duration=10,pandemic=false,spec=3, }, -- FindWeaknes
-	[31665] = { target = "player",sort=true, duration=5,pandemic=false,spec=3, }, -- Master of Subtlety
-	[61304] = { target = "player", sort=true, duration=1, pandemic=false,spec=0,}, --GCD
-	[137619] = { target= "target", sort=true, duration=60, pandemic=false,spec=4,}, --Marked for Death
-	--[74001] = {target="player", sort=true, duration=10, pandemic = false,spec=4,}, --Combat Rediness
-	[408] = {target="target", sort=true, duration=6, pandemic=false,spec=0,}, --Kidney Shot
-	--[26679] ={target="target", sort=true, duration=6, pandemic=false,spec=4,}, --Deadly throw
-	[31224] ={target="player", sort=true, duration=5, pandemic=false,spec=0,}, --Cloak of Shadows
-	--[152151] = {target="player", sort=true, duration=8, pandemic=false,spec=4,}, --Shadow Reflection --player
-	[5277] = {target="player", sort=true, duration=10, pandemic=false,spec=0,}, --Evasion
-	[1776] = {target="target", sort=true, duration=4, pandemic=false,spec=2,}, --Gouge
-	[2983] =  {target="player", sort=true, duration=8, pandemic=false,spec=0,}, --Sprint
-	[2094] =  {target="target", sort=true, duration=60, pandemic=false,spec=0,}, --Blind
-	[115192] = {target="player", sort=false, duration=3, pandemic=false,spec=4,}, --Subterfuge
-	[8680] = {target="target", sort=false, duration=12, pandemic=false,spec=1,}, --Wound Poison
-	[3409] = {target="target", sort=false, duration=12, pandemic=false,spec=1,}, --Crippling Poison
-	[112947] = {target="target", sort=false, duration=6, pandemic=false,spec=4,}, --Nervestrike
-	[199603] = {target="player", sort=true, duration=42, pandemic=true, spec=2,}, --RtB JollyRoger
-	[193358] = {target="player", sort=true, duration=42, pandemic=true, spec=2,},
-	[193357] = {target="player", sort=true, duration=42, pandemic=true, spec=2,},
-	[193359] = {target="player", sort=true, duration=42, pandemic=true, spec=2,},
-	[199600] = {target="player", sort=true, duration=42, pandemic=true, spec=2,},
-	[193356] = {target="player", sort=true, duration=42, pandemic=true, spec=2,},
-	[199754] = {target="player", sort=true, duration=42, pandemic=true, spec=2,}, --Riposte
-	[185311] = {target="player", sort=false, duration=6, pandemic=true, spec=0,}, --Crimson Vial
-	[206760] = {target="target", sort=true, duration=16, pandemic=true, spec=3,}, --Nightterror
-	[195452] = {target="target", sort=true, duration=16, pandemic=true, spec=3,}, --Nightblade
-	[185422] = {target="player", sort=true, duration=3, pandemic=true, spec=3,}, --Shadowdance
-	[121471] = {target="player", sort=false, duration=12, pandemic=false, spec=3,}, --Shadow Blade
-	[206237] = {target="player", sort=true, duration=36, pandemic=true, spec=3,}, --Enveloping Shadows
-	[193641] = {target="player", sort=false, duration=5, pandemic=false, spec=1,}, --Elaborate Planing
-	[3409] = {target="target", sort=false, duration=12, pandemic=false, spec=1,}, --Agonizing Poison
-	[196937] = {target="target", sort=true, duration=10, pandemic=false, spec=2,}, --Ghostly Strike
-	[212283] = {target="player",sort=false, duration=35, pandemic=false, spec=3,}, --Symbols of Death
-	[195627] = {target="player", sort=false, duration=10, pandemic=false, spec=2,}, --QuickDraw/Oppurtunity
-	[193538] = {target="player", sort=false, duration=20, pandemic=false, spec=4,}, --Aclarity
-	[199740] = {target="pet",sort=true,duration=300, pandemic=false, spec=2,}, --Bribe
+SA_Spells = { [SID_SND] = { target = "player", sort = true,duration=36, pandemic=true,spec=2,}, --Slice and Dice
+	[SID_DEADLY_POISON] = { target = "target", sort = false, duration=12,pandemic=true,spec=1,}, --DeadlyPoison
+	[SID_RUPTURE] = { target = "target", sort = true,duration=24, pandemic=true, spec=1,},  --Rupture
+	[SID_FEINT]  = { target = "player", sort = false,duration=5,pandemic=false,spec=0, }, --Feint
+	[SID_GARROTE] = { target = "target", sort = true,duration=18, pandemic=true,spec=1, }, --Garrote
+	--[SID_BURST_SPEED] = { target = "player",sort = true,duration=4,pandemic=false,spec=4, }, --BurstOfSpeed
+	[SID_INTERNAL_BLEEDING] = { target = "target", sort = true,duration=12,pandemic=false,spec=1, }, --InternalBleeding
+	[SID_VENDETTA] = { target = "target", sort=false,duration=20,pandemic=false,spec=1, }, --Vendetta
+	[SID_ENVENOM] = { target = "player",sort = true,duration=6,pandemic=false,spec=1,}, --Envenom
+	[SID_ADRENALINE_RUSH] = { target = "player",sort=true,duration=15,pandemic=false,spec=2,altId=SID_ADRENALINE_RUSH_T18,}, --Adrenaline Rush	\w T18 p2
+	[SID_ADRENALINE_RUSH_T18] = { target = "player",sort=true,duration=4,pandemic=false,spec=2,hidden=true,}, --T18 2 set
+	[SID_HEMORRHAGE] = { target = "target",sort=true,duration=24,pandemic=true,spec=1, }, -- Hemorrhage
+	[SID_FIND_WEAKNESS] = { target = "target",sort=true, duration=10,pandemic=false,spec=3, }, -- FindWeaknes
+	[SID_MASTER_SUBTLETY] = { target = "player",sort=true, duration=5,pandemic=false,spec=3, }, -- Master of Subtlety
+	[SID_GCD] = { target = "player", sort=true, duration=1, pandemic=false,spec=0,}, --GCD
+	[SID_MARKED_FOR_DEATH] = { target= "target", sort=true, duration=60, pandemic=false,spec=4,}, --Marked for Death
+	--[SID_COMBAT_READINESS] = {target="player", sort=true, duration=10, pandemic = false,spec=4,}, --Combat Rediness
+	[SID_KIDNEY_SHOT] = {target="target", sort=true, duration=6, pandemic=false,spec=0,}, --Kidney Shot
+	--[SID_DEADLY_THROW] ={target="target", sort=true, duration=6, pandemic=false,spec=4,}, --Deadly throw
+	[SID_CLOAK_SHADOWS] ={target="player", sort=true, duration=5, pandemic=false,spec=0,}, --Cloak of Shadows
+	--[SID_SHADOW_REFLECTION] = {target="player", sort=true, duration=8, pandemic=false,spec=4,}, --Shadow Reflection --player
+	[SID_EVASION] = {target="player", sort=true, duration=10, pandemic=false,spec=0,}, --Evasion
+	[SID_GOUGE] = {target="target", sort=true, duration=4, pandemic=false,spec=2,}, --Gouge
+	[SID_SPRINT] =  {target="player", sort=true, duration=8, pandemic=false,spec=0,}, --Sprint
+	[SID_BLIND] =  {target="target", sort=true, duration=60, pandemic=false,spec=0,}, --Blind
+	[SID_SUBTERFUGE] = {target="player", sort=false, duration=3, pandemic=false,spec=4,}, --Subterfuge
+	[SID_WOUND_POISON] = {target="target", sort=false, duration=12, pandemic=false,spec=1,}, --Wound Poison
+	[SID_CRIPPLING_POISON] = {target="target", sort=false, duration=12, pandemic=false,spec=1,}, --Crippling Poison
+--	[SID_CRIPPLING_POISON] = {target="target", sort=false, duration=12, pandemic=false, spec=1,}, --Agonizing Poison
+	[SID_NERVE_STRIKE] = {target="target", sort=false, duration=6, pandemic=false,spec=4,}, --Nervestrike
+	[SID_ROLL_BONES] = {target="player", sort=true, duration=42, pandemic=true, spec=2,}, --RtB JollyRoger
+	[SID_GRAND_MELEE] = {target="player", sort=true, duration=42, pandemic=true, spec=2,},
+	[SID_SHARK_INFESTED] = {target="player", sort=true, duration=42, pandemic=true, spec=2,},
+	[SID_TRUE_BEARING] = {target="player", sort=true, duration=42, pandemic=true, spec=2,},
+	[SID_BURIED_TREASURE] = {target="player", sort=true, duration=42, pandemic=true, spec=2,},
+	[SID_BROADSIDES] = {target="player", sort=true, duration=42, pandemic=true, spec=2,},
+	[SID_RIPOSTE] = {target="player", sort=true, duration=42, pandemic=true, spec=2,}, --Riposte
+	[SID_CRIMSON_VIAL] = {target="player", sort=false, duration=6, pandemic=true, spec=0,}, --Crimson Vial
+	[SID_NIGHT_TERRORS] = {target="target", sort=true, duration=16, pandemic=true, spec=3,}, --Night Terrors
+	[SID_NIGHTBLADE] = {target="target", sort=true, duration=16, pandemic=true, spec=3,}, --Nightblade
+	[SID_SHADOW_DANCE] = {target="player", sort=true, duration=3, pandemic=true, spec=3,}, --Shadowdance
+	[SID_SHADOW_BLADES] = {target="player", sort=false, duration=12, pandemic=false, spec=3,}, --Shadow Blade
+--	[206237] = {target="player", sort=true, duration=36, pandemic=true, spec=3,}, --Enveloping Shadows
+	[SID_ELABORATE_PLANNING] = {target="player", sort=false, duration=5, pandemic=false, spec=1,}, --Elaborate Planning
+	[SID_GHOSTLY_STRIKE] = {target="target", sort=true, duration=10, pandemic=false, spec=2,}, --Ghostly Strike
+	[SID_SYMBOLS_DEATH] = {target="player",sort=false, duration=35, pandemic=false, spec=3,}, --Symbols of Death
+	[SID_OPPORTUNITY] = {target="player", sort=false, duration=10, pandemic=false, spec=2,}, --QuickDraw/Oppurtunity
+	[SID_ALACRITY] = {target="player", sort=false, duration=20, pandemic=false, spec=4,}, --Alacrity
+	[SID_BETWEEN_EYES] = {target="target", sort=true, duration=5, pandemic=false, spec=2,}, --Between the Eyes
+--	[199740] = {target="pet",sort=true,duration=300, pandemic=false, spec=2,}, --Bribe
 	};
 
 for k in pairs(SA_Spells) do
  local name, rank, icon, _ = GetSpellInfo(k)
- if not name then print(k) end
+ if not name then print(string.format("SliceAdmiral: Unknown SpellId: %d",k)) end
 	SA_Spells[k].name = name or "none"..k
 	SA_Spells[k].icon = icon or "blank"
 	SA_Spells[k].id = k
