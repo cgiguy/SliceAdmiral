@@ -49,7 +49,7 @@ SID_GRAND_MELEE = 193358;	 -- RtB Grand Melee
 SID_SHARK_INFESTED = 193357;	 -- RtB Shark Infested Waters
 SID_TRUE_BEARING = 193359;	 -- RtB True Bearing
 SID_BURIED_TREASURE = 199600;	 -- RtB Buried Treasure
-SID_BROADSIDES = 193356;	 -- RtB Broadsides
+SID_BROADSIDE = 193356;		 -- RtB Broadside
 SID_RIPOSTE = 199754;		 -- Riposte
 SID_CRIMSON_VIAL = 185311;	 -- Crimson Vial
 SID_NIGHT_TERRORS = 206760;	 -- Night Terrors
@@ -61,6 +61,7 @@ SID_SYMBOLS_DEATH = 212283;	 -- Symbols of Death
 SID_OPPORTUNITY = 195627;	 -- Opportunity
 SID_ALACRITY = 193538;		 -- Alacrity
 SID_BETWEEN_EYES = 199804;	 -- Between the Eyes
+SID_BLADE_RUSH = 271877;	 -- Blade Rush
 
 --0 Shared 1 Assassination, 2 Combat, 3 Subtlety 4 Talents
 SA_Spells = { [SID_SND] = { target = "player", sort = true,duration=36, pandemic=true,spec=2,}, --Slice and Dice
@@ -72,8 +73,8 @@ SA_Spells = { [SID_SND] = { target = "player", sort = true,duration=36, pandemic
 	[SID_INTERNAL_BLEEDING] = { target = "target", sort = true,duration=12,pandemic=false,spec=1, }, --InternalBleeding
 	[SID_VENDETTA] = { target = "target", sort=false,duration=20,pandemic=false,spec=1, }, --Vendetta
 	[SID_ENVENOM] = { target = "player",sort = true,duration=6,pandemic=false,spec=1,}, --Envenom
-	[SID_ADRENALINE_RUSH] = { target = "player",sort=true,duration=15,pandemic=false,spec=2,altId=SID_ADRENALINE_RUSH_T18,}, --Adrenaline Rush	\w T18 p2
-	[SID_ADRENALINE_RUSH_T18] = { target = "player",sort=true,duration=4,pandemic=false,spec=2,hidden=true,}, --T18 2 set
+	[SID_ADRENALINE_RUSH] = { target = "player",sort=true,duration=20,pandemic=false,spec=2,altId=SID_ADRENALINE_RUSH_T18,}, --Adrenaline Rush	\w T18 p2
+	[SID_ADRENALINE_RUSH_T18] = { target = "player",sort=true,duration=20,pandemic=false,spec=2,hidden=true,}, --T18 2 set
 	[SID_HEMORRHAGE] = { target = "target",sort=true,duration=24,pandemic=true,spec=1, }, -- Hemorrhage
 	[SID_FIND_WEAKNESS] = { target = "target",sort=true, duration=10,pandemic=false,spec=3, }, -- FindWeaknes
 	[SID_MASTER_SUBTLETY] = { target = "player",sort=true, duration=5,pandemic=false,spec=3, }, -- Master of Subtlety
@@ -98,7 +99,7 @@ SA_Spells = { [SID_SND] = { target = "player", sort = true,duration=36, pandemic
 	[SID_SHARK_INFESTED] = {target="player", sort=true, duration=42, pandemic=true, spec=2,},
 	[SID_TRUE_BEARING] = {target="player", sort=true, duration=42, pandemic=true, spec=2,},
 	[SID_BURIED_TREASURE] = {target="player", sort=true, duration=42, pandemic=true, spec=2,},
-	[SID_BROADSIDES] = {target="player", sort=true, duration=42, pandemic=true, spec=2,},
+	[SID_BROADSIDE] = {target="player", sort=true, duration=42, pandemic=true, spec=2,},
 	[SID_RIPOSTE] = {target="player", sort=true, duration=42, pandemic=true, spec=2,}, --Riposte
 	[SID_CRIMSON_VIAL] = {target="player", sort=false, duration=6, pandemic=true, spec=0,}, --Crimson Vial
 	[SID_NIGHT_TERRORS] = {target="target", sort=true, duration=16, pandemic=true, spec=3,}, --Night Terrors
@@ -112,6 +113,8 @@ SA_Spells = { [SID_SND] = { target = "player", sort = true,duration=36, pandemic
 	[SID_OPPORTUNITY] = {target="player", sort=false, duration=10, pandemic=false, spec=2,}, --QuickDraw/Oppurtunity
 	[SID_ALACRITY] = {target="player", sort=false, duration=20, pandemic=false, spec=4,}, --Alacrity
 	[SID_BETWEEN_EYES] = {target="target", sort=true, duration=5, pandemic=false, spec=2,}, --Between the Eyes
+	[SID_BLADE_FLURRY] = {target="player", sort=true, duration=12, pandemic=false, spec=2,}, --Blade Flurry
+	[SID_BLADE_RUSH] = {target="player", sort=true, duration=5, pandemic=false, spec=2,}, --Blade Rush
 --	[199740] = {target="pet",sort=true,duration=300, pandemic=false, spec=2,}, --Bribe
 	};
 

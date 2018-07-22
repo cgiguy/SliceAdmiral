@@ -48,6 +48,7 @@ SADefault = {
 				BladeFlurry = false,
 				ShowNames = false,
 			},
+			-- Timers that aren't initially black (default)
 			Colours = {
 				[SID_SND] = { r=255/255, g=74/255, b=18/255, a=0.9,},
 				[SID_DEADLY_POISON] =  {r=96/255, g=116/255, b=65/255,},
@@ -65,19 +66,8 @@ SADefault = {
 				[SID_FIND_WEAKNESS] = {r=130/255, g=130/255, b=0,},
 				[SID_MASTER_SUBTLETY] = {r=99/255, g=26/255, b=151/255,},
 				[SID_GCD] = {r=192/255,g=192/255,b=192/255},
-				[SID_MARKED_FOR_DEATH] = {r=0,g=0,b=0},
-				[SID_COMBAT_READINESS] = {r=0,g=0,b=0},
-				[SID_KIDNEY_SHOT] = {r=0,g=0,b=0},
-				[SID_DEADLY_THROW] = {r=0,g=0,b=0},
-				[SID_CLOAK_SHADOWS] = {r=0,g=0,b=0},
-				[SID_SHADOW_REFLECTION] = {r=0,g=0,b=0},
-				[SID_EVASION] = {r=0,g=0,b=0},
-				[SID_GOUGE] = {r=0,g=0,b=0},
-				[SID_SPRINT]  = {r=0,g=0,b=0},
-				[SID_BLIND]  = {r=0,g=0,b=0},
-				[SID_SUBTERFUGE] = {r=0,g=0,b=0},
-				[SID_BETWEEN_EYES] = {r=0,g=0,b=0},
 			},
+			-- Timers that aren't initially 3.0 (default)
 			Timers = {
 				[SID_SND] = 6.0, --Slice and Dice
 				[SID_RUPTURE] = 6.0, --Rupture
@@ -105,37 +95,20 @@ SADefault = {
 				[SID_GOUGE] = 4.0,
 				[SID_SPRINT]= 6.0,
 				[SID_BLIND] = 6.0,
-				[SID_SUBTERFUGE] = 3.0,
-				[SID_BETWEEN_EYES] = 5.0,
 			},
+			-- Timers that are initially shown (off by default)
 			[SID_SND] = true, --Slice and Dice
 			[SID_RUPTURE] = true, --Rupture
 			[SID_ANTICIPATION] = false, -- Anticipation
 			[SID_ENVENOM] = true, -- Envenom
 			[SID_FEINT] = true, -- Feint
-			[SID_BURST_SPEED] = false, -- Burst of Speed
 			[SID_FIND_WEAKNESS] = true, --FindWeaknes
 			[SID_HEMORRHAGE] = true, --Hemorrhage
 			[SID_DEADLY_POISON] = true, --DeadlyPoison
-			[SID_VENDETTA] = false, --Vendetta
 			[SID_GARROTE] = true, -- Garrote
 			[SID_ADRENALINE_RUSH] = true, --Adrenaline Rush
 			[SID_ADRENALINE_RUSH_T18] = true,
-			[SID_INTERNAL_BLEEDING] = false, --InteralBleeding
 			[SID_MASTER_SUBTLETY] = true, -- master of Subtlety
-			[SID_GCD] = false, --GCD
-			[SID_MARKED_FOR_DEATH] = false, --Marked for death
-			[SID_COMBAT_READINESS] = false,
-			[SID_KIDNEY_SHOT] = false,
-			[SID_DEADLY_THROW] = false,
-			[SID_CLOAK_SHADOWS] = false,
-			[SID_SHADOW_REFLECTION] = false,
-			[SID_EVASION] = false,
-			[SID_GOUGE] = false,
-			[SID_SPRINT]= false,
-			[SID_BLIND] = false,
-			[SID_SUBTERFUGE] = false,
-			[SID_BETWEEN_EYES] = false,
 		},
 		Combo = {
 			PointShow = true,
@@ -160,35 +133,15 @@ SADefault = {
 			TextColor = { r=1.0, g=1.0, b=1.0, a=0.9},
 			ComboTextColor = { r=1.0, g=1.0, b=1.0, a=0.8},
 		},
+		-- Timers that aren't initially the default sound set
+		--  default: {enabled=false, tick = "None", alert="None", tickStart=3.0}
 		Sound = {
 			[SID_SND] = {enabled=true, tick = "Tambourine", alert = "Waaaah",tickStart=3.0, }, --Slice and Dice
 			[SID_RUPTURE] = {enabled=true, tick = "Shaker", alert = "BassDrum", tickStart=3.0, }, --Rupture
 			[SID_VENDETTA] = {enabled=true, tick = "Ping", alert = "None", tickStart=3.0, }, --Vendetta
 			[SID_HEMORRHAGE] = {enabled=true, tick = "Ping", alert = "None", tickStart=3.0, }, --Hemorrhage
 			[SID_ANTICIPATION] = {enabled=false, tick = "None", alert="None", tickStart=3.0, }, -- Anticipation
-			[SID_FEINT] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
-			[SID_ENVENOM]  = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
-			[SID_BURST_SPEED] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
-			[SID_DEADLY_POISON] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
-			[SID_GARROTE] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
-			[SID_ADRENALINE_RUSH] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
-			[SID_ADRENALINE_RUSH_T18] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
-			[SID_INTERNAL_BLEEDING] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
-			[SID_FIND_WEAKNESS] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
-			[SID_MASTER_SUBTLETY] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
 			[SID_GCD] = {enabled=false, tick= "None", alert="None", tickStart=0.5, },
-			[SID_MARKED_FOR_DEATH] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
-			[SID_COMBAT_READINESS] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
-			[SID_KIDNEY_SHOT] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
-			[SID_DEADLY_THROW] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
-			[SID_CLOAK_SHADOWS] ={enabled=false, tick = "None", alert="None", tickStart=3.0, },
-			[SID_SHADOW_REFLECTION]= {enabled=false, tick = "None", alert="None", tickStart=3.0, },
-			[SID_EVASION] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
-			[SID_GOUGE] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
-			[SID_SPRINT] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
-			[SID_BLIND] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
-			[SID_SUBTERFUGE] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
-			[SID_BETWEEN_EYES] = {enabled=false, tick = "None", alert="None", tickStart=3.0, },
 			MasterVolume = false,
 			OutOfCombat = false,
 			none = "none",
@@ -196,12 +149,19 @@ SADefault = {
 	},  
 }
 
+-- We're only setting non-defaults above.  Set everything else to default.
 for k in pairs(SA_Spells) do
 	if not SADefault.Modules.ShowTimer.Colours[k] then
-		SADefault.Modules.ShowTimer.Colours[k] = {r=0,g=0,b=0,a=0}
-		SADefault.Modules.ShowTimer.Timers[k] = 3.0
-		SADefault.Modules.ShowTimer[k] = false
-		SADefault.Modules.Sound[k] = {enabled=false, tick = "None", alert="None", tickStart=3.0 }
+	  SADefault.Modules.ShowTimer.Colours[k] = {r=0,g=0,b=0,a=0}
+	end
+	if not SADefault.Modules.ShowTimer.Timers[k] then
+	  SADefault.Modules.ShowTimer.Timers[k] = 3.0
+	end
+	if not SADefault.Modules.ShowTimer[k] then
+	  SADefault.Modules.ShowTimer[k] = false
+	end
+	if not SADefault.Modules.Sound[k] then
+	  SADefault.Modules.Sound[k] = {enabled=false, tick = "None", alert="None", tickStart=3.0 }
 	end
 end
 
