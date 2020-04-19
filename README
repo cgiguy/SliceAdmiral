@@ -1,18 +1,21 @@
-SliceAdmiral can best described as an info-center for maximizing Rogue damage. It contains a bunch of timer bars, stat displays, and audio notifications that add up to nearly everything you need to know to properly time your Rogue's DPS cycle. It has a compact and configurable UI that features...
- 
-* Timer Bars for Slice and Dice, Rupture, Recuperate, Vendetta, Deadly Poison, and Envenom buff
+SliceAdmiral can be best described as an info-center for maximizing Rogue damage. It contains a bunch of timer bars, stat displays, and audio notifications that add up to nearly everything you need to know to properly time your Rogue's DPS cycle. It has a compact and configurable UI that features...
+
+
+* Timer Bars for Slice and Dice, Rupture, Recuperate, Vendetta, Deadly Poison, Envenom, Revealing Strike, Garrotte and Burst of Speed and many, many more!
 * Timer Bar sorting based on refresh priority
 * Audio Reminders for refreshing and expiring abilities (SnD, Rupture, Recuperate and Vendetta)
 * Stat displays for Attack Power, Crit %, and Attack Speed
 * Rupture and Deadly Poison DoT damage and crit indicators
 * Combo Point bar
 * Energy bar
-* New Options Menu interface, rebuilt from the ground up
+
+New Options Menu interface, rebuilt from the ground up
 
 Little to no setup needed. Just load the mod and you're ready to rock! Good for Rogues of any spec.
 
-SliceAdmiral is a continuation of SliceCommander. Big thanks to the original authors for starting up this much-needed Rogue DPS project! 
+I want to very much thank Haghala for his time and effort on this project. It was languishing and he breathed new life into it. Thanks!
 
-The original author of SliceAdmiral, Linguine, is no longer working on this project.  I want to thank him for his time and effort on this much needed Rogue addon!
+A summary of changes for each version can be found here.
 
-A summary of changes for each version can be found [[http://wow.curseforge.com/addons/sliceadmiral/pages/change-log|here]].
+I found a bug how do i tell you? How do i request a feature?
+Please, open a ticket on the web or right click on SliceAdmiral in Curse client and select "Report a Bug" .
