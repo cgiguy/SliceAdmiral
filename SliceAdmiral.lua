@@ -1,5 +1,5 @@
--- Author      : Haghala/cgiguy
--- Create Date : 13/10/2014
+-- Author      : cgiguy
+-- Create Date : 10/13/2014
 local addon = LibStub("AceAddon-3.0"):NewAddon("SliceAdmiral","AceConsole-3.0","AceEvent-3.0");
 local AceConfig = LibStub("AceConfig-3.0");
 local AceConfigDialog = LibStub("AceConfigDialog-3.0");
@@ -60,6 +60,7 @@ SADefault = {
 				[SID_INTERNAL_BLEEDING] = {r=205/255, g=92/255, b=92/255,},
 				[SID_VENDETTA] = {r=130/255, g=130/255, b=0,},
 				[SID_ENVENOM] = {r=66/255, g=86/255, b=35/255,},
+				[SID_TOXIC_BLADE] = {r=66/255, g=200/255, b=35/255,},
 				[SID_ADRENALINE_RUSH] = {r=240/255,g=128/255,b=128/255,},
 				[SID_ADRENALINE_RUSH_T18] = {r=240/255,g=128/255,b=128/255,},
 				[SID_HEMORRHAGE] = {r=255/255, g=5/255, b=5/255,},
@@ -95,6 +96,7 @@ SADefault = {
 				[SID_GOUGE] = 4.0,
 				[SID_SPRINT]= 6.0,
 				[SID_BLIND] = 6.0,
+                                [SID_DREADBLADES] = 10.0,
 			},
 			-- Timers that are initially shown (off by default)
 			[SID_SND] = true, --Slice and Dice
@@ -203,9 +205,10 @@ local maxCP = 5
 local bfhits = {}
 local soundBuffer = {}
 
-local Sa_filter = {	["player"] = "PLAYER", 
-					["target"] = "PLAYER HARMFUL",
-					["pet"] = "PLAYER HARMFUL", };
+local Sa_filter = {	["player"] = "PLAYER HELPFUL", 
+                        ["player-nofilter"] = "NONE",
+			["target"] = "PLAYER HARMFUL",
+			["pet"] = "PLAYER HARMFUL", };
 
 local function Lsort(a,b)
 	return floor(a["Expires"]) < floor(b["Expires"]); -- No need for decimals
@@ -482,16 +485,51 @@ function addon:UNIT_MAXPOWER(...)
 	end
 end
 
+--- For ...,  the length operator # does not work with 'holes'
+--- (embedded nils) in sequences. Computing the length of a table with holes
+--- is undefined and cannot be relied on. So, depending upon the values
+--- in ..., taking the length of using local arg = {...} may not result
+--- in the 'correct' answer.
+--- In Lua 5.2+ table.pack() was introduced to handle this deficiency
+
+-- table.pack(...) can also be used to pack the vararg list into a table vs.
+-- {...}
+-- The advantage of table.pack(...) is that it sets the n field of the
+-- returned table to the value of select('#', ...).
+-- This is important if your argument list may contain nils.
+
+-- WoW doesn't have table.pack so we fake it with setting table
+-- length using select('#,...')
+
 DebugPrint = function (str, ...)
+  local t = {...}
+  t.n = select('#', ...)
+  for i = 1,t.n do
+    if not t[i] then
+      t[i] = "NIL"
+    end
+  end
+  str = string.format(str, unpack(t))
+  DEFAULT_CHAT_FRAME:AddMessage(("SA: %s"):format(str));
+end
+
+--- Does not work with embedded nils.  So, unless you pass
+--- (foo or "NIL") as an argument, don't use this.
+DebugPrintBroken = function (str, ...)
   if ... then str = string.format(str,...)end
   DEFAULT_CHAT_FRAME:AddMessage(("SA: %s"):format(str));
 end
 
-function UnitAuraBySpellNameNew(target,spellname,filter)
-  if filter == "PLAYER" then
-    return AuraUtil.FindAuraByName(spellname, target)
+function UnitAuraBySpellNameNew(spell)
+  -- Stupid Dreadblades bullshit.  Not under PLAYER HELPFUL filter
+  -- So, now we need another table entry "aurafilter" to override
+  local afilter
+  if spell.aurafilter then
+    afilter = spell.aurafilter
+  else
+    afilter = Sa_filter[spell.target]
   end
-  return AuraUtil.FindAuraByName(spellname, target, filter)
+  return AuraUtil.FindAuraByName(spell.name, spell.target, afilter)
 end
 
 function UnitAuraBySpellNameBroken(target,spellname,filter)
@@ -509,9 +547,9 @@ function UnitAuraBySpellNameBroken(target,spellname,filter)
 end
 
 local function MasterOfSubtley()
-	local subtlety = SA_Spells[SID_MASTER_SUBTLETY].name
+        local spell = SA_Spells[SID_MASTER_SUBTLETY]
 --	local name, _, _, _, _, _, expirationTime = UnitAura("player", subtlety);
-	local name, _, _, _, _, expirationTime = UnitAuraBySpellNameNew("player", subtlety);
+	local name, _, _, _, _, expirationTime = UnitAuraBySpellNameNew(spell);
 	local MOSBar = SA_Data.BARS[subtlety]
 	
 	if name then		
@@ -576,6 +614,8 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, type, hideCaster, s
 	local timestamp, type, hideCaster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId, extraArg2, extraArg3, extraArg4, extraArg5, extraArg6, extraArg7, extraArg8, extraArg9, extraArg10 = CombatLogGetCurrentEventInfo()
 --        DebugPrint("CLE:%s,%d",type,spellId);
 --        DebugPrint("  destName:%s, spellId:%d",destName,spellId)
+--        spellname,_,_,_ = GetSpellInfo(spellId)
+--        DebugPrint("spellId: %s, name: %s, type = %s, destName = %s",spellId, spellname, type, destName)
 --	DebugPrint("CLE: (%s,%s,%d,%s,%s,%x,%x,%s,%s,%x,%x,%d,%s (%d),%s (%d),%s (%d),%s (%d),%s (%d),%s (%d),%s (%d),%s (%d),%s (%d)",
 --		   timestamp,
 --		   type,
@@ -653,10 +693,14 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, type, hideCaster, s
 	if dbtypes[type] then
 		--Buffs EVENT --
 		if SAMod.ShowTimer[spellId] then
+  		        --DebugPrint("%s Timer bar for %s", type, spellId)
 			local BuffBar = SA_Data.BARS[SA_Spells[spellId].name]
 			local spell = SA_Spells[spellId]
-			local name, icon, count, debuffType, duration, expirationTime = UnitAuraBySpellNameNew(spell.target, spell.name, Sa_filter[spell.target])
+			--DebugPrint("UA Target: %s, Spell: %s, Filter: %s", spell.target, spell.name, Sa_filter[spell.target])
+			local name, icon, count, debuffType, duration, expirationTime = UnitAuraBySpellNameNew(spell)
 --			local name, rank, icon, count, debuffType, duration, expirationTime = UnitAura(spell.target, spell.name, nil, Sa_filter[spell.target])
+			
+
 
 			BuffBar["Expires"] = expirationTime or 0;
 			BuffBar["tickStart"] = (expirationTime or 0) - SAMod.Sound[spellId].tickStart;
@@ -664,6 +708,7 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, type, hideCaster, s
 			BuffBar["count"] = count or 0;
 			if saTimerOp.Dynamic then addon:UpdateMaxValue(spellId,duration) end;
 			if not (name) then
+			  --DebugPrint("Hiding bar with no aura name %s", spellId)
 				BuffBar["obj"]:Hide();
 			else
 				BuffBar["obj"]:Show();
@@ -724,9 +769,10 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, type, hideCaster, s
 --		local multistrike = select(13,...)
 	        local multistrike = extraArg2;
 		if SID_DEADLY_POISON_NEW == spellId then
-			local eventDeadlyPoison = SA_Spells[SID_DEADLY_POISON].name
+  		        local spell = SA_Spells[SID_DEADLY_POISON]
+			local eventDeadlyPoison = spell.name
 --			local name, rank, icon, count, debuffType, duration, expirationTime = UnitDebuff("target", eventDeadlyPoison, nil, "PLAYER");
-			local name, _, count, _, duration, expirationTime = UnitAuraBySpellNameNew("target", eventDeadlyPoison, "PLAYER HARMFUL");
+			local name, _, count, _, duration, expirationTime = UnitAuraBySpellNameNew(spell);
 			SABars[eventDeadlyPoison]["Expires"] = expirationTime or 0;
 			SABars[eventDeadlyPoison]["tickStart"] = (expirationTime or 0) - SAMod.Sound[SID_DEADLY_POISON].tickStart;
 			SABars[eventDeadlyPoison]["LastTick"] = SABars[eventDeadlyPoison]["tickStart"] - 1.0;
@@ -763,7 +809,7 @@ function addon:UpdateTarget()
 		if v and spell then
 			local spellBar = SA_Data.BARS[spell.name]
 --			local name, _, _, count, _, duration, expirationTime, _ = UnitAura(spell.target, spell.name, nil, Sa_filter[spell.target]);
-			local name, _, count, _, duration, expirationTime = UnitAuraBySpellNameNew(spell.target, spell.name, Sa_filter[spell.target])
+			local name, _, count, _, duration, expirationTime = UnitAuraBySpellNameNew(spell)
 			if not (name) then				
 				spellBar["tickStart"] = 0;
 				spellBar["count"] = 0;
@@ -787,7 +833,7 @@ function addon:BarUpdate(id)
 	local spell = SA_Spells[id]
 	if SAMod.ShowTimer[id] then
 		local spellBar = SA_Data.BARS[spell.name]
-		local name, _, count, _, duration, expirationTime = UnitAuraBySpellNameNew(spell.target, spell.name, Sa_filter[spell.target]);
+		local name, _, count, _, duration, expirationTime = UnitAuraBySpellNameNew(spell);
 --		local name, _, _, count, _, duration, expirationTime, _ = UnitAura(spell.target, spell.name, nil, Sa_filter[spell.target]);
 		if not (name) then			
 			spellBar["tickStart"] = 0;
@@ -830,12 +876,12 @@ function addon:SetComboPoints()
 end
 
 function addon:CreateComboFrame()
-	local f = CreateFrame("Frame", nil, SA);
+	local f = CreateFrame("Frame", nil, SA, BackdropTemplateMixin and "BackdropTemplate");
 	local flvl = f:GetFrameLevel()
 	local bg = f:CreateTexture(nil, "BACKGROUND");
 	
-	local combo = CreateFrame("StatusBar", nil, f);
-	local anti = CreateFrame("StatusBar", nil, f);
+	local combo = CreateFrame("StatusBar", nil, f, BackdropTemplateMixin and "BackdropTemplate");
+	local anti = CreateFrame("StatusBar", nil, f, BackdropTemplateMixin and "BackdropTemplate");
 	local overlay = anti:CreateTexture(nil, "OVERLAY");
 	local width = VTimerEnergy:GetWidth();
 	local cpC = SAMod.Combo.CPColor
@@ -930,7 +976,7 @@ function addon:SA_UpdateStatWidths(width)
 end
 
 function addon:SA_CreateStatBar()
-	local f = CreateFrame("StatusBar", nil, SA);
+	local f = CreateFrame("StatusBar", nil, SA, BackdropTemplateMixin and "BackdropTemplate");
 	local width = widthUI;
 
 	f:ClearAllPoints();
@@ -1057,7 +1103,7 @@ function addon:SA_flashBuffedStats()
 end
 
 function addon:SA_NewFrame()
-	local f = CreateFrame("StatusBar", nil, SA);
+	local f = CreateFrame("StatusBar", nil, SA, BackdropTemplateMixin and "BackdropTemplate");
 
 	f:SetSize(widthUI, 12);
 	f:SetScale(scaleUI); 

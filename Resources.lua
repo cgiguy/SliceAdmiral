@@ -62,9 +62,11 @@ SID_OPPORTUNITY = 195627;	 -- Opportunity
 SID_ALACRITY = 193538;		 -- Alacrity
 SID_BETWEEN_EYES = 199804;	 -- Between the Eyes
 SID_BLADE_RUSH = 271877;	 -- Blade Rush
-SID_CRIMSON_TEMPEST = 121411     -- Crimson Tempest
+SID_CRIMSON_TEMPEST = 121411;    -- Crimson Tempest
+SID_TOXIC_BLADE = 245389;        -- Toxic Blade
+SID_DREADBLADES = 343142;        -- Dreadblades
 
---0 Shared 1 Assassination, 2 Combat, 3 Subtlety 4 Talents
+--0 Shared 1 Assassination, 2 Outlaw, 3 Subtlety 4 Talents
 SA_Spells = { [SID_SND] = { target = "player", sort = true,duration=36, pandemic=true,spec=2,}, --Slice and Dice
 	[SID_DEADLY_POISON] = { target = "target", sort = false, duration=12,pandemic=true,spec=1,}, --DeadlyPoison
 	[SID_RUPTURE] = { target = "target", sort = true,duration=24, pandemic=true, spec=1,},  --Rupture
@@ -118,6 +120,8 @@ SA_Spells = { [SID_SND] = { target = "player", sort = true,duration=36, pandemic
 	[SID_BLADE_FLURRY] = {target="player", sort=true, duration=12, pandemic=false, spec=2,}, --Blade Flurry
 	[SID_BLADE_RUSH] = {target="player", sort=true, duration=5, pandemic=false, spec=2,}, --Blade Rush
 --	[199740] = {target="pet",sort=true,duration=300, pandemic=false, spec=2,}, --Bribe
+	[SID_TOXIC_BLADE] = { target = "target", sort = true,duration=9, pandemic=false,spec=1, }, --Toxic Blade
+	[SID_DREADBLADES] = {target="player", aurafilter="NONE", sort=true, duration=10, pandemic=false, spec=2,}, --Dreadblades
 	};
 
 for k in pairs(SA_Spells) do

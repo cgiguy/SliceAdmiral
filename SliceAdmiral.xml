@@ -1,9 +1,9 @@
 <Ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.blizzard.com/wow/ui/">
 	
-	<Frame name="SA" parent="UIParent" toplevel="true" movable="true" enableMouse="true">
+	<Frame name="SA" inherits="BackdropTemplate" parent="UIParent" toplevel="true" movable="true" enableMouse="true">
 		<Size x="140" y="30" />
 		<Frames>
-			<StatusBar name="VTimerEnergy" minValue="0" maxValue="100" defaultValue="100">
+			<StatusBar name="VTimerEnergy" inherits="BackdropTemplate" minValue="0" maxValue="100" defaultValue="100">
 				<Size x="200" y="20" />
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="SA" relativePoint="TOPLEFT">

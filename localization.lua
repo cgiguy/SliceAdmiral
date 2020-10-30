@@ -1,7 +1,7 @@
 -- Author      : cgiguy
 -- Create Date : 7/19/2011
 local L = LibStub("AceLocale-3.0"):NewLocale("SliceAdmiral", "enUS", true)
-L["SALoaded"] = "SliceAdmiral %s loaded!! Options are under the SliceAdmiral tab in the Game Menu->Interface->Addons tab"
+L["SALoaded"] = "SliceAdmiral %s loaded!! Options are under the SliceAdmiral tab in the Addons Interface menu"
 L["ClickToMove"] = "Disable Click to Move"
 L["PadLatency"] = "Pad Alerts with Latency"
 L["ResetPossition"] = "Reset Position"
