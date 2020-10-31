@@ -11,4 +11,4 @@
 <p>Little to no setup needed. Just load the mod and you're ready to rock! Good for Rogues of any spec.</p>
 <p>A summary of changes for each version can be found <a href="https://curseforge.com/wow/addons/sliceadmiral/pages/change-log">here</a>.</p>
 <h4 id="w-i-found-a-bug-how-do-i-tell-you-how-do-i-request-a">I found a bug how do I tell you? How do I request a feature?</h5>
-<p>Please, open a <a href="http://wow.curseforge.com/addons/sliceadmiral/create-ticket/">ticket on the web</a> or right click on SliceAdmiral in Curse client and select "Report a Bug" .</p>
+<p>Please, open a <a href="https://www.curseforge.com/wow/addons/sliceadmiral/issues/create">ticket on the web</a> or right click on SliceAdmiral in Curse client and select "Report a Bug" .</p>
