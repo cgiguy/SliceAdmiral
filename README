@@ -1,21 +1,16 @@
 SliceAdmiral can be best described as an info-center for maximizing Rogue damage. It contains a bunch of timer bars, stat displays, and audio notifications that add up to nearly everything you need to know to properly time your Rogue's DPS cycle. It has a compact and configurable UI that features...
 
-
-* Timer Bars for Slice and Dice, Rupture, Recuperate, Vendetta, Deadly Poison, Envenom, Revealing Strike, Garrotte and Burst of Speed and many, many more!
+* Timer Bars for Slice and Dice, Rupture, Recuperate, Vendetta, Deadly Poison, Envenom, Garrotte and many, many more!
 * Timer Bar sorting based on refresh priority
-* Audio Reminders for refreshing and expiring abilities (SnD, Rupture, Recuperate and Vendetta)
+* Audio Reminders for refreshing and expiring abilities
 * Stat displays for Attack Power, Crit %, and Attack Speed
 * Rupture and Deadly Poison DoT damage and crit indicators
-* Combo Point bar
-* Energy bar
-
-New Options Menu interface, rebuilt from the ground up
+* Combo Point Bar
+* Energy Bar
 
 Little to no setup needed. Just load the mod and you're ready to rock! Good for Rogues of any spec.
 
-I want to very much thank Haghala for his time and effort on this project. It was languishing and he breathed new life into it. Thanks!
+A summary of changes for each version can be found here: https://curseforge.com/wow/addons/sliceadmiral/pages/change-log
 
-A summary of changes for each version can be found here.
-
-I found a bug how do i tell you? How do i request a feature?
-Please, open a ticket on the web or right click on SliceAdmiral in Curse client and select "Report a Bug" .
+I found a bug how do I tell you? How do I request a feature?
+Please, open a ticket on the web or right click on SliceAdmiral in Curse/Overwolf client and select "Report a Bug" .
