@@ -38,8 +38,5 @@ externals:
 	lib\libmoothStatusBar-1.0:
 	  url: git://git.curseforge.net/wow/libsmoothstatusbar-1-0/mainline.git
 	  tag: latest
-	libs\LibDualSpec-1.0: 
-		url: git://git.wowace.com/wow/libdualspec-1-0/mainline.git
-		tag: latest
   
 enable-nolib-creation: no
