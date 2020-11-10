@@ -1478,11 +1478,6 @@ function addon:OnInitialize()
 				},
 			}
 	
-	-- Add dual-spec support
-	--local LibDualSpec = LibStub('LibDualSpec-1.0')
-	--LibDualSpec:EnhanceDatabase(self.db, "SliceAdmiral")
-	--LibDualSpec:EnhanceOptions(addon.opt.profile, self.db)
-	-- Spec Setup
 	addon.db.RegisterCallback(self, "OnNewProfile", "InitializeProfile")
 	addon.db.RegisterCallback(self, "OnProfileChanged", "UpdateModuleConfigs")
 	addon.db.RegisterCallback(self, "OnProfileCopied", "UpdateModuleConfigs")
