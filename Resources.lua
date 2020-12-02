@@ -65,6 +65,7 @@ SID_BLADE_RUSH = 271877;	 -- Blade Rush
 SID_CRIMSON_TEMPEST = 121411;    -- Crimson Tempest
 SID_TOXIC_BLADE = 245389;        -- Toxic Blade
 SID_DREADBLADES = 343142;        -- Dreadblades
+SID_SEPSIS = 328305;             -- Sepsis (Covenant)
 
 --0 Shared 1 Assassination, 2 Outlaw, 3 Subtlety 4 Talents
 SA_Spells = { [SID_SND] = { target = "player", sort = true,duration=36, pandemic=true,spec=2,}, --Slice and Dice
@@ -122,6 +123,7 @@ SA_Spells = { [SID_SND] = { target = "player", sort = true,duration=36, pandemic
 --	[199740] = {target="pet",sort=true,duration=300, pandemic=false, spec=2,}, --Bribe
 	[SID_TOXIC_BLADE] = { target = "target", sort = true,duration=9, pandemic=false,spec=1, }, --Toxic Blade
 	[SID_DREADBLADES] = {target="player", aurafilter="NONE", sort=true, duration=10, pandemic=false, spec=2,}, --Dreadblades
+	[SID_SEPSIS] = {target="target", sort=true, duration=10, pandemic=false, spec=4,}, --Sepsis
 	};
 
 for k in pairs(SA_Spells) do
