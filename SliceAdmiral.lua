@@ -529,7 +529,8 @@ function UnitAuraBySpellNameNew(spell)
   else
     afilter = Sa_filter[spell.target]
   end
-  return AuraUtil.FindAuraByName(spell.name, spell.target, afilter)
+--  DebugPrint("Looking for spellname: %s on %s [filter = %s] (Real name %s)",spell.name,spell.target, afilter, spell.realname or "None")
+  return AuraUtil.FindAuraByName(spell.realname, spell.target, afilter)
 end
 
 function UnitAuraBySpellNameBroken(target,spellname,filter)
@@ -546,7 +547,7 @@ function UnitAuraBySpellNameBroken(target,spellname,filter)
   end
 end
 
-local function MasterOfSubtley()
+local function MasterOfSubtlety()
         local spell = SA_Spells[SID_MASTER_SUBTLETY]
 --	local name, _, _, _, _, _, expirationTime = UnitAura("player", subtlety);
 	local name, _, _, _, _, expirationTime = UnitAuraBySpellNameNew(spell);
@@ -612,8 +613,11 @@ end
 
 function addon:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, type, hideCaster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId, ...)
 	local timestamp, type, hideCaster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId, extraArg2, extraArg3, extraArg4, extraArg5, extraArg6, extraArg7, extraArg8, extraArg9, extraArg10 = CombatLogGetCurrentEventInfo()
---        DebugPrint("CLE:%s,%d",type,spellId);
---        DebugPrint("  destName:%s, spellId:%d",destName,spellId)
+	local isMySpell = (sourceGUID == UnitGUID("player"))
+--        if isMySpell then
+--	  DebugPrint("CLE:%s,%d",type,spellId);
+--	  DebugPrint("  destName:%s, spellId:%d",destName,spellId)
+--        end
 --        spellname,_,_,_ = GetSpellInfo(spellId)
 --        DebugPrint("spellId: %s, name: %s, type = %s, destName = %s",spellId, spellname, type, destName)
 --	DebugPrint("CLE: (%s,%s,%d,%s,%s,%x,%x,%s,%s,%x,%x,%d,%s (%d),%s (%d),%s (%d),%s (%d),%s (%d),%s (%d),%s (%d),%s (%d),%s (%d)",
@@ -682,7 +686,6 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, type, hideCaster, s
 		end
 		return
 	end
-	local isMySpell = (sourceGUID == UnitGUID("player"))
 	if not isMySpell then return end;
 	local saTimerOp = SAMod.ShowTimer.Options
 	local select = select
@@ -693,12 +696,15 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, type, hideCaster, s
 	if dbtypes[type] then
 		--Buffs EVENT --
 		if SAMod.ShowTimer[spellId] then
-  		        --DebugPrint("%s Timer bar for %s", type, spellId)
-			local BuffBar = SA_Data.BARS[SA_Spells[spellId].name]
+--  		        DebugPrint("%s Timer bar for %s", type, spellId)
 			local spell = SA_Spells[spellId]
 			--DebugPrint("UA Target: %s, Spell: %s, Filter: %s", spell.target, spell.name, Sa_filter[spell.target])
 			local name, icon, count, debuffType, duration, expirationTime = UnitAuraBySpellNameNew(spell)
 --			local name, rank, icon, count, debuffType, duration, expirationTime = UnitAura(spell.target, spell.name, nil, Sa_filter[spell.target])
+                        if SA_Spells[spellId].altname then
+			  name = SA_Spells[spellId].altname
+			end
+			local BuffBar = SA_Data.BARS[SA_Spells[spellId].name]
 			
 
 
@@ -733,7 +739,7 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, type, hideCaster, s
 			end
 			-- Master of Subtlety Work around-- 
 			if type == "SPELL_AURA_REMOVED" and (spellId == SID_STEALTH or spellId == SID_STEALTH_NEW) and SAMod.ShowTimer[SID_MASTER_SUBTLETY] then
-				C_Timer.After(math.max(0.1, SA_Data.lag), MasterOfSubtley);
+				C_Timer.After(math.max(0.1, SA_Data.lag), MasterOfSubtlety);
 			end
 			-- Subterfuge Work around-- 
 			if type == "SPELL_AURA_REMOVED" and spellId == SID_STEALTH_NEW and SAMod.ShowTimer[SID_SUBTERFUGE] then
