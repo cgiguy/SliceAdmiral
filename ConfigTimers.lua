@@ -20,9 +20,9 @@ local function pandemic(val)
 			opt = options.args.Talents.args
 		end	
 		if val then
-			opt[SA_Spells[k].name].args.valuses.disabled = SA_Spells[k].pandemic
+			opt[SA_Spells[k].name].args.values.disabled = SA_Spells[k].pandemic
 		else
-			opt[SA_Spells[k].name].args.valuses.disabled = false
+			opt[SA_Spells[k].name].args.values.disabled = false
 		end
 		end
 	end
@@ -108,7 +108,7 @@ options.args = {
 					get = function(info) return SAMod.Sound[k].enabled; end,
 					set = function(info,val) SAMod.Sound[k].enabled = val; if (SA_Spells[k].altId) then SAMod.ShowTimer[SA_Spells[k].altId] = val; end; end,
 				},
-				valuses = {name=L["bar/prep"], type="range", order=3,
+				values = {name=L["bar/prep"], type="range", order=3,
 					min=1.0,max=math.min(12.0,math.max(3,SA_Spells[k].duration)), step=0.5,
 					get = function(info) return SAMod.ShowTimer.Timers[k]; end,
 					set = function(info,val) 

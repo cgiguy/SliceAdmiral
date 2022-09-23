@@ -1,10 +1,10 @@
-<p>SliceAdmiral can be best described as an info-center for maximizing Rogue damage. It contains a bunch of timer bars, stat displays, and audio notifications that add up to nearly everything you need to know to properly time your Rogue's DPS cycle. It has a compact and configurable UI that features...</p>
+<p>SliceAdmiral can be best described as an info-center for maximizing Rogue damage. It contains a bunch of timer bars, status displays, and audio notifications that add up to nearly everything you need to know to properly time your Rogue's DPS cycle. It has a compact and configurable UI that features...</p>
 <ul>
 <li>Timer Bars for Slice and Dice, Rupture, Recuperate, Vendetta, Deadly Poison, Envenom, Garrotte and many, many more!</li>
 <li>Timer Bar sorting based on refresh priority</li>
 <li>Audio Reminders for refreshing and expiring abilities</li>
-<li>Stat displays for Attack Power, Crit %, and Attack Speed</li>
-<li>DoT damage and crit indicators</li>
+<li>Status displays for Attack Power, Crit %, and Attack Speed</li>
+<li>DoT damage and Crit indicators</li>
 <li>Combo Point Bar</li>
 <li>Energy Bar</li>
 </ul>
