@@ -14,6 +14,7 @@ SID_ANTICIPATION = 114015;	-- Anticipation
 SID_BURST_SPEED = 137573;	-- Burst of Speed
 SID_INTERNAL_BLEEDING = 154953;	-- Internal Bleeding
 SID_VENDETTA = 79140;		-- Vendetta
+SID_DEATHMARK = 394331;         -- Deathmark
 SID_ENVENOM = 32645;		-- Envenom
 SID_ADRENALINE_RUSH = 13750;	-- Adrenaline Rush
 SID_ADRENALINE_RUSH_T18 = 186286; -- Adrenaline Rush (w/ T18)
@@ -76,7 +77,8 @@ SA_Spells = { [SID_SND] = { target = "player", sort = true,duration=36, pandemic
 	[SID_GARROTE] = { target = "target", sort = true,duration=18, pandemic=true,spec=1, }, --Garrote
 	--[SID_BURST_SPEED] = { target = "player",sort = true,duration=4,pandemic=false,spec=4, }, --BurstOfSpeed
 	[SID_INTERNAL_BLEEDING] = { target = "target", sort = true,duration=12,pandemic=false,spec=1, }, --InternalBleeding
-	[SID_VENDETTA] = { target = "target", sort=false,duration=20,pandemic=false,spec=1, }, --Vendetta
+--	[SID_VENDETTA] = { target = "target", sort=false,duration=20,pandemic=false,spec=1, }, --Vendetta
+	[SID_DEATHMARK] = { target = "target", sort=false,duration=16,pandemic=false,spec=1, }, --Deathmark
 	[SID_ENVENOM] = { target = "player",sort = true,duration=6,pandemic=false,spec=1,}, --Envenom
 	[SID_ADRENALINE_RUSH] = { target = "player",sort=true,duration=20,pandemic=false,spec=2,altId=SID_ADRENALINE_RUSH_T18,}, --Adrenaline Rush	\w T18 p2
 	[SID_ADRENALINE_RUSH_T18] = { target = "player",sort=true,duration=20,pandemic=false,spec=2,hidden=true,}, --T18 2 set
