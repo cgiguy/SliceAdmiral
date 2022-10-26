@@ -816,7 +816,7 @@ function addon:UpdateTarget()
 			local spellBar = SA_Data.BARS[spell.name]
 --			local name, _, _, count, _, duration, expirationTime, _ = UnitAura(spell.target, spell.name, nil, Sa_filter[spell.target]);
 			local name, _, count, _, duration, expirationTime = UnitAuraBySpellNameNew(spell)
-			if not (name) then				
+			if not (name) then
 				spellBar["tickStart"] = 0;
 				spellBar["count"] = 0;
 				spellBar["obj"]:Hide();
@@ -1192,25 +1192,25 @@ function addon:SA_OnLoad()
 	addon:RegisterEvent("UNIT_ATTACK_POWER")
 	addon:RegisterEvent("UNIT_ATTACK_SPEED")
 	SA_Data.BarFont = CreateFont("VTimerFont");
-	SA_Data.BarFont:SetFont("Fonts\\FRIZQT__.TTF", 12);
+	SA_Data.BarFont:SetFont("Fonts\\FRIZQT__.TTF", 12, "");
 	SA_Data.BarFont:SetShadowColor(0,0,0, 0.7);
 	SA_Data.BarFont:SetTextColor(1,1,1,0.9);
 	SA_Data.BarFont:SetShadowOffset(0.8, -0.8);
 	
 	SA_Data.BarFont2 = CreateFont("VTimerFont2");
-	SA_Data.BarFont2:SetFont("Fonts\\FRIZQT__.TTF", 8)
+	SA_Data.BarFont2:SetFont("Fonts\\FRIZQT__.TTF", 8, "");
 	SA_Data.BarFont2:SetShadowColor(0,0,0, 0.7);
 	SA_Data.BarFont2:SetTextColor(1,1,1,0.9);
 	SA_Data.BarFont2:SetShadowOffset(0.8, -0.8);
 
 	SA_Data.BarFont3 = CreateFont("VTimerFont1O");
-	SA_Data.BarFont3:SetFont("Fonts\\FRIZQT__.TTF", 12);
+	SA_Data.BarFont3:SetFont("Fonts\\FRIZQT__.TTF", 12, "");
 	SA_Data.BarFont3:SetShadowColor(0,0,0, 1);
 	SA_Data.BarFont3:SetTextColor(1,1,1,0.8);
 	SA_Data.BarFont3:SetShadowOffset(0.8, -0.8);
 
 	SA_Data.BarFont4 = CreateFont("VTimerFont4");
-	SA_Data.BarFont4:SetFont("Fonts\\FRIZQT__.TTF", 8)
+	SA_Data.BarFont4:SetFont("Fonts\\FRIZQT__.TTF", 8, "");
 	SA_Data.BarFont4:SetShadowColor(0,0,0, 0.7); 
 	SA_Data.BarFont4:SetShadowOffset(0.8, -0.8);
 	
