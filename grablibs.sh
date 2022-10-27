@@ -15,7 +15,9 @@ svn checkout https://repos.curseforge.com/wow/ace3/trunk/AceLocale-3.0 lib/AceLo
 svn checkout https://repos.curseforge.com/wow/callbackhandler/trunk/CallbackHandler-1.0 lib/CallbackHandler-1.0
 git clone https://repos.curseforge.com/wow/libsmoothstatusbar-1-0 lib/LibSmoothStatusBar-1.0
 svn checkout https://repos.curseforge.com/wow/libsharedmedia-3-0/trunk/LibSharedMedia-3.0 lib/LibSharedMedia-3.0
-svn checkout https://repos.curseforge.com/wow/ace3/trunk/LibStub lib/LibStub
+svn checkout https://repos.curseforge.com/wow/libstub/trunk lib/LibStub
 
 find ./lib -type d -name .svn -exec rm -rf {} \;
 find ./lib -type d -name .git -exec rm -rf {} \;
+find ./lib -type d -name tests -exec rm -rf {} \;
+exit 0
