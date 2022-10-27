@@ -470,10 +470,10 @@ function addon:UNIT_MAXPOWER(...)
 	cpBar.combo:SetMinMaxValues(0,cpMax)
 --	DebugPrint("UNIT_MAXPOWER settexcoord = %f", maxCP * 0.1265625)
 	hashtexturewidth = .03872
-	tleft = 0.16068 + hashtexturewidth	-- Start First hash mark over from start of bar texture
+	tleft = 0.1595 + hashtexturewidth	-- Start First hash mark over from start of bar texture
 	ttop = 0.3355
 	tbot = .3754
-	factor = tleft + cpMax * hashtexturewidth + .002 -- Add a little to the end to get a smidge of the next hash mark
+	factor = tleft + cpMax * hashtexturewidth + .003 -- Add a little to the end to get a smidge of the next hash mark
 	cpBar.overlay:SetTexCoord(tleft, factor, ttop, tbot);
 --	cpBar.overlay:SetTexCoord(0,1,0,1)
 end
@@ -897,10 +897,10 @@ function addon:CreateComboFrame()
 	overlay:SetTexture("Interface\\MainMenuBar\\MainMenuBar");
 	overlay:SetAllPoints(f);
 	hashtexturewidth = .03872
-	tleft = 0.16068 + hashtexturewidth	-- Start First hash mark over from start of bar texture
+	tleft = 0.1595 + hashtexturewidth	-- Start First hash mark over from start of bar texture
 	ttop = 0.3355
 	tbot = .3754
-	factor = tleft + cpMax * hashtexturewidth + .002 -- Add a little to the end to get a smidge of the next hash mark
+	factor = tleft + cpMax * hashtexturewidth + .003 -- Add a little to the end to get a smidge of the next hash mark
 	overlay:SetTexCoord(tleft, factor, ttop, tbot);
 --	overlay:SetTexCoord(0,1,0,1);
 
