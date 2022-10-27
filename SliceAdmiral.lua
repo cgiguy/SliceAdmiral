@@ -55,7 +55,6 @@ SADefault = {
 				[SID_RUPTURE] = {r=130/255, g=15/255, b=0,},
 				[SID_FEINT]  = {r=155/255, g=155/255, b=255/255,},
 				[SID_GARROTE] = {r=130/255, g=15/255, b=0,},
-				[SID_ANTICIPATION] = {r=121/255,g=30/255,b=28/255,},
 				[SID_BURST_SPEED] = {r=135/255, g=135/255, b=255/255,},
 				[SID_INTERNAL_BLEEDING] = {r=205/255, g=92/255, b=92/255,},
 				[SID_VENDETTA] = {r=130/255, g=130/255, b=0,},
@@ -72,7 +71,6 @@ SADefault = {
 			Timers = {
 				[SID_SND] = 6.0, --Slice and Dice
 				[SID_RUPTURE] = 6.0, --Rupture
-				[SID_ANTICIPATION] = 6.0, -- Anticipation
 				[SID_ENVENOM] = 6.0, -- Envenom
 				[SID_FEINT] = 5.0, -- Feint
 				[SID_BURST_SPEED] = 4.0, -- Burst of Speed
@@ -101,7 +99,6 @@ SADefault = {
 			-- Timers that are initially shown (off by default)
 			[SID_SND] = true, --Slice and Dice
 			[SID_RUPTURE] = true, --Rupture
-			[SID_ANTICIPATION] = false, -- Anticipation
 			[SID_ENVENOM] = true, -- Envenom
 			[SID_FEINT] = true, -- Feint
 			[SID_FIND_WEAKNESS] = true, --FindWeaknes
@@ -115,7 +112,6 @@ SADefault = {
 		Combo = {
 			PointShow = true,
 			Texture = "Grid",
-			AnticipationShow = true,
 			ShowStatBar = true,
 			HilightBuffed = false,
 			CPColor = {r=1.0,g=0.86,b=0.1,a=1.0},
@@ -124,7 +120,6 @@ SADefault = {
 		Energy  = {
 			ShowEnergy = false,
 			ShowComboText = true,
-			AnticpationText = true,
 			Energy1 = 25,
 			Energy2 = 40,
 			BarTexture = "Runes",
@@ -142,7 +137,6 @@ SADefault = {
 			[SID_RUPTURE] = {enabled=true, tick = "Shaker", alert = "BassDrum", tickStart=3.0, }, --Rupture
 			[SID_VENDETTA] = {enabled=true, tick = "Ping", alert = "None", tickStart=3.0, }, --Vendetta
 			[SID_HEMORRHAGE] = {enabled=true, tick = "Ping", alert = "None", tickStart=3.0, }, --Hemorrhage
-			[SID_ANTICIPATION] = {enabled=false, tick = "None", alert="None", tickStart=3.0, }, -- Anticipation
 			[SID_GCD] = {enabled=false, tick= "None", alert="None", tickStart=0.5, },
 			MasterVolume = false,
 			OutOfCombat = false,
@@ -272,7 +266,6 @@ function addon:RetextureBars(texture, object)
 	end
 	if object == "combo" then
 		SA_Data.BARS["CP"]["obj"].combo:SetStatusBarTexture(texture);
-		SA_Data.BARS["CP"]["obj"].anti:SetStatusBarTexture(texture);
 	end
 	if object == "stats" then		
 		SA_Data.BARS["CP"]["obj"].bg:SetTexture(texture);
@@ -467,22 +460,17 @@ function addon:UNIT_POWER_FREQUENT(Time,arg1,arg2)
 end
 
 function addon:UNIT_MAXPOWER(...)
+--  DebugPrint("UNIT_MAXPOWER entered");
 	local cpBar = SA_Data.BARS["CP"]["obj"]
 	if SAMod.Energy.ShowEnergy then
 		VTimerEnergy:SetMinMaxValues(0,UnitPowerMax("player",Enum.PowerType.Energy));
 		VTimerEnergy:SetValue(UnitPower("player",Enum.PowerType.Energy))		
 	end
 	maxCP = UnitPowerMax("player",Enum.PowerType.ComboPoints)
-	if maxCP == 8 then
-		cpBar.combo:SetMinMaxValues(0,5)		
-	else
-		cpBar.combo:SetMinMaxValues(0,maxCP)
-	end
-	if maxCP == 6 then
-		cpBar.overlay:SetTexCoord(0.015625,0.76,0.109375,0.13671875);
-	else
-		cpBar.overlay:SetTexCoord(0.015625,0.6328125,0.109375,0.13671875);
-	end
+	cpBar.combo:SetMinMaxValues(0,maxCP)
+--	DebugPrint("UNIT_MAXPOWER settexcoord = %f", maxCP * 0.1265625)
+	cpBar.overlay:SetTexCoord(0.015625, maxCP * 0.1265625,0.109375,0.13671875);
+--	cpBar.overlay:SetTexCoord(0,1,0,1)
 end
 
 --- For ...,  the length operator # does not work with 'holes'
@@ -861,23 +849,18 @@ end
 function addon:SetComboPoints()
 	local points = UnitPower("player", Enum.PowerType.ComboPoints); 
 	local cpBar = SA_Data.BARS["CP"]["obj"]
-	local count = points%5
-	local text = "0(0)"
+	local text = "0"
+
+	maxCP = UnitPowerMax("player",Enum.PowerType.ComboPoints)
 	
-	if maxCP == 8 then
-		text = string.format("%d(%d)",min(5,points),points == count and 0 or count)
-	else
-		text = points
-	end	
-	if (SAMod.Energy.ShowComboText) or (SAMod.Energy.AnticpationText) then
-		SA_Combo:SetFormattedText(text == 0 and "" or text == "0(0)" and "" or text );
+--	DebugPrint("maxCP = %d, points = %d", maxCP, points);
+	text = string.format("%d",points)
+	if (SAMod.Energy.ShowComboText) then
+		SA_Combo:SetFormattedText(points == 0 and "" or text );
 	end
 
-	if SAMod.Combo.AnticipationShow then
-		cpBar.anti:SetValue(points == count and 0 or maxCP==8 and count or 0);
-	end
 	if SAMod.Combo.PointShow then
-		cpBar.combo:SetValue(maxCP == 8 and min(5,points) or points);	
+		cpBar.combo:SetValue(points);	
 	end
 end
 
@@ -887,15 +870,15 @@ function addon:CreateComboFrame()
 	local bg = f:CreateTexture(nil, "BACKGROUND");
 	
 	local combo = CreateFrame("StatusBar", nil, f, BackdropTemplateMixin and "BackdropTemplate");
-	local anti = CreateFrame("StatusBar", nil, f, BackdropTemplateMixin and "BackdropTemplate");
-	local overlay = anti:CreateTexture(nil, "OVERLAY");
+	local overlay = combo:CreateTexture(nil, "OVERLAY");
 	local width = VTimerEnergy:GetWidth();
 	local cpC = SAMod.Combo.CPColor
 	local cpA = SAMod.Combo.AnColor
 	local cpMax = UnitPowerMax("player",Enum.PowerType.ComboPoints)
 	
+	comboheight = 10;
 	f:ClearAllPoints();
-	f:SetSize(width, 10);
+	f:SetSize(width, comboheight);
 	f:SetScale(scaleUI);
 	f:SetAllPoints(VTimerEnergy);
 
@@ -905,13 +888,12 @@ function addon:CreateComboFrame()
 	bg:SetAlpha(0.7);
 	
 	overlay:SetTexture("Interface\\Archeology\\ArcheologyToast");
+--	overlay:SetTexture("Interface\\MainMenuBar\\MainMenuBar");
 	overlay:SetAllPoints(f);
-	if cpMax == 6 then
-		overlay:SetTexCoord(0.015625,0.76,0.109375,0.13671875);
-	else
-		overlay:SetTexCoord(0.015625,0.6328125,0.109375,0.13671875);
-	end
-	combo:SetSize(width, 10);
+	overlay:SetTexCoord(0.015625,cpMax * 0.1265625,0.109375,0.13671875);
+--	overlay:SetTexCoord(0,1,0,1);
+
+	combo:SetSize(width, comboheight);
 	combo:SetScale(scaleUI);
 	combo:SetFrameLevel(flvl+1)
 	combo:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 0, 0);
@@ -921,22 +903,11 @@ function addon:CreateComboFrame()
 	combo:SetValue(0);
 	combo:Show();
 	
-	anti:SetSize(width, 5);
-	anti:SetScale(scaleUI);
-	anti:SetFrameLevel(flvl+2);
-	anti:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 0, 0);
-	anti:SetStatusBarTexture(addon:SA_BarTexture("combo"));
-	anti:SetStatusBarColor(cpA.r, cpA.g, cpA.b);
-	anti:SetMinMaxValues(0, 3);
-	anti:SetValue(0);
-	anti:Show()	
-	
 	f:SetScript("OnMouseDown", function(self) if (not SAMod.Main.IsLocked) then SA:StartMoving() end end)
 	f:SetScript("OnMouseUp", function(self) SA:StopMovingOrSizing(); SAMod.Main.point, _l, _l, SAMod.Main.xOfs, SAMod.Main.yOfs = SA:GetPoint(); end )
 	f.bg = bg;
 	f.overlay = overlay;
 	f.combo = combo;
-	f.anti = anti;
 	return f;
 end
 
@@ -946,7 +917,6 @@ function addon:SA_UpdateCPWidths(width)
 	local f = SA_Data.BARS["CP"]["obj"];
 	f:SetWidth(width);
 	f.combo:SetWidth(width);
-	f.anti:SetWidth(width);
 end
 
 function addon:SA_UpdateStatWidths(width)
@@ -1374,7 +1344,6 @@ function addon:SA_Config_VarsChanged()
 
 	VTimerEnergy:SetStatusBarColor(eCo.r,eCo.g,eCo.b)
 	SA_Data.BARS["CP"]["obj"].combo:SetStatusBarColor(cpC.r,cpC.g,cpC.b); 
-	SA_Data.BARS["CP"]["obj"].anti:SetStatusBarColor(cpA.r,cpA.g,cpA.b);
 
 	if SAMod.Energy.ShowEnergy then
 		VTimerEnergy:Show();
@@ -1391,7 +1360,7 @@ function addon:SA_Config_VarsChanged()
 	SA_Spark1:SetPoint("TOPLEFT", VTimerEnergy, "TOPLEFT", p1, 0);
 	SA_Spark2:SetPoint("TOPLEFT", VTimerEnergy, "TOPLEFT", p2, 0);
 
-	if not SACombo.PointShow and not SACombo.AnticipationShow  then   
+	if not SACombo.PointShow then
 		SA_Data.BARS["CP"]["obj"]:Hide();
 	else
 		SA_Data.BARS["CP"]["obj"]:Show();

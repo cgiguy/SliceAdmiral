@@ -10,7 +10,7 @@ function addon:OnInitialize()
 				showcp = {name=L["combo/Show"],type="toggle",order=1,
 					get = function(info) return SAMod.Combo.PointShow; end, 
 					set = function(info,val) SAMod.Combo.PointShow=val;
-						if not (SAMod.Combo.PointShow) and not SAMod.Combo.AnticipationShow then
+						if not (SAMod.Combo.PointShow) then
 							SA_Data.BARS["CP"]["obj"]:Hide();
 						else
 							SA_Data.BARS["CP"]["obj"]:Show();
@@ -21,21 +21,6 @@ function addon:OnInitialize()
 					get = function(info) return cpC.r, cpC.g,cpC.b,cpC.a; end,
 					set = function(info, r,g,b,a) SA_Data.BARS["CP"]["obj"].combo:SetStatusBarColor(r,g,b);							
 							cpC.r = r; cpC.g = g; cpC.b = b; end,
-				},
-				tAnticipation = {name=L["tShow/anticipation"], type="toggle", order=3,
-					get = function(info) return SAMod.Combo.AnticipationShow; end,
-					set = function(info,val) SAMod.Combo.AnticipationShow=val;
-						if not (SAMod.Combo.PointShow) and not SAMod.Combo.AnticipationShow then
-							SA_Data.BARS["CP"]["obj"]:Hide();
-						else
-							SA_Data.BARS["CP"]["obj"]:Show();
-						end
-					end,
-				},
-				apColor = { name=L["ComboA/Color"], type="color", order=4,width="double",
-					get = function(info) return cpA.r, cpA.g,cpA.b,cpA.a; end,
-					set = function(info, r,g,b,a) SA_Data.BARS["CP"]["obj"].anti:SetStatusBarColor(r,g,b);
-						cpA.r = r; cpA.g = g; cpA.b = b; end,
 				},
 				barTex = {name=L["combo/texture"], type="select",order=5,dialogControl = 'LSM30_Statusbar',
 					values = LSM:HashTable("statusbar"),

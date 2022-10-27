@@ -26,17 +26,7 @@ function addon:OnInitialize()
 			showcp = {name=L["energy/ShowCombo"],type="toggle",order=4,
 					get = function(info) return SAMod.Energy.ShowComboText; end, 
 					set = function(info,val) SAMod.Energy.ShowComboText=val;
-						if not (SAMod.Energy.ShowComboText) and not (SAMod.Energy.AnticpationText) then
-							SA_Combo:Hide();							
-						else
-							SA_Combo:Show();							
-						end
-					end,
-				},
-			showanti = {name=L["energy/ShowAnti"],type="toggle",order=7,width="full",
-					get = function(info) return SAMod.Energy.AnticpationText; end, 
-					set = function(info,val) SAMod.Energy.AnticpationText=val;
-						if not (SAMod.Energy.ShowComboText) and not (SAMod.Energy.AnticpationText) then
+						if not (SAMod.Energy.ShowComboText) then
 							SA_Combo:Hide();							
 						else
 							SA_Combo:Show();							
