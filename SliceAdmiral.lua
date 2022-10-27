@@ -466,10 +466,15 @@ function addon:UNIT_MAXPOWER(...)
 		VTimerEnergy:SetMinMaxValues(0,UnitPowerMax("player",Enum.PowerType.Energy));
 		VTimerEnergy:SetValue(UnitPower("player",Enum.PowerType.Energy))		
 	end
-	maxCP = UnitPowerMax("player",Enum.PowerType.ComboPoints)
-	cpBar.combo:SetMinMaxValues(0,maxCP)
+	cpMax = UnitPowerMax("player",Enum.PowerType.ComboPoints)
+	cpBar.combo:SetMinMaxValues(0,cpMax)
 --	DebugPrint("UNIT_MAXPOWER settexcoord = %f", maxCP * 0.1265625)
-	cpBar.overlay:SetTexCoord(0.015625, maxCP * 0.1265625,0.109375,0.13671875);
+	hashtexturewidth = .03872
+	tleft = 0.16068 + hashtexturewidth	-- Start First hash mark over from start of bar texture
+	ttop = 0.3355
+	tbot = .3754
+	factor = tleft + cpMax * hashtexturewidth + .002 -- Add a little to the end to get a smidge of the next hash mark
+	cpBar.overlay:SetTexCoord(tleft, factor, ttop, tbot);
 --	cpBar.overlay:SetTexCoord(0,1,0,1)
 end
 
@@ -887,10 +892,16 @@ function addon:CreateComboFrame()
 	bg:SetVertexColor(0.3, 0.3, 0.3);
 	bg:SetAlpha(0.7);
 	
-	overlay:SetTexture("Interface\\Archeology\\ArcheologyToast");
---	overlay:SetTexture("Interface\\MainMenuBar\\MainMenuBar");
+-- This is a little odd because it has to be concerned about combo points > 5
+-- So, we use a long hash mark bar and expand the texture width to suite our combo points
+	overlay:SetTexture("Interface\\MainMenuBar\\MainMenuBar");
 	overlay:SetAllPoints(f);
-	overlay:SetTexCoord(0.015625,cpMax * 0.1265625,0.109375,0.13671875);
+	hashtexturewidth = .03872
+	tleft = 0.16068 + hashtexturewidth	-- Start First hash mark over from start of bar texture
+	ttop = 0.3355
+	tbot = .3754
+	factor = tleft + cpMax * hashtexturewidth + .002 -- Add a little to the end to get a smidge of the next hash mark
+	overlay:SetTexCoord(tleft, factor, ttop, tbot);
 --	overlay:SetTexCoord(0,1,0,1);
 
 	combo:SetSize(width, comboheight);
