@@ -115,7 +115,6 @@ SADefault = {
       ShowStatBar = true,
       HilightBuffed = false,
       CPColor = {r=1.0,g=0.86,b=0.1,a=1.0},
-      AnColor = {r=1.0,g=0.15,b=0.2,a=1.0},
     },
     Energy  = {
       ShowEnergy = false,
@@ -459,22 +458,18 @@ function addon:UNIT_POWER_FREQUENT(Time,arg1,arg2)
 end
 
 function addon:UNIT_MAXPOWER(...)
-  --  DebugPrint("UNIT_MAXPOWER entered");
   local cpBar = SA_Data.BARS["CP"]["obj"]
-  if SAMod.Energy.ShowEnergy then
-    VTimerEnergy:SetMinMaxValues(0,UnitPowerMax("player",Enum.PowerType.Energy));
-    VTimerEnergy:SetValue(UnitPower("player",Enum.PowerType.Energy))		
-  end
-  cpMax = UnitPowerMax("player",Enum.PowerType.ComboPoints)
-  cpBar.combo:SetMinMaxValues(0,cpMax)
-  --	DebugPrint("UNIT_MAXPOWER settexcoord = %f", maxCP * 0.1265625)
+  VTimerEnergy:SetMinMaxValues(0,UnitPowerMax("player",Enum.PowerType.Energy));
+  VTimerEnergy:SetValue(UnitPower("player",Enum.PowerType.Energy));
+  cpMax = UnitPowerMax("player",Enum.PowerType.ComboPoints);
+  cpBar.combo:SetMinMaxValues(0,cpMax);
   hashtexturewidth = .03872
   tleft = 0.1595 + hashtexturewidth	-- Start First hash mark over from start of bar texture
   ttop = 0.3355
   tbot = .3754
   factor = tleft + cpMax * hashtexturewidth + .003 -- Add a little to the end to get a smidge of the next hash mark
   cpBar.overlay:SetTexCoord(tleft, factor, ttop, tbot);
-  --	cpBar.overlay:SetTexCoord(0,1,0,1)
+--    cpBar.overlay:SetTexCoord(0,1,0,1)
 end
 
 --- For ...,  the length operator # does not work with 'holes'
@@ -854,17 +849,28 @@ function addon:SetComboPoints()
   local points = UnitPower("player", Enum.PowerType.ComboPoints); 
   local cpBar = SA_Data.BARS["CP"]["obj"]
   local text = "0"
+  local maxCP = UnitPowerMax("player",Enum.PowerType.ComboPoints)
+  local chargedPoints = GetUnitChargedPowerPoints("player")
 
-  maxCP = UnitPowerMax("player",Enum.PowerType.ComboPoints)
-  
-  --	DebugPrint("maxCP = %d, points = %d", maxCP, points);
+--  DebugPrint("maxCP = %d, points = %d", maxCP, points);
   text = string.format("%d",points)
   if (SAMod.Energy.ShowComboText) then
     SA_Combo:SetFormattedText(points == 0 and "" or text );
   end
 
+  DebugPrint("Setting combo points to %d", points)
   if SAMod.Combo.PointShow then
     cpBar.combo:SetValue(points);	
+  end
+
+-- Okay, now the heinous animacharged combo points. Blizzard is ridiculous.
+  if chargedPoints then
+    for i = 1, maxCP do
+      isCharged = tContains(chargedPoints, i) 
+      if isCharged then
+	DebugPrint("Combo %d ischarged", i)
+      end
+    end
   end
 end
 
@@ -873,13 +879,14 @@ function addon:CreateComboFrame()
   local flvl = f:GetFrameLevel()
   local bg = f:CreateTexture("SA-ComboFrameBackground", "BACKGROUND");
   
-  local combo = CreateFrame("StatusBar", "SA-StatusFrame", f, BackdropTemplateMixin and "BackdropTemplate");
-  local overlay = combo:CreateTexture("SA-ComboFrameOverlay", "OVERLAY");
+  local combo = CreateFrame("StatusBar", "SA-ComboFrameBar", f, BackdropTemplateMixin and "BackdropTemplate");
+  local overlay = combo:CreateTexture("SA-ComboFrameBarOverlay", "OVERLAY");
   local width = VTimerEnergy:GetWidth();
   local cpC = SAMod.Combo.CPColor
-  local cpA = SAMod.Combo.AnColor
   local cpMax = UnitPowerMax("player",Enum.PowerType.ComboPoints)
-  
+  local mostCP = 10  
+  local anima = {}
+
   comboheight = 10;
   f:ClearAllPoints();
   f:SetSize(width, comboheight);
@@ -913,11 +920,36 @@ function addon:CreateComboFrame()
   combo:SetValue(0);
   combo:Show();
   
+
+  for i = 1, mostCP do
+    anima[i] = CreateFrame("Frame", string.format("SA-AnimaFrame-%d",i), f, BackdropTemplateMixin and "BackdropTemplate");
+    bloop = anima[i]
+    foo = bloop:CreateTexture(string.format("SA-AnimaFrameTexture-%d",i), "OVERLAY");
+    foo:SetAllPoints(bloop);
+    foo:SetVertexColor(1.0, 1.0, 1.0);
+    foo:SetAlpha(1.0);
+--    foo:SetAtlas("ClassOverlay-ComboPoint-Off-Kyrian")
+--    foo:SetAtlas("AnimaChannel-Icon-Device-Kyrian-Border")
+    foo:SetAtlas("AnimaChannel-Bar-Kyrian-Gem")
+    wide = SAMod.Main.Width / cpMax
+    bloop:SetSize(wide, comboheight)
+    bloop:SetScale(scaleUI);
+    bloop:SetFrameLevel(flvl+2)
+    bloop:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", (i-1) * wide, 0);
+--    if i <= cpMax then
+--      DebugPrint("Showing anima[%d]",i)
+      bloop:Show()
+--    end
+  end
+  anima[2]:Hide()
+  anima[4]:Hide()
+  
   f:SetScript("OnMouseDown", function(self) if (not SAMod.Main.IsLocked) then SA:StartMoving() end end)
   f:SetScript("OnMouseUp", function(self) SA:StopMovingOrSizing(); SAMod.Main.point, _l, _l, SAMod.Main.xOfs, SAMod.Main.yOfs = SA:GetPoint(); end )
   f.bg = bg;
   f.overlay = overlay;
   f.combo = combo;
+  f.anima = anima;
   return f;
 end
 
@@ -1349,7 +1381,6 @@ function addon:SA_Config_VarsChanged()
   addon:SA_SetWidth(SAMod.Main.Width);
   local eCo = SAMod.Energy.Color
   local cpC = SAMod.Combo.CPColor
-  local cpA = SAMod.Combo.AnColor
   local SACombo = SAMod.Combo
 
   VTimerEnergy:SetStatusBarColor(eCo.r,eCo.g,eCo.b)
@@ -1373,6 +1404,7 @@ function addon:SA_Config_VarsChanged()
   if not SACombo.PointShow then
     SA_Data.BARS["CP"]["obj"]:Hide();
   else
+    addon:SetComboPoints();
     SA_Data.BARS["CP"]["obj"]:Show();
   end
   if SAMod.Energy.ShowComboText then
