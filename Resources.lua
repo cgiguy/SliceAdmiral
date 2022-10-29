@@ -69,6 +69,7 @@ SID_DREADBLADES = 343142;        -- Dreadblades
 SID_SEPSIS = 328305;             -- Sepsis (Covenant)
 SID_SEPSIS_STEALTH = 347037      -- Sepsis (Stealth component)
 SID_SHIV = 319504;               -- Shiv 
+
 --0 Shared 1 Assassination, 2 Outlaw, 3 Subtlety 4 Talents
 SA_Spells = { [SID_SND] = { target = "player", sort = true,duration=36, pandemic=true,spec=2,}, --Slice and Dice
 	[SID_DEADLY_POISON] = { target = "target", sort = false, duration=12,pandemic=true,spec=1,}, --DeadlyPoison
