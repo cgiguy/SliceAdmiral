@@ -246,8 +246,8 @@ function addon:SA_SetWidth(w)
       VTimerEnergy:Hide();
     end
     addon:SA_UpdateCPWidths(w);
+    addon:SA_UpdateAnimaChargedWidths(w);
     addon:SA_UpdateStatWidths(w);
-    
   end
 end
 
@@ -470,6 +470,10 @@ function addon:UNIT_MAXPOWER(...)
   factor = tleft + cpMax * hashtexturewidth + .003 -- Add a little to the end to get a smidge of the next hash mark
   cpBar.overlay:SetTexCoord(tleft, factor, ttop, tbot);
 --    cpBar.overlay:SetTexCoord(0,1,0,1)
+
+  addon:SA_UpdateCPWidths(w);
+  addon:SA_UpdateAnimaChargedWidths(w);
+
 end
 
 --- For ...,  the length operator # does not work with 'holes'
@@ -850,7 +854,6 @@ function addon:SetComboPoints()
   local cpBar = SA_Data.BARS["CP"]["obj"]
   local text = "0"
   local maxCP = UnitPowerMax("player",Enum.PowerType.ComboPoints)
-  local chargedPoints = GetUnitChargedPowerPoints("player")
 
 --  DebugPrint("maxCP = %d, points = %d", maxCP, points);
   text = string.format("%d",points)
@@ -858,18 +861,19 @@ function addon:SetComboPoints()
     SA_Combo:SetFormattedText(points == 0 and "" or text );
   end
 
-  DebugPrint("Setting combo points to %d", points)
   if SAMod.Combo.PointShow then
     cpBar.combo:SetValue(points);	
   end
 
 -- Okay, now the heinous animacharged combo points. Blizzard is ridiculous.
-  if chargedPoints then
-    for i = 1, maxCP do
-      isCharged = tContains(chargedPoints, i) 
-      if isCharged then
-	DebugPrint("Combo %d ischarged", i)
-      end
+  local chargedPoints = GetUnitChargedPowerPoints("player")
+  local animaBars = SA_Data.BARS["CP"]["obj"].anima 
+  for i = 1, maxCP do
+    isCharged = chargedPoints and tContains(chargedPoints, i) 
+    if isCharged then
+      animaBars[i]:Show()
+    else
+      animaBars[i]:Hide()
     end
   end
 end
@@ -920,29 +924,32 @@ function addon:CreateComboFrame()
   combo:SetValue(0);
   combo:Show();
   
-
+  -- We create frames and textures for each possible combo point
+  -- so we can Show() and Hide() if anima charged.
+  -- I don't want to create animacharged frames on the fly... so, we just set up an initial max number (mostCP)
   for i = 1, mostCP do
     anima[i] = CreateFrame("Frame", string.format("SA-AnimaFrame-%d",i), f, BackdropTemplateMixin and "BackdropTemplate");
     bloop = anima[i]
     foo = bloop:CreateTexture(string.format("SA-AnimaFrameTexture-%d",i), "OVERLAY");
-    foo:SetAllPoints(bloop);
     foo:SetVertexColor(1.0, 1.0, 1.0);
     foo:SetAlpha(1.0);
---    foo:SetAtlas("ClassOverlay-ComboPoint-Off-Kyrian")
---    foo:SetAtlas("AnimaChannel-Icon-Device-Kyrian-Border")
     foo:SetAtlas("AnimaChannel-Bar-Kyrian-Gem")
     wide = SAMod.Main.Width / cpMax
-    bloop:SetSize(wide, comboheight)
+
+    foo:SetPoint("CENTER",bloop) -- Texture should be square and centered within anima Frame
+    foo:SetSize(10, comboheight)
+
+    bloop:SetSize(wide, comboheight) -- Set the animabar frame to the size of our combopoint slot
     bloop:SetScale(scaleUI);
-    bloop:SetFrameLevel(flvl+2)
-    bloop:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", (i-1) * wide, 0);
---    if i <= cpMax then
---      DebugPrint("Showing anima[%d]",i)
-      bloop:Show()
---    end
+    bloop:SetFrameLevel(flvl+2)	-- Put it on top so it shows up over combopoint texture
+    -- We set it so that each of the animacharged frames is anchored to the frame on the left
+    if (i == 1) then
+      bloop:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 0, 0)
+    else
+      bloop:SetPoint("BOTTOMLEFT", anima[i-1], "BOTTOMRIGHT", 0, 0);
+    end
+    bloop:Hide()		-- Start out with frames hidden
   end
-  anima[2]:Hide()
-  anima[4]:Hide()
   
   f:SetScript("OnMouseDown", function(self) if (not SAMod.Main.IsLocked) then SA:StartMoving() end end)
   f:SetScript("OnMouseUp", function(self) SA:StopMovingOrSizing(); SAMod.Main.point, _l, _l, SAMod.Main.xOfs, SAMod.Main.yOfs = SA:GetPoint(); end )
@@ -951,6 +958,20 @@ function addon:CreateComboFrame()
   f.combo = combo;
   f.anima = anima;
   return f;
+end
+
+function addon:SA_UpdateAnimaChargedWidths(width)
+  local width = width or VTimerEnergy:GetWidth()
+  local cpMax = UnitPowerMax("player",Enum.PowerType.ComboPoints)
+  local comboheight = 10
+  local animaslots = SA_Data.BARS["CP"]["obj"].anima
+
+  wide = width / cpMax
+
+  for i = 1, #animaslots do
+    f = animaslots[i];
+    f:SetSize(wide, comboheight)
+  end
 end
 
 function addon:SA_UpdateCPWidths(width)
