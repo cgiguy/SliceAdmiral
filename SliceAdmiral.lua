@@ -459,10 +459,13 @@ end
 
 function addon:UNIT_MAXPOWER(...)
   local cpBar = SA_Data.BARS["CP"]["obj"]
+  local cpMax = UnitPowerMax("player",Enum.PowerType.ComboPoints);
+
   VTimerEnergy:SetMinMaxValues(0,UnitPowerMax("player",Enum.PowerType.Energy));
   VTimerEnergy:SetValue(UnitPower("player",Enum.PowerType.Energy));
-  cpMax = UnitPowerMax("player",Enum.PowerType.ComboPoints);
   cpBar.combo:SetMinMaxValues(0,cpMax);
+
+  -- Set up combo point frame so it has the proper number of hash bars from the texture
   hashtexturewidth = .03872
   tleft = 0.1595 + hashtexturewidth	-- Start First hash mark over from start of bar texture
   ttop = 0.3355
@@ -471,6 +474,7 @@ function addon:UNIT_MAXPOWER(...)
   cpBar.overlay:SetTexCoord(tleft, factor, ttop, tbot);
 --    cpBar.overlay:SetTexCoord(0,1,0,1)
 
+  -- Fix up the width of the bars and the placement of the AnimaCharged point textures
   addon:SA_UpdateCPWidths(w);
   addon:SA_UpdateAnimaChargedWidths(w);
 
@@ -865,15 +869,15 @@ function addon:SetComboPoints()
     cpBar.combo:SetValue(points);	
   end
 
--- Okay, now the heinous animacharged combo points. Blizzard is ridiculous.
+-- Okay, now the heinous AnimaCharged combo points. Blizzard is ridiculous.
   local chargedPoints = GetUnitChargedPowerPoints("player")
-  local animaBars = SA_Data.BARS["CP"]["obj"].anima 
+  local acframes = SA_Data.BARS["CP"]["obj"].charged
   for i = 1, maxCP do
     isCharged = chargedPoints and tContains(chargedPoints, i) 
     if isCharged then
-      animaBars[i]:Show()
+      acframes[i]:Show()
     else
-      animaBars[i]:Hide()
+      acframes[i]:Hide()
     end
   end
 end
@@ -889,7 +893,7 @@ function addon:CreateComboFrame()
   local cpC = SAMod.Combo.CPColor
   local cpMax = UnitPowerMax("player",Enum.PowerType.ComboPoints)
   local mostCP = 10  
-  local anima = {}
+  local charged = {}
 
   comboheight = 10;
   f:ClearAllPoints();
@@ -926,29 +930,29 @@ function addon:CreateComboFrame()
   
   -- We create frames and textures for each possible combo point
   -- so we can Show() and Hide() if anima charged.
-  -- I don't want to create animacharged frames on the fly... so, we just set up an initial max number (mostCP)
+  -- I don't want to create AnimaCharged frames on the fly... so, we just set up an initial max number (mostCP)
   for i = 1, mostCP do
-    anima[i] = CreateFrame("Frame", string.format("SA-AnimaFrame-%d",i), f, BackdropTemplateMixin and "BackdropTemplate");
-    bloop = anima[i]
-    foo = bloop:CreateTexture(string.format("SA-AnimaFrameTexture-%d",i), "OVERLAY");
-    foo:SetVertexColor(1.0, 1.0, 1.0);
-    foo:SetAlpha(1.0);
-    foo:SetAtlas("AnimaChannel-Bar-Kyrian-Gem")
+    charged[i] = CreateFrame("Frame", string.format("SA-AnimaFrame-%d",i), f, BackdropTemplateMixin and "BackdropTemplate");
+    acframe = charged[i]
+    actexture = acframe:CreateTexture(string.format("SA-AnimaFrameTexture-%d",i), "OVERLAY");
+    actexture:SetVertexColor(1.0, 1.0, 1.0);
+    actexture:SetAlpha(1.0);
+    actexture:SetAtlas("AnimaChannel-Bar-Kyrian-Gem") -- It's purdy
     wide = SAMod.Main.Width / cpMax
 
-    foo:SetPoint("CENTER",bloop) -- Texture should be square and centered within anima Frame
-    foo:SetSize(10, comboheight)
+    actexture:SetPoint("CENTER",acframe) -- Texture should be square and centered within AnimaCharged Frame
+    actexture:SetSize(comboheight, comboheight)
 
-    bloop:SetSize(wide, comboheight) -- Set the animabar frame to the size of our combopoint slot
-    bloop:SetScale(scaleUI);
-    bloop:SetFrameLevel(flvl+2)	-- Put it on top so it shows up over combopoint texture
-    -- We set it so that each of the animacharged frames is anchored to the frame on the left
+    acframe:SetSize(wide, comboheight) -- Set the AnimaCharged frame to the size of our combopoint slot
+    acframe:SetScale(scaleUI);
+    acframe:SetFrameLevel(flvl+2)	-- Put it on top so it shows up over combopoint texture
+    -- We set it so that each of the AnimaCharged frames is anchored to the frame on the left
     if (i == 1) then
-      bloop:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 0, 0)
+      acframe:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 0, 0)
     else
-      bloop:SetPoint("BOTTOMLEFT", anima[i-1], "BOTTOMRIGHT", 0, 0);
+      acframe:SetPoint("BOTTOMLEFT", charged[i-1], "BOTTOMRIGHT", 0, 0);
     end
-    bloop:Hide()		-- Start out with frames hidden
+    acframe:Hide()		-- Start out with frames hidden
   end
   
   f:SetScript("OnMouseDown", function(self) if (not SAMod.Main.IsLocked) then SA:StartMoving() end end)
@@ -956,21 +960,21 @@ function addon:CreateComboFrame()
   f.bg = bg;
   f.overlay = overlay;
   f.combo = combo;
-  f.anima = anima;
+  f.charged = charged;
   return f;
 end
 
+-- Recalculate the sizes of the AnimaCharged Frames to match the number of Combo Point Slots
 function addon:SA_UpdateAnimaChargedWidths(width)
   local width = width or VTimerEnergy:GetWidth()
   local cpMax = UnitPowerMax("player",Enum.PowerType.ComboPoints)
-  local comboheight = 10
-  local animaslots = SA_Data.BARS["CP"]["obj"].anima
+  local animachargedslots = SA_Data.BARS["CP"]["obj"].charged
 
   wide = width / cpMax
 
-  for i = 1, #animaslots do
-    f = animaslots[i];
-    f:SetSize(wide, comboheight)
+  for i = 1, #animachargedslots do
+    f = animachargedslots[i];
+    f:SetWidth(wide)
   end
 end
 
