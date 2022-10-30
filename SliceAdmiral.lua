@@ -787,6 +787,7 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, type, hideCaster, s
   if type == "SPELL_AURA_REFRESH" then C_Timer.After(0.2, addon.UpdateTarget) end
 end
 
+--- Handle pandemic timers where we start updating bar when it's 30% of it's duration
 function addon:UpdateMaxValue(spellId,duration)
   local SpellBar = SA_Data.BARS[SA_Spells[spellId].name]
   local spelld = SA_Spells[spellId].duration
@@ -932,9 +933,9 @@ function addon:CreateComboFrame()
   -- so we can Show() and Hide() if anima charged.
   -- I don't want to create AnimaCharged frames on the fly... so, we just set up an initial max number (mostCP)
   for i = 1, mostCP do
-    charged[i] = CreateFrame("Frame", string.format("SA-AnimaFrame-%d",i), f, BackdropTemplateMixin and "BackdropTemplate");
+    charged[i] = CreateFrame("Frame", "SA-AnimaFrame-"..i, f, BackdropTemplateMixin and "BackdropTemplate");
     acframe = charged[i]
-    actexture = acframe:CreateTexture(string.format("SA-AnimaFrameTexture-%d",i), "OVERLAY");
+    actexture = acframe:CreateTexture("SA-AnimaFrameTexture-"..i, "OVERLAY");
     actexture:SetVertexColor(1.0, 1.0, 1.0);
     actexture:SetAlpha(1.0);
     actexture:SetAtlas("AnimaChannel-Bar-Kyrian-Gem") -- It's purdy
@@ -1146,7 +1147,7 @@ function addon:SA_flashBuffedStats()
 end
 
 function addon:SA_NewFrame(spellid)
-  local f = CreateFrame("StatusBar", string.format("SA-TimerBar-%d", spellid), SA, BackdropTemplateMixin and "BackdropTemplate");
+  local f = CreateFrame("StatusBar", "SA-TimerBar-"..spellid, SA, BackdropTemplateMixin and "BackdropTemplate");
 
   f:SetSize(widthUI, 12);
   f:SetScale(scaleUI); 
@@ -1282,7 +1283,7 @@ function addon:SA_OnLoad()
   S:SmoothBar(VTimerEnergy);
   
   SA_Data.BARS["CP"]["obj"] = addon:CreateComboFrame();
-  SA_Data.BARS["tmp"]["obj"] = addon:SA_NewFrame()
+  SA_Data.BARS["tmp"]["obj"] = addon:SA_NewFrame(0)
   SA_Data.BARS["Stat"]["obj"] = addon:SA_CreateStatBar();
   
   SA_Data.BARORDER = {}; -- Initial order puts the longest towards the inside.
