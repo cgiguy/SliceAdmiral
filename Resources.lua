@@ -126,7 +126,7 @@ SA_Spells = { [SID_SND] = { target = "player", sort = true,duration=36, pandemic
 	[SID_BLADE_RUSH] = {target="player", sort=true, duration=5, pandemic=false, spec=2,}, --Blade Rush
 --	[199740] = {target="pet",sort=true,duration=300, pandemic=false, spec=2,}, --Bribe
 	[SID_TOXIC_BLADE] = { target = "target", sort = true,duration=9, pandemic=false,spec=1, }, --Toxic Blade
-	[SID_DREADBLADES] = {target="player", aurafilter="NONE", sort=true, duration=10, pandemic=false, spec=2,}, --Dreadblades
+	[SID_DREADBLADES] = {target="player", aurafilter="PLAYER HARMFUL", sort=true, duration=10, pandemic=false, spec=2,}, --Dreadblades
 	[SID_SEPSIS] = {target="target", sort=true, duration=10, pandemic=false, spec=4,}, --Sepsis
 	[SID_SEPSIS_STEALTH] = {target="player", altname="Sepsis (Stealth)", sort=true, duration=5, pandemic=false, spec=4,}, --Sepsis (Stealth component)
 	[SID_SHIV] = {target="target", sort=true, duration=9, pandemic=false, spec=1,}, --Shiv
