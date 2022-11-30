@@ -95,6 +95,7 @@ SADefault = {
 	[SID_SPRINT]= 6.0,
 	[SID_BLIND] = 6.0,
 	[SID_DREADBLADES] = 10.0,
+        [SID_KINGSBANE] = 14.0,
       },
       -- Timers that are initially shown (off by default)
       [SID_SND] = true, --Slice and Dice

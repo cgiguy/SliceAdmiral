@@ -109,7 +109,7 @@ options.args = {
 					set = function(info,val) SAMod.Sound[k].enabled = val; if (SA_Spells[k].altId) then SAMod.ShowTimer[SA_Spells[k].altId] = val; end; end,
 				},
 				values = {name=L["bar/prep"], type="range", order=3,
-					min=1.0,max=math.min(12.0,math.max(3,SA_Spells[k].duration)), step=0.5,
+					min=1.0,max=math.min(15.0,math.max(3,SA_Spells[k].duration)), step=0.5,
 					get = function(info) return SAMod.ShowTimer.Timers[k]; end,
 					set = function(info,val) 
 						SAMod.ShowTimer.Timers[k] = val; 
