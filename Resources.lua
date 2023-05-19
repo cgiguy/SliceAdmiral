@@ -4,6 +4,37 @@
 -- cgiguy: I don't like "random" numbers in code.  So, define a few Spell IDs
 -- that we use here.  Note: If they change, you need to change these!
 
+SliceAdmiral = {}
+
+local flavorFromToc = GetAddOnMetadata("SliceAdmiral", "X-Flavor")
+local flavorFromTocToNumber = {
+  Vanilla = 1,
+  TBC = 2,
+  Wrath = 3,
+  Mainline = 10
+}
+local flavor = flavorFromTocToNumber[flavorFromToc]
+
+function SliceAdmiral.IsClassicEra()
+  return flavor == 1
+end
+
+function SliceAdmiral.IsWrathClassic()
+  return flavor == 3
+end
+
+function SliceAdmiral.IsRetail()
+  return flavor == 10
+end
+
+function SliceAdmiral.IsClassicEraOrWrath()
+  return SliceAdmiral.IsClassicEra() or SliceAdmiral.IsWrathClassic()
+end
+
+function SliceAdmiral.IsWrathOrRetail()
+  return SliceAdmiral.IsRetail() or SliceAdmiral.IsWrathClassic()
+end
+
 SID_SUBTERFUGE = 115192;        -- Subterfuge
 SID_SND = 5171;			-- Slice and Dice
 SID_RUPTURE = 1943;		-- Rupture
@@ -134,10 +165,13 @@ SA_Spells = { [SID_SND] = { target = "player", sort = true,duration=36, pandemic
         [SID_KINGSBANE] = {target="target", sort=true, duration=14, pandemic=false, spec=1,}, --Kingsbane
 	};
 
+local SA_Classic = SliceAdmiral.IsClassicEra()
+
 for k in pairs(SA_Spells) do
  local name, rank, icon, _ = GetSpellInfo(k)
- if not name then print(string.format("SliceAdmiral: Unknown SpellId: %d",k)) end
+ 
  SA_Spells[k].realname = name or "none"..k
+ if not name and not SA_Classic then print(string.format("SliceAdmiral: Unknown SpellId: %d",k)) end
  if SA_Spells[k].altname then
    SA_Spells[k].name = SA_Spells[k].altname
  else
@@ -145,7 +179,9 @@ for k in pairs(SA_Spells) do
  end
  SA_Spells[k].icon = icon or "blank"
  SA_Spells[k].id = k
-
+ if SA_Classic and not name then
+   SA_Spells[k].hidden = true
+ end
 end
 
 local LSM = LibStub("LibSharedMedia-3.0")

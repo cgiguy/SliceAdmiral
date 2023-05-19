@@ -3,6 +3,8 @@ local L = LibStub("AceLocale-3.0"):GetLocale("SliceAdmiral", true);
 local addon = sliceadmiral:NewModule("ShowTimer");
 local LSM = LibStub("LibSharedMedia-3.0")
 
+local SA_Classic = SliceAdmiral.IsClassicEra()
+
 local function pandemic(val)
 	local options = sliceadmiral.opt.ShowTimer
 	local opt
@@ -32,12 +34,16 @@ function addon:OnInitialize()
 local options = sliceadmiral.opt.ShowTimer 
 local col = SAMod.ShowTimer.Colours
 local BanditsGuilLocal, _ =  GetSpellInfo(84654)
-local SPECS = {} --1 Assassination, 2 Combat, 3 Subtlety
-for i = 1,3 do
-	local _,SPEC,_ = GetSpecializationInfoForClassID(4,i);
-	SPECS[i] = SPEC;
+local SPECS
+if SA_Classic then
+  SPECS= {"Assassination", "Combat", "Subtlety"}
+else
+  SPECS = {} --1 Assassination, 2 Combat, 3 Subtlety
+  for i = 1,3 do
+    local _,SPEC,_ = GetSpecializationInfoForClassID(4,i);
+    SPECS[i] = SPEC;
+  end
 end
-
 options.childGroups="tab";
 options.args = { 
 			GrowUp = {name=L["Bars/GrowUp"],type="toggle",order=1,

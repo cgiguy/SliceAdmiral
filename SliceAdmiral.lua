@@ -6,6 +6,19 @@ local AceConfigDialog = LibStub("AceConfigDialog-3.0");
 local L = LibStub("AceLocale-3.0"):GetLocale("SliceAdmiral", true)
 local S = LibStub("LibSmoothStatusBar-1.0")
 local LSM = LibStub("LibSharedMedia-3.0")
+
+local SA_Classic = SliceAdmiral.IsClassicEra()
+
+local UnitAura = _G.UnitAura
+--local LibClassicDurations   -- Needed if we want to call it directly LibClassicDurations.UnitAuraWrapper
+if SA_Classic then
+  local LibClassicDurations = LibStub("LibClassicDurations", true)
+  if LibClassicDurations then
+    LibClassicDurations:Register(addon)
+    UnitAura = LibClassicDurations.UnitAuraWrapper
+  end
+end
+
 SliceAdmiralVer = GetAddOnMetadata("SliceAdmiral", "Version")
 ----------------------------------------------------------------------------------------------------
 
@@ -193,7 +206,7 @@ local UnitAttackSpeed = UnitAttackSpeed
 local GetCritChance = GetCritChance
 local UnitPower = UnitPower
 local UnitPowerMax = UnitPowerMax
-local UnitAura = UnitAura
+--local UnitAura = UnitAura
 local _,k,v,guileZero
 local maxCP = 5 
 local bfhits = {}
@@ -247,7 +260,9 @@ function addon:SA_SetWidth(w)
       VTimerEnergy:Hide();
     end
     addon:SA_UpdateCPWidths(w);
-    addon:SA_UpdateAnimaChargedWidths(w);
+    if not SA_Classic then
+      addon:SA_UpdateAnimaChargedWidths(w);
+    end
     addon:SA_UpdateStatWidths(w);
   end
 end
@@ -477,8 +492,9 @@ function addon:UNIT_MAXPOWER(...)
 
   -- Fix up the width of the bars and the placement of the AnimaCharged point textures
   addon:SA_UpdateCPWidths(w);
-  addon:SA_UpdateAnimaChargedWidths(w);
-
+  if not SA_Classic then
+    addon:SA_UpdateAnimaChargedWidths(w);
+  end
 end
 
 --- For ...,  the length operator # does not work with 'holes'
@@ -516,10 +532,19 @@ DebugPrintBroken = function (str, ...)
 		     DEFAULT_CHAT_FRAME:AddMessage(("SA: %s"):format(str));
 		   end
 
+function UnitAuraBySpellName(spell)
+  if SA_Classic then
+    return UnitAuraBySpellNameClassic(spell)
+  else
+    return UnitAuraBySpellNameNew(spell)
+  end
+end
+
 function UnitAuraBySpellNameNew(spell)
   -- Stupid Dreadblades bullshit.  Not under PLAYER HELPFUL filter
   -- So, now we need another table entry "aurafilter" to override
   local afilter
+  --DebugPrint("SpellNameNew")
   if spell.aurafilter then
     afilter = spell.aurafilter
   else
@@ -529,24 +554,32 @@ function UnitAuraBySpellNameNew(spell)
   return AuraUtil.FindAuraByName(spell.realname, spell.target, afilter)
 end
 
-function UnitAuraBySpellNameBroken(target,spellname,filter)
-  --  DebugPrint("Looking for spellname: %s on %s [filter = %s]",spellname,target,filter or "None")
-  for i = 1,40 do
-    --    name = UnitAura(target, i, filter);
-    name = UnitAura(target, i);
-    if not name then return end
+function UnitAuraBySpellNameClassic(spell)
+  target = spell.target
+  spellname = spell.name
+  filter = Sa_filter[spell.target]
+  --DebugPrint(string.format("Looking for spellname: %s on %s [filter = %s]",spellname,target,filter or "None"))
+  --DebugPrint("SpellNameCLASSIC")
+  for i = 1,100 do
+    --name = LibClassicDurations.UnitAuraWrapper(target, i, filter)
+    name = UnitAura(target, i, filter)
+    if not name then break end
+    --DebugPrint(string.format("Found Aura %s",name))
     if name == spellname then
-      --      DebugPrint("Found spellname: %s on %s",spellname,target);
-      --      return UnitAura(target, i, filter);
-      return UnitAura(target, i);
+      local sname, icon, count, dispelType,duration,expirationTime,source = UnitAura(target,i,filter)
+      --local sname, icon, count, dispelType,duration,expirationTime,source = LibClassicDurations.UnitAuraWrapper(target,i,filter)
+      --DebugPrint(string.format("Name: %s, Duration: %d, expirationTime: %s", sname, duration,expirationTime))
+      return sname, icon, count, dispelType, duration, expirationTime, source
+      --return UnitAura(target, i, filter);
     end
   end
+  return none
 end
 
 local function MasterOfSubtlety()
   local spell = SA_Spells[SID_MASTER_SUBTLETY]
   --	local name, _, _, _, _, _, expirationTime = UnitAura("player", subtlety);
-  local name, _, _, _, _, expirationTime = UnitAuraBySpellNameNew(spell);
+  local name, _, _, _, _, expirationTime = UnitAuraBySpellName(spell);
   local MOSBar = SA_Data.BARS[subtlety]
   
   if name then		
@@ -611,8 +644,8 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, type, hideCaster, s
   local timestamp, type, hideCaster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId, extraArg2, extraArg3, extraArg4, extraArg5, extraArg6, extraArg7, extraArg8, extraArg9, extraArg10 = CombatLogGetCurrentEventInfo()
   local isMySpell = (sourceGUID == UnitGUID("player"))
   --        if isMySpell then
-  --	  DebugPrint("CLE:%s,%d",type,spellId);
-  --	  DebugPrint("  destName:%s, spellId:%d",destName,spellId)
+  --          DebugPrint("CLE:%s,%d",type,spellId)
+  --          DebugPrint("  destName:%s, spellId:%d",destName,spellId)
   --        end
   --        spellname,_,_,_ = GetSpellInfo(spellId)
   --        DebugPrint("spellId: %s, name: %s, type = %s, destName = %s",spellId, spellname, type, destName)
@@ -668,6 +701,13 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, type, hideCaster, s
   --	DebugPrint("  extraArg8: %s (%d)", extraArg8 or "None", extraArg8 or 0);
   --	DebugPrint("  extraArg9: %s (%d)", extraArg9 or "None", extraArg9 or 0);
   --	DebugPrint("  extraArg10: %s (%d)", extraArg10 or "None", extraArg10 or 0);
+  if spellId == 0 and SA_Classic then
+    local name, rank, icon, castTime, minRange, maxRange, spId, originalIcon = GetSpellInfo(extraArg2)
+    if isMySpell then
+      --DebugPrint(string.format("Classic and Spellname = %s (%d)", extraArg2, spId))
+    end
+    spellId = spId
+  end
   if deathEvent[type] then
     soundBuffer = {};
     return
@@ -692,18 +732,17 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, type, hideCaster, s
   if dbtypes[type] then
     --Buffs EVENT --
     if SAMod.ShowTimer[spellId] then
-      --  		        DebugPrint("%s Timer bar for %s", type, spellId)
+      --DebugPrint("%s Timer bar for %s", type, spellId)
       local spell = SA_Spells[spellId]
       --DebugPrint("UA Target: %s, Spell: %s, Filter: %s", spell.target, spell.name, Sa_filter[spell.target])
-      local name, icon, count, debuffType, duration, expirationTime = UnitAuraBySpellNameNew(spell)
+      local name, icon, count, debuffType, duration, expirationTime = UnitAuraBySpellName(spell)
       --			local name, rank, icon, count, debuffType, duration, expirationTime = UnitAura(spell.target, spell.name, nil, Sa_filter[spell.target])
       if SA_Spells[spellId].altname then
 	name = SA_Spells[spellId].altname
       end
       local BuffBar = SA_Data.BARS[SA_Spells[spellId].name]
       
-
-
+      --DebugPrint(string.format("Setting expiration time on %s(%d) to %d",name, spellId, expirationTime))
       BuffBar["Expires"] = expirationTime or 0;
       BuffBar["tickStart"] = (expirationTime or 0) - SAMod.Sound[spellId].tickStart;
       BuffBar["LastTick"] = BuffBar["tickStart"] - 1.0;
@@ -713,6 +752,7 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, type, hideCaster, s
 	--DebugPrint("Hiding bar with no aura name %s", spellId)
 	BuffBar["obj"]:Hide();
       else
+	--DebugPrint(string.format("Trying to show bar for %d", spellId))
 	BuffBar["obj"]:Show();
       end
       if SAMod.Sound[spellId].enabled and (type == "SPELL_AURA_REMOVED") and not (name) and (isOnMe or isOnTarget) then
@@ -774,7 +814,7 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, type, hideCaster, s
       local spell = SA_Spells[SID_DEADLY_POISON]
       local eventDeadlyPoison = spell.name
       --			local name, rank, icon, count, debuffType, duration, expirationTime = UnitDebuff("target", eventDeadlyPoison, nil, "PLAYER");
-      local name, _, count, _, duration, expirationTime = UnitAuraBySpellNameNew(spell);
+      local name, _, count, _, duration, expirationTime = UnitAuraBySpellName(spell);
       SABars[eventDeadlyPoison]["Expires"] = expirationTime or 0;
       SABars[eventDeadlyPoison]["tickStart"] = (expirationTime or 0) - SAMod.Sound[SID_DEADLY_POISON].tickStart;
       SABars[eventDeadlyPoison]["LastTick"] = SABars[eventDeadlyPoison]["tickStart"] - 1.0;
@@ -809,10 +849,10 @@ function addon:UpdateTarget()
   
   for k,v in pairs(showT) do
     local spell = SA_Spells[k]
-    if v and spell then
+    if v and spell and not spell.hidden then
       local spellBar = SA_Data.BARS[spell.name]
       --			local name, _, _, count, _, duration, expirationTime, _ = UnitAura(spell.target, spell.name, nil, Sa_filter[spell.target]);
-      local name, _, count, _, duration, expirationTime = UnitAuraBySpellNameNew(spell)
+      local name, _, count, _, duration, expirationTime = UnitAuraBySpellName(spell)
       if not (name) then
 	spellBar["tickStart"] = 0;
 	spellBar["count"] = 0;
@@ -836,7 +876,7 @@ function addon:BarUpdate(id)
   local spell = SA_Spells[id]
   if SAMod.ShowTimer[id] then
     local spellBar = SA_Data.BARS[spell.name]
-    local name, _, count, _, duration, expirationTime = UnitAuraBySpellNameNew(spell);
+    local name, _, count, _, duration, expirationTime = UnitAuraBySpellName(spell);
     --		local name, _, _, count, _, duration, expirationTime, _ = UnitAura(spell.target, spell.name, nil, Sa_filter[spell.target]);
     if not (name) then			
       spellBar["tickStart"] = 0;
@@ -871,15 +911,17 @@ function addon:SetComboPoints()
     cpBar.combo:SetValue(points);	
   end
 
+  if not SA_Classic then
 -- Okay, now the heinous AnimaCharged combo points. Blizzard is ridiculous.
-  local chargedPoints = GetUnitChargedPowerPoints("player")
-  local acframes = SA_Data.BARS["CP"]["obj"].charged
-  for i = 1, maxCP do
-    isCharged = chargedPoints and tContains(chargedPoints, i) 
-    if isCharged then
-      acframes[i]:Show()
-    else
-      acframes[i]:Hide()
+    local chargedPoints = GetUnitChargedPowerPoints("player")
+    local acframes = SA_Data.BARS["CP"]["obj"].charged
+    for i = 1, maxCP do
+      isCharged = chargedPoints and tContains(chargedPoints, i) 
+      if isCharged then
+	acframes[i]:Show()
+      else
+	acframes[i]:Hide()
+      end
     end
   end
 end
@@ -910,7 +952,8 @@ function addon:CreateComboFrame()
   
   -- This is a little odd because it has to be concerned about combo points > 5
   -- So, we use a long hash mark bar and expand the texture width to suite our combo points
-  overlay:SetTexture("Interface\\MainMenuBar\\MainMenuBar");
+--  overlay:SetTexture("Interface\\MainMenuBar\\MainMenuBar");
+  overlay:SetTexture("Interface\\AddOns\\SliceAdmiral\\textures\\MainMenuBar");
   overlay:SetAllPoints(f);
   hashtexturewidth = .03872
   tleft = 0.1595 + hashtexturewidth	-- Start First hash mark over from start of bar texture
@@ -933,30 +976,36 @@ function addon:CreateComboFrame()
   -- We create frames and textures for each possible combo point
   -- so we can Show() and Hide() if anima charged.
   -- I don't want to create AnimaCharged frames on the fly... so, we just set up an initial max number (mostCP)
-  for i = 1, mostCP do
-    charged[i] = CreateFrame("Frame", "SA-AnimaFrame-"..i, f, BackdropTemplateMixin and "BackdropTemplate");
-    acframe = charged[i]
-    actexture = acframe:CreateTexture("SA-AnimaFrameTexture-"..i, "OVERLAY");
-    actexture:SetVertexColor(1.0, 1.0, 1.0);
-    actexture:SetAlpha(1.0);
-    actexture:SetAtlas("AnimaChannel-Bar-Kyrian-Gem") -- It's purdy
-    wide = SAMod.Main.Width / cpMax
+  if not SA_Classic then
+    for i = 1, mostCP do
+      charged[i] = CreateFrame("Frame", "SA-AnimaFrame-"..i, f, BackdropTemplateMixin and "BackdropTemplate");
+      acframe = charged[i]
+      actexture = acframe:CreateTexture("SA-AnimaFrameTexture-"..i, "OVERLAY");
+      actexture:SetVertexColor(1.0, 1.0, 1.0);
+      actexture:SetAlpha(1.0);
+      actexture:SetAtlas("AnimaChannel-Bar-Kyrian-Gem") -- It's purdy
+      -- Using texcoord in case they ever change the shipping atlas
+      --actexture:SetTexture("Interface\\Addons\\SliceAdmiral\\textures\\AnimaChannelingDevice.blp")
+      --actexture:SetSize(24,24)
+      --actexture:SetTexCoord(0.755859375, 0.802734375, 0.591796875 0.638671875)
+      wide = SAMod.Main.Width / cpMax
 
-    actexture:SetPoint("CENTER",acframe) -- Texture should be square and centered within AnimaCharged Frame
-    actexture:SetSize(comboheight, comboheight)
+      actexture:SetPoint("CENTER",acframe) -- Texture should be square and centered within AnimaCharged Frame
+      actexture:SetSize(comboheight, comboheight)
 
-    acframe:SetSize(wide, comboheight) -- Set the AnimaCharged frame to the size of our combopoint slot
-    acframe:SetScale(scaleUI);
-    acframe:SetFrameLevel(flvl+2)	-- Put it on top so it shows up over combopoint texture
-    -- We set it so that each of the AnimaCharged frames is anchored to the frame on the left
-    if (i == 1) then
-      acframe:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 0, 0)
-    else
-      acframe:SetPoint("BOTTOMLEFT", charged[i-1], "BOTTOMRIGHT", 0, 0);
+      acframe:SetSize(wide, comboheight) -- Set the AnimaCharged frame to the size of our combopoint slot
+      acframe:SetScale(scaleUI);
+      acframe:SetFrameLevel(flvl+2)	-- Put it on top so it shows up over combopoint texture
+      -- We set it so that each of the AnimaCharged frames is anchored to the frame on the left
+      if (i == 1) then
+	acframe:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 0, 0)
+      else
+	acframe:SetPoint("BOTTOMLEFT", charged[i-1], "BOTTOMRIGHT", 0, 0);
+      end
+      acframe:Hide()		-- Start out with frames hidden
     end
-    acframe:Hide()		-- Start out with frames hidden
-  end
-  
+  end  
+
   f:SetScript("OnMouseDown", function(self) if (not SAMod.Main.IsLocked) then SA:StartMoving() end end)
   f:SetScript("OnMouseUp", function(self) SA:StopMovingOrSizing(); SAMod.Main.point, _l, _l, SAMod.Main.xOfs, SAMod.Main.yOfs = SA:GetPoint(); end )
   f.bg = bg;
@@ -1159,7 +1208,7 @@ function addon:SA_NewFrame(spellid)
   f:SetValue(0);
 
   f:Hide();
-  
+
   f:SetBackdrop({
 		  bgFile="Interface\\AddOns\\SliceAdmiral\\Images\\winco_stripe_128.tga",
 		  edgeFile="",
@@ -1353,6 +1402,8 @@ local function SA_UpdateBar(unit, spell, sa_sound)
 end
 
 local function SA_QuickUpdateBar(unit, spell)
+  if not SA_Data.BARS[spell] then return end
+  
   local sabars = SA_Data.BARS[spell];
   local sa_time = sabars["Expires"];
   local Showname = SAMod.ShowTimer.Options.ShowNames
@@ -1561,14 +1612,17 @@ function addon:OnEnable()
   local point, xOfs, yOfs = SAMod.Main.point, SAMod.Main.xOfs, SAMod.Main.yOfs
   if (englishClass == "ROGUE") then
     for k in pairs(SA_Spells) do
-      SA_Data.BARS[SA_Spells[k].name] = {	
-	["obj"] = 0,
-	["Expires"] = 0,		-- expire time until GetTime()
-	["LastTick"] = 0,
-	["tickStart"] = 0,
-	["count"] = 0,
-	["id"]=SA_Spells[k].id or 0,
-      }
+      if not SA_Spells[k].hidden then
+	--DebugPrint(string.format("Barring %s", SA_Spells[k].name))
+	SA_Data.BARS[SA_Spells[k].name] = {	
+	  ["obj"] = 0,
+	  ["Expires"] = 0,		-- expire time until GetTime()
+	  ["LastTick"] = 0,
+	  ["tickStart"] = 0,
+	  ["count"] = 0,
+	  ["id"]=SA_Spells[k].id or 0,
+	}
+      end
     end
     addon:SA_OnLoad()
     SA:ClearAllPoints(); SA:SetPoint(point, xOfs, yOfs);
