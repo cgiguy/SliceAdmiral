@@ -1,0 +1,37 @@
+## Title: SliceAdmiral
+## Interface: 11403
+## Author: Iorrh - Bronzebeard US
+## Version: 1.4.14
+## Notes: Info-center for maximizing Rogue DPS.
+## DefaultState: Enabled
+## LoadOnDemand: 0
+## SavedVariables: SliceAdmiralDB
+## X-Flavor: Vanilla
+## OptionalDeps: LibStub, LibSmoothStatusBar-1.0, LibClassicDurations
+
+lib\LibStub\LibStub.lua
+lib\LibSmoothStatusBar-1.0\LibSmoothStatusBar-1.0.lua
+lib\CallbackHandler-1.0\CallbackHandler-1.0.xml
+lib\AceAddon-3.0\AceAddon-3.0.xml
+lib\AceEvent-3.0\AceEvent-3.0.xml
+lib\AceHook-3.0\AceHook-3.0.xml
+lib\AceDB-3.0\AceDB-3.0.xml
+lib\AceDBOptions-3.0\AceDBOptions-3.0.xml
+lib\AceConsole-3.0\AceConsole-3.0.xml
+lib\AceGUI-3.0\AceGUI-3.0.xml
+lib\AceConfig-3.0\AceConfig-3.0.xml
+lib\AceLocale-3.0\AceLocale-3.0.xml
+lib\LibSharedMedia-3.0\LibSharedMedia-3.0.lua
+lib\AceGUI-3.0-SharedMediaWidgets\widget.xml
+lib\LibClassicDurations\LibClassicDurations.xml
+
+localization.lua
+localization.cn.lua
+localization.es.lua
+
+Resources.lua
+SliceAdmiral.lua
+ConfigCombo.lua
+ConfigEnergy.lua
+ConfigTimers.lua
+SliceAdmiral.xml
