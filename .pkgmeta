@@ -44,5 +44,6 @@ externals:
     lib/LibStub:
           url: https://repos.curseforge.com/wow/libstub/trunk/LibStub
           tag: latest
-
-  
+    lib/LibClassicDurations:
+          url: https://repos.curseforge.com/wow/libclassicdurations
+          tag: latest

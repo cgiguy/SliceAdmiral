@@ -26,7 +26,7 @@ fi
    
 mkdir -p $SLICEDIR
 
-cp -rp *.lua *.xml *.toc .pkgmeta Audio Images $SLICEDIR
+cp -rp *.lua *.xml *.toc .pkgmeta Audio Images textures $SLICEDIR
 
 cd $SLICEDIR
 
