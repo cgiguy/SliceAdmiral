@@ -561,13 +561,13 @@ function UnitAuraBySpellNameClassic(spell)
   --DebugPrint(string.format("Looking for spellname: %s on %s [filter = %s]",spellname,target,filter or "None"))
   --DebugPrint("SpellNameCLASSIC")
   for i = 1,100 do
-    --name = LibClassicDurations.UnitAuraWrapper(target, i, filter)
+    --name = LibClassicDurations:UnitAuraWrapper(target, i, filter)
     name = UnitAura(target, i, filter)
     if not name then break end
     --DebugPrint(string.format("Found Aura %s",name))
     if name == spellname then
       local sname, icon, count, dispelType,duration,expirationTime,source = UnitAura(target,i,filter)
-      --local sname, icon, count, dispelType,duration,expirationTime,source = LibClassicDurations.UnitAuraWrapper(target,i,filter)
+      --local sname, icon, count, dispelType,duration,expirationTime,source = LibClassicDurations:UnitAuraWrapper(target,i,filter)
       --DebugPrint(string.format("Name: %s, Duration: %d, expirationTime: %s", sname, duration,expirationTime))
       return sname, icon, count, dispelType, duration, expirationTime, source
       --return UnitAura(target, i, filter);
