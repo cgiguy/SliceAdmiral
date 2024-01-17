@@ -1592,18 +1592,10 @@ function addon:AddOption(name, Table, displayName)
   AceConfigDialog:AddToBlizOptions("SliceAdmiral"..name, displayName, "SliceAdmiral");
 end
 
-function addon:SlashCommand(Arg)	
-  SAMod.Main.IsLocked = not SAMod.Main.IsLocked;
-  SA:EnableMouse(not SAMod.Main.IsLocked); 
-  VTimerEnergy:EnableMouse(not SAMod.Main.IsLocked);
-  for k in pairs(SA_Data.BARS) do
-    SA_Data.BARS[k]["obj"]:EnableMouse(not SAMod.Main.IsLocked); 
-  end
-end
-
 function addon:OnEnable()
   AceConfig:RegisterOptionsTable("SliceAdmiral", addon.opt.Main);
   self.optionsFrame = AceConfigDialog:AddToBlizOptions("SliceAdmiral");
+  SA_Data.AddonFrame = self.optionsFrame
   if addon:GetModule("ShowTimer", true) then addon:AddOption("ShowTimer Bars", addon.opt.ShowTimer, L["TimerBars"]); end;
   if addon:GetModule("Combo", true) then addon:AddOption("Combo Points", addon.opt.Combo, L["Combo"]) end
   if addon:GetModule("Energy", true) then addon:AddOption("Energy Bar", addon.opt.Energy, L["EnergyBar"]) end
@@ -1635,11 +1627,23 @@ function addon:OnEnable()
     VTimerEnergy:EnableMouse(not SAMod.Main.IsLocked);
     addon:SA_SetScale(SAMod.Main.Scale);
     addon:SA_SetWidth(SAMod.Main.Width);
+    SLASH_SliceAdmiral_Command1,SLASH_SliceAdmiral_Command2 = "/sliceadmiral", "/sa";
     SlashCmdList["SliceAdmiral_Command"] = addon.SlashCommand;
-    SLASH_SliceAdmiral_Command1 = "/SliceAdmiral";
   else
     addon:UnregisterAllEvents();
     SA:Hide();
     DisableAddOn("SliceAdmiral");
   end
 end
+
+function addon:SlashCommand(Arg, editBox)
+  InterfaceOptionsFrame_OpenToCategory(SA_Data.AddonFrame)
+  InterfaceOptionsFrame_OpenToCategory(SA_Data.AddonFrame)
+--  SAMod.Main.IsLocked = not SAMod.Main.IsLocked;
+--  SA:EnableMouse(not SAMod.Main.IsLocked); 
+--  VTimerEnergy:EnableMouse(not SAMod.Main.IsLocked);
+--  for k in pairs(SA_Data.BARS) do
+--    SA_Data.BARS[k]["obj"]:EnableMouse(not SAMod.Main.IsLocked); 
+--  end
+end
+
