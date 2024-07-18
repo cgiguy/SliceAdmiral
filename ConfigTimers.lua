@@ -3,7 +3,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale("SliceAdmiral", true);
 local addon = sliceadmiral:NewModule("ShowTimer");
 local LSM = LibStub("LibSharedMedia-3.0")
 
-local SA_Classic = SliceAdmiral.IsClassicEra()
+local SA_Classic = SliceAdmiral.IsClassicEra() or SliceAdmiral.IsCataClassic()
 
 local function pandemic(val)
 	local options = sliceadmiral.opt.ShowTimer

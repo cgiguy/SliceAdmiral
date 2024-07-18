@@ -11,6 +11,7 @@ local flavorFromTocToNumber = {
   Vanilla = 1,
   TBC = 2,
   Wrath = 3,
+  Cata = 4,
   Mainline = 10
 }
 local flavor = flavorFromTocToNumber[flavorFromToc]
@@ -23,12 +24,20 @@ function SliceAdmiral.IsWrathClassic()
   return flavor == 3
 end
 
+function SliceAdmiral.IsCataClassic()
+  return flavor == 4
+end
+
 function SliceAdmiral.IsRetail()
   return flavor == 10
 end
 
 function SliceAdmiral.IsClassicEraOrWrath()
   return SliceAdmiral.IsClassicEra() or SliceAdmiral.IsWrathClassic()
+end
+
+function SliceAdmiral.IsClassicEraOrCata()
+  return SliceAdmiral.IsClassicEra() or SliceAdmiral.IsCataClassic()
 end
 
 function SliceAdmiral.IsWrathOrRetail()
@@ -165,7 +174,7 @@ SA_Spells = { [SID_SND] = { target = "player", sort = true,duration=36, pandemic
         [SID_KINGSBANE] = {target="target", sort=true, duration=14, pandemic=false, spec=1,}, --Kingsbane
 	};
 
-local SA_Classic = SliceAdmiral.IsClassicEra()
+local SA_Classic = SliceAdmiral.IsClassicEra() or SliceAdmiral.IsCataClassic()
 
 for k in pairs(SA_Spells) do
  local name, rank, icon, _ = GetSpellInfo(k)

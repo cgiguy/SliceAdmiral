@@ -7,7 +7,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale("SliceAdmiral", true)
 local S = LibStub("LibSmoothStatusBar-1.0")
 local LSM = LibStub("LibSharedMedia-3.0")
 
-local SA_Classic = SliceAdmiral.IsClassicEra()
+local SA_Classic = SliceAdmiral.IsClassicEra() or SliceAdmiral.IsCataClassic()
 
 local UnitAura = _G.UnitAura
 --local LibClassicDurations   -- Needed if we want to call it directly LibClassicDurations.UnitAuraWrapper
