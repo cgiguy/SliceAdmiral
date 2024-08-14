@@ -6,7 +6,7 @@
 
 SliceAdmiral = {}
 
-local flavorFromToc = GetAddOnMetadata("SliceAdmiral", "X-Flavor")
+local flavorFromToc = C_AddOns.GetAddOnMetadata("SliceAdmiral", "X-Flavor")
 local flavorFromTocToNumber = {
   Vanilla = 1,
   TBC = 2,
@@ -110,6 +110,7 @@ SID_SEPSIS = 328305;             -- Sepsis (Covenant)
 SID_SEPSIS_STEALTH = 347037      -- Sepsis (Stealth component)
 SID_SHIV = 319504;               -- Shiv 
 SID_KINGSBANE = 385627           -- Kingsbane
+SID_BLADEDANCE = 400012          -- Blade Dance Rune (Classic SOD)
 
 --0 Shared 1 Assassination, 2 Outlaw, 3 Subtlety 4 Talents
 SA_Spells = { [SID_SND] = { target = "player", sort = true,duration=36, pandemic=true,spec=2,}, --Slice and Dice
@@ -176,11 +177,22 @@ SA_Spells = { [SID_SND] = { target = "player", sort = true,duration=36, pandemic
 
 local SA_Classic = SliceAdmiral.IsClassicEra() or SliceAdmiral.IsCataClassic()
 
+if SliceAdmiral.IsClassicEra() then
+  SA_Spells[SID_BLADEDANCE] = {target="player", sort=true, duration=30, pandemic=false,spec=0} --Blade Dance Rune (SOD)
+end
+
 for k in pairs(SA_Spells) do
- local name, rank, icon, _ = GetSpellInfo(k)
+ local name, rank, icon
+ if not SA_Classic then
+   local spe = C_Spell.GetSpellInfo(k)
+   name = spe.name
+   icon = spe.iconID
+ else
+   name, rank, icon = GetSpellInfo(k)
+ end
  
  SA_Spells[k].realname = name or "none"..k
- if not name and not SA_Classic then print(string.format("SliceAdmiral: Unknown SpellId: %d",k)) end
+-- if not name and not SA_Classic then print(string.format("SliceAdmiral: Unknown SpellId: %d",k)) end
  if SA_Spells[k].altname then
    SA_Spells[k].name = SA_Spells[k].altname
  else

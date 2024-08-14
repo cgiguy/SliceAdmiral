@@ -33,7 +33,7 @@ end
 function addon:OnInitialize()
 local options = sliceadmiral.opt.ShowTimer 
 local col = SAMod.ShowTimer.Colours
-local BanditsGuilLocal, _ =  GetSpellInfo(84654)
+-- local BanditsGuilLocal, _ =  C_Spell.GetSpellInfo(84654)
 local SPECS
 if SA_Classic then
   SPECS= {"Assassination", "Combat", "Subtlety"}
@@ -91,6 +91,10 @@ options.args = {
 		}
 		
 	local GetSpellDescription = GetSpellDescription
+        if not SA_Classic then
+	  GetSpellDescription = C_Spell.GetSpellDescription
+        end  
+--	local GetSpellDescription = GetSpellDescription
 	for k in pairs(SA_Spells) do
 		if not SA_Spells[k].hidden then
 		if SA_Spells[k].spec == 0 then

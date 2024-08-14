@@ -19,7 +19,7 @@ if SA_Classic then
   end
 end
 
-SliceAdmiralVer = GetAddOnMetadata("SliceAdmiral", "Version")
+SliceAdmiralVer = C_AddOns.GetAddOnMetadata("SliceAdmiral", "Version")
 ----------------------------------------------------------------------------------------------------
 
 addon.opt = {
@@ -544,13 +544,13 @@ function UnitAuraBySpellNameNew(spell)
   -- Stupid Dreadblades bullshit.  Not under PLAYER HELPFUL filter
   -- So, now we need another table entry "aurafilter" to override
   local afilter
-  --DebugPrint("SpellNameNew")
+  -- DebugPrint("SpellNameNew")
   if spell.aurafilter then
     afilter = spell.aurafilter
   else
     afilter = Sa_filter[spell.target]
   end
-  --  DebugPrint("Looking for spellname: %s on %s [filter = %s] (Real name %s)",spell.name,spell.target, afilter, spell.realname or "None")
+--  DebugPrint("Looking for spellname: %s on %s [filter = %s] (Real name %s)",spell.name,spell.target, afilter, spell.realname or "None")
   return AuraUtil.FindAuraByName(spell.realname, spell.target, afilter)
 end
 
@@ -625,7 +625,15 @@ local deathEvent = { UNIT_DIED = true,
 		   };
 local function GCD()
   if not SAMod.ShowTimer[SID_GCD] then return end
-  local start, duration, enabled = GetSpellCooldown(SID_GCD)
+  if SA_Classic then
+    local start, duration, enabled = GetSpellCooldown(SID_GCD)
+  else
+    sinfo = C_Spell.GetSpellCooldown(SID_GCD)
+    start = sinfo.startTime
+    duration = sinfo.duration
+    enabled = sinfo.isEnabled
+  end
+
   local GCD = SA_Data.BARS[SA_Spells[SID_GCD].name]
   
   if start > 0 then
@@ -647,7 +655,7 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, type, hideCaster, s
   --          DebugPrint("CLE:%s,%d",type,spellId)
   --          DebugPrint("  destName:%s, spellId:%d",destName,spellId)
   --        end
-  --        spellname,_,_,_ = GetSpellInfo(spellId)
+  --        spellname,_,_,_ = C_Spell.GetSpellInfo(spellId)
   --        DebugPrint("spellId: %s, name: %s, type = %s, destName = %s",spellId, spellname, type, destName)
   --	DebugPrint("CLE: (%s,%s,%d,%s,%s,%x,%x,%s,%s,%x,%x,%d,%s (%d),%s (%d),%s (%d),%s (%d),%s (%d),%s (%d),%s (%d),%s (%d),%s (%d)",
   --		   timestamp,
@@ -702,7 +710,7 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, type, hideCaster, s
   --	DebugPrint("  extraArg9: %s (%d)", extraArg9 or "None", extraArg9 or 0);
   --	DebugPrint("  extraArg10: %s (%d)", extraArg10 or "None", extraArg10 or 0);
   if spellId == 0 and SA_Classic then
-    local name, rank, icon, castTime, minRange, maxRange, spId, originalIcon = GetSpellInfo(extraArg2)
+    local name, rank, icon, castTime, minRange, maxRange, spId, originalIcon = C_Spell.GetSpellInfo(extraArg2)
     if isMySpell then
       --DebugPrint(string.format("Classic and Spellname = %s (%d)", extraArg2, spId))
     end
@@ -1516,7 +1524,7 @@ function addon:OnInitialize()
   SAMod = addon.db.profile.Modules
   addon.opt.profile = LibStub("AceDBOptions-3.0"):GetOptionsTable(addon.db);	
   addon.opt.Main.args = {
-    version = {name = string.format("%s %s: %s","SliceAdmiral", GAME_VERSION_LABEL, GetAddOnMetadata("SliceAdmiral", "Version")),order=90,type = "header"},
+    version = {name = string.format("%s %s: %s","SliceAdmiral", GAME_VERSION_LABEL, C_AddOns.GetAddOnMetadata("SliceAdmiral", "Version")),order=90,type = "header"},
     lockMovement = {name=L["ClickToMove"],type="toggle",order=1,
 		    get = function(info) return SAMod.Main.IsLocked; end,
 		    set = function(info,val) SAMod.Main.IsLocked = val; SA:EnableMouse(not val); VTimerEnergy:EnableMouse(not val);
