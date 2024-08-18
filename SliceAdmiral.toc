@@ -1,7 +1,7 @@
 ## Title: SliceAdmiral
 ## Interface: 110002
 ## Author: Iorrh - Bronzebeard US
-## Version: 1.4.20
+## Version: 1.4.21
 ## Notes: Info-center for maximizing Rogue DPS.
 ## DefaultState: Enabled
 ## LoadOnDemand: 0

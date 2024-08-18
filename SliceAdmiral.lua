@@ -1640,13 +1640,14 @@ function addon:OnEnable()
   else
     addon:UnregisterAllEvents();
     SA:Hide();
-    DisableAddOn("SliceAdmiral");
+    C_AddOns.DisableAddOn("SliceAdmiral");
   end
 end
 
 function addon:SlashCommand(Arg, editBox)
-  InterfaceOptionsFrame_OpenToCategory(SA_Data.AddonFrame)
-  InterfaceOptionsFrame_OpenToCategory(SA_Data.AddonFrame)
+--  InterfaceOptionsFrame_OpenToCategory(SA_Data.AddonFrame)
+--  InterfaceOptionsFrame_OpenToCategory(SA_Data.AddonFrame)
+  Settings.OpenToCategory("SliceAdmiral")
 --  SAMod.Main.IsLocked = not SAMod.Main.IsLocked;
 --  SA:EnableMouse(not SAMod.Main.IsLocked); 
 --  VTimerEnergy:EnableMouse(not SAMod.Main.IsLocked);
