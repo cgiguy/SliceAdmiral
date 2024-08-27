@@ -103,7 +103,11 @@ SID_OPPORTUNITY = 195627;	 -- Opportunity
 SID_ALACRITY = 193538;		 -- Alacrity
 SID_BETWEEN_EYES = 315341;	 -- Between the Eyes
 SID_BLADE_RUSH = 271877;	 -- Blade Rush
-SID_CRIMSON_TEMPEST = 121411;    -- Crimson Tempest
+if SliceAdmiral.IsClassicEra() then
+  SID_CRIMSON_TEMPEST = 436611;	 -- Crimson Tempest Rune
+else
+  SID_CRIMSON_TEMPEST = 121411;    -- Crimson Tempest
+end
 SID_TOXIC_BLADE = 245389;        -- Toxic Blade
 SID_DREADBLADES = 343142;        -- Dreadblades
 SID_SEPSIS = 328305;             -- Sepsis (Covenant)
