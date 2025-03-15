@@ -115,11 +115,13 @@ SID_SEPSIS_STEALTH = 347037      -- Sepsis (Stealth component)
 SID_SHIV = 319504;               -- Shiv 
 SID_KINGSBANE = 385627           -- Kingsbane
 SID_BLADEDANCE = 400012          -- Blade Dance Rune (Classic SOD)
+SID_RECUPERATE = 73651         -- Recuperate (Cataclysm Classic)
+
 
 --0 Shared 1 Assassination, 2 Outlaw, 3 Subtlety 4 Talents
 SA_Spells = { [SID_SND] = { target = "player", sort = true,duration=36, pandemic=true,spec=2,}, --Slice and Dice
 	[SID_DEADLY_POISON] = { target = "target", sort = false, duration=12,pandemic=true,spec=1,}, --DeadlyPoison
-	[SID_RUPTURE] = { target = "target", sort = true,duration=24, pandemic=true, spec=1,},  --Rupture
+	[SID_RUPTURE] = { target = "target", sort = true,duration=32, pandemic=true, spec=1,},  --Rupture
 	[SID_FEINT]  = { target = "player", sort = false,duration=5,pandemic=false,spec=0, }, --Feint
 	[SID_GARROTE] = { target = "target", sort = true,duration=18, pandemic=true,spec=1, }, --Garrote
 	--[SID_BURST_SPEED] = { target = "player",sort = true,duration=4,pandemic=false,spec=4, }, --BurstOfSpeed
@@ -183,6 +185,9 @@ local SA_Classic = SliceAdmiral.IsClassicEra() or SliceAdmiral.IsCataClassic()
 
 if SliceAdmiral.IsClassicEra() then
   SA_Spells[SID_BLADEDANCE] = {target="player", sort=true, duration=30, pandemic=false,spec=0} --Blade Dance Rune (SOD)
+end
+if SliceAdmiral.IsCataClassic() then
+  SA_Spells[SID_RECUPERATE] = {target="player", sort=true, duration=30, pandemic=false,spec=3} --Recuperate (Cataclysm Classic)
 end
 
 for k in pairs(SA_Spells) do

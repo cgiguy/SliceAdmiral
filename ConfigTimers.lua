@@ -66,16 +66,20 @@ options.args = {
 				get = function(info) return SAMod.ShowTimer.Options.DoTCrits; end,
 				set = function(info,val) SAMod.ShowTimer.Options.DoTCrits = val; end
 			},
-			barTex = {name=L["Main/Texture"], type="select",order=6,dialogControl = 'LSM30_Statusbar',
+			DoTFormatNumbers = {name=L["Bars/DoTFormatNumbers"],type="toggle",order=6,
+				get = function(info) return SAMod.ShowTimer.Options.DoTFormatNumbers; end,
+				set = function(info,val) SAMod.ShowTimer.Options.DoTFormatNumbers = val; end
+			},
+			barTex = {name=L["Main/Texture"], type="select",order=7,dialogControl = 'LSM30_Statusbar',
 				values = LSM:HashTable("statusbar"),
 				get = function(info) return SAMod.ShowTimer.Options.BarTexture; end,
 				set = function(info,val) SAMod.ShowTimer.Options.BarTexture = val, sliceadmiral:RetextureBars(LSM:Fetch("statusbar",val), "spells") end, 
 			},
-			MasterVolume = {name=L["Sound/MasterVolume"],desc=L["Sound/MasterDesc"],type="toggle",order=7,width="full",		
+			MasterVolume = {name=L["Sound/MasterVolume"],desc=L["Sound/MasterDesc"],type="toggle",order=8,width="full",		
 				get = function(info) return SAMod.Sound.MasterVolume; end,
 				set = function(info,val) SAMod.Sound.MasterVolume = val; end
 			},
-			OutOfCombat = {name=L["Sound/OutOfCombat"],type="toggle",order=8,width="double",
+			OutOfCombat = {name=L["Sound/OutOfCombat"],type="toggle",order=9,width="double",
 				get = function(info) return SAMod.Sound.OutOfCombat; end,
 				set = function(info,val) SAMod.Sound.OutOfCombat = val; end
 			},

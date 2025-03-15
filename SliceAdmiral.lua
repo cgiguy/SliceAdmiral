@@ -18,6 +18,7 @@ if SA_Classic then
     UnitAura = LibClassicDurations.UnitAuraWrapper
   end
 end
+local FormatLargeNumber = FormatLargeNumber
 
 SliceAdmiralVer = C_AddOns.GetAddOnMetadata("SliceAdmiral", "Version")
 ----------------------------------------------------------------------------------------------------
@@ -56,6 +57,7 @@ SADefault = {
 	Dynamic = false,
 	ShowDoTDmg = true,
 	DoTCrits = true,
+	DoTFormatNumbers = false,
 	BarTexture = "Smooth",
 	guileCount = false,
 	BladeFlurry = false,
@@ -702,7 +704,7 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, type, hideCaster, s
   --	DebugPrint("  spellId: %d",spellId);
   --	DebugPrint("  extraArg2: %s (%d)", extraArg2 or "None", extraArg2 or 0);
   --	DebugPrint("  extraArg3: %s (%d)", extraArg3 or "None", extraArg3 or 0);
-  --	DebugPrint("  extraArg4: %s (%d)", extraArg4 or "None", extraArg4 or 0);
+  --	DebugPrint("  extraArg4: *%s* (%d)", extraArg4 or "None", extraArg4 or 0);
   --	DebugPrint("  extraArg5: %s (%d)", extraArg5 or "None", extraArg5 or 0);
   --	DebugPrint("  extraArg6: %s (%d)", extraArg6 or "None", extraArg6 or 0);
   --	DebugPrint("  extraArg7: %s (%d)", extraArg7 or "None", extraArg7 or 0);
@@ -750,7 +752,9 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, type, hideCaster, s
       end
       local BuffBar = SA_Data.BARS[SA_Spells[spellId].name]
       
-      --DebugPrint(string.format("Setting expiration time on %s(%d) to %d",name, spellId, expirationTime))
+--      if (name) then
+--	DebugPrint(string.format("Setting expiration time on %s(%d) to %d",name, spellId, expirationTime))
+--      end
       BuffBar["Expires"] = expirationTime or 0;
       BuffBar["tickStart"] = (expirationTime or 0) - SAMod.Sound[spellId].tickStart;
       BuffBar["LastTick"] = BuffBar["tickStart"] - 1.0;
@@ -805,9 +809,16 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, type, hideCaster, s
       else
 	dotText = SABars[SA_Spells[spellId].name]["obj"].DoTtext
       end
+      if saTimerOp.DoTFormatNumbers then
+	amount = FormatLargeNumber(amount)
+      end
       dotText:SetAlpha(1);
       if (saTimerOp.DoTCrits and critical) then
-	dotText:SetFormattedText("*%.0f*", amount);
+	if saTimerOp.DoTFormatNumbers then
+	  dotText:SetFormattedText("*"..amount.."*");
+	else
+	  dotText:SetFormattedText("*%.0f*", amount);
+	end
 	UIFrameFadeOut(dotText, 3, 1, 0);
       else
 	dotText:SetFormattedText(amount);
@@ -868,7 +879,10 @@ function addon:UpdateTarget()
       else				
 	spellBar["Expires"] = expirationTime or 0;
 	spellBar["tickStart"] = (expirationTime or 0) - SAMod.Sound[spell.id].tickStart;
-	spellBar["LastTick"] = spellBar["tickStart"] - 1.0;
+	if spellBar["LastTick"] == 0 then
+	  spellBar["LastTick"] = spellBar["tickStart"] - 1.0;
+	end
+	--DebugPrint("UpdateTarget for %s,lastTick set to %d", spell.name, spellBar["LastTick"]);
 	spellBar["count"] = count or 0;
 	if expirationTime > SA_Data.tNow then
 	  spellBar["obj"]:Show();
@@ -1403,7 +1417,9 @@ local function SA_UpdateBar(unit, spell, sa_sound)
     sabars["count"] = 0;		
     return
   end
+  --DebugPrint("UpdateBar(%s) at %d with lastTick %d", spell, GetTime(),lastTick);
   if (sa_time > tickStart) and ((lastTick + 1.0) < GetTime()) then
+    --DebugPrint("Playing Sound = %s, lastTick = %d at %d", sa_sound, lastTick, GetTime());
     addon:SA_Sound(sa_sound,false);
     sabars["LastTick"] = GetTime();
   end

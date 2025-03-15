@@ -7,6 +7,7 @@ L["Assassination"] = "Asesinato" -- Needs review
 L["bar/prep"] = "Cuenta atrás de Barra de Estado" -- Needs review
 L["bars/color"] = "Color de Barra" -- Needs review
 L["Bars/DoTCrit"] = "Resaltar DoT crits" -- Needs review
+L["Bars/DoTFormatNumbers"] = "Formatear numeros por miles" -- Needs review
 L["Bars/GrowUp"] = "Barras crecen hacia arriba" -- Needs review
 L["Bars/ShowDoT"] = "Mostrar DoT ticks" -- Needs review
 L["Bars/Sort"] = "Ordenar barras por duración" -- Needs review

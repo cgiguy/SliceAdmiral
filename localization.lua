@@ -37,6 +37,7 @@ L["Bars/Spellnames/Desc"] = "Enables spellname as text on the bars"
 L["Bars/Sort"] = "Sort bars by duration"
 L["Bars/ShowDoT"] = "Show DoT ticks"
 L["Bars/DoTCrit"] = "Highlight DoT crits"
+L["Bars/DoTFormatNumbers"] = "Group numbers by thousands"
 L["bars/color"] = "Bar Color"
 L["bars/tickCd"] = "Tick Countdown"
 
