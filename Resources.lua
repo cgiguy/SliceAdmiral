@@ -12,6 +12,7 @@ local flavorFromTocToNumber = {
   TBC = 2,
   Wrath = 3,
   Cata = 4,
+  MoP = 5,
   Mainline = 10
 }
 local flavor = flavorFromTocToNumber[flavorFromToc]
@@ -26,6 +27,10 @@ end
 
 function SliceAdmiral.IsCataClassic()
   return flavor == 4
+end
+
+function SliceAdmiral.IsMoPClassic()
+  return flavor == 5
 end
 
 function SliceAdmiral.IsRetail()
@@ -181,7 +186,7 @@ SA_Spells = { [SID_SND] = { target = "player", sort = true,duration=36, pandemic
         [SID_KINGSBANE] = {target="target", sort=true, duration=14, pandemic=false, spec=1,}, --Kingsbane
 	};
 
-local SA_Classic = SliceAdmiral.IsClassicEra() or SliceAdmiral.IsCataClassic()
+local SA_Classic = SliceAdmiral.IsClassicEra() or SliceAdmiral.IsCataClassic() or SliceAdmiral.IsMoPClassic()
 
 if SliceAdmiral.IsClassicEra() then
   SA_Spells[SID_BLADEDANCE] = {target="player", sort=true, duration=30, pandemic=false,spec=0} --Blade Dance Rune (SOD)

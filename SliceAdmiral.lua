@@ -879,9 +879,9 @@ function addon:UpdateTarget()
       else				
 	spellBar["Expires"] = expirationTime or 0;
 	spellBar["tickStart"] = (expirationTime or 0) - SAMod.Sound[spell.id].tickStart;
-	if spellBar["LastTick"] == 0 then
+--	if spellBar["LastTick"] == 0 then
 	  spellBar["LastTick"] = spellBar["tickStart"] - 1.0;
-	end
+--	end
 	--DebugPrint("UpdateTarget for %s,lastTick set to %d", spell.name, spellBar["LastTick"]);
 	spellBar["count"] = count or 0;
 	if expirationTime > SA_Data.tNow then
