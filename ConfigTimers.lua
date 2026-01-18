@@ -1,3 +1,5 @@
+if SliceAdmiral.IsMidnight() then return end
+
 local sliceadmiral = LibStub("AceAddon-3.0"):GetAddon("SliceAdmiral");
 local L = LibStub("AceLocale-3.0"):GetLocale("SliceAdmiral", true);
 local addon = sliceadmiral:NewModule("ShowTimer");

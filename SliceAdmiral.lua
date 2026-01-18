@@ -1,5 +1,8 @@
 -- Author      : cgiguy
 -- Create Date : 10/13/2014
+
+if SliceAdmiral.IsMidnight() then return end
+
 local addon = LibStub("AceAddon-3.0"):NewAddon("SliceAdmiral","AceConsole-3.0","AceEvent-3.0");
 local AceConfig = LibStub("AceConfig-3.0");
 local AceConfigDialog = LibStub("AceConfigDialog-3.0");

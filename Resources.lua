@@ -4,7 +4,20 @@
 -- cgiguy: I don't like "random" numbers in code.  So, define a few Spell IDs
 -- that we use here.  Note: If they change, you need to change these!
 
+local buildinfo = select(4,GetBuildInfo())
+
 SliceAdmiral = {}
+
+function SliceAdmiral.IsMidnight()
+    return buildinfo >= 120000
+end
+
+if SliceAdmiral.IsMidnight() then
+  C_Timer.After(1, function()
+     print("|cFFFF00FFSliceAdmiral:|r Sliceadmiral does not support Midnight due to Blizzard's new addon restrictions.  So long and thanks for all the fish!")
+  end)
+  return
+end
 
 local flavorFromToc = C_AddOns.GetAddOnMetadata("SliceAdmiral", "X-Flavor")
 local flavorFromTocToNumber = {
