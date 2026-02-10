@@ -1,12 +1,12 @@
 ## Title: SliceAdmiral
-## Interface: 50500
+## Interface: 20505
 ## Author: Iorrh - Bronzebeard US
 ## Version: 1.4.29
 ## Notes: Info-center for maximizing Rogue DPS.
 ## DefaultState: Enabled
 ## LoadOnDemand: 0
 ## SavedVariables: SliceAdmiralDB
-## X-Flavor: MoP
+## X-Flavor: TBC
 ## OptionalDeps: LibStub, LibSmoothStatusBar-1.0, LibClassicDurations
 
 lib\LibStub\LibStub.lua

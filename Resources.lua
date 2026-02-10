@@ -34,6 +34,10 @@ function SliceAdmiral.IsClassicEra()
   return flavor == 1
 end
 
+function SliceAdmiral.IsTBCClassic()
+  return flavor == 2
+end
+
 function SliceAdmiral.IsWrathClassic()
   return flavor == 3
 end
@@ -56,6 +60,10 @@ end
 
 function SliceAdmiral.IsClassicEraOrCata()
   return SliceAdmiral.IsClassicEra() or SliceAdmiral.IsCataClassic()
+end
+
+function SliceAdmiral.IsClassicEraOrTBC()
+  return SliceAdmiral.IsClassicEra() or SliceAdmiral.IsTBCClassic()
 end
 
 function SliceAdmiral.IsWrathOrRetail()
@@ -135,7 +143,6 @@ SID_KINGSBANE = 385627           -- Kingsbane
 SID_BLADEDANCE = 400012          -- Blade Dance Rune (Classic SOD)
 SID_RECUPERATE = 73651         -- Recuperate (Cataclysm Classic)
 
-
 --0 Shared 1 Assassination, 2 Outlaw, 3 Subtlety 4 Talents
 SA_Spells = { [SID_SND] = { target = "player", sort = true,duration=36, pandemic=true,spec=2,}, --Slice and Dice
 	[SID_DEADLY_POISON] = { target = "target", sort = false, duration=12,pandemic=true,spec=1,}, --DeadlyPoison
@@ -199,7 +206,7 @@ SA_Spells = { [SID_SND] = { target = "player", sort = true,duration=36, pandemic
         [SID_KINGSBANE] = {target="target", sort=true, duration=14, pandemic=false, spec=1,}, --Kingsbane
 	};
 
-local SA_Classic = SliceAdmiral.IsClassicEra() or SliceAdmiral.IsCataClassic() or SliceAdmiral.IsMoPClassic()
+local SA_Classic = SliceAdmiral.IsClassicEra() or SliceAdmiral.IsCataClassic() or SliceAdmiral.IsMoPClassic() or SliceAdmiral.IsTBCClassic()
 
 if SliceAdmiral.IsClassicEra() then
   SA_Spells[SID_BLADEDANCE] = {target="player", sort=true, duration=30, pandemic=false,spec=0} --Blade Dance Rune (SOD)

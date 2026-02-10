@@ -10,7 +10,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale("SliceAdmiral", true)
 local S = LibStub("LibSmoothStatusBar-1.0")
 local LSM = LibStub("LibSharedMedia-3.0")
 
-local SA_Classic = SliceAdmiral.IsClassicEra() or SliceAdmiral.IsCataClassic() or SliceAdmiral.IsMoPClassic()
+local SA_Classic = SliceAdmiral.IsClassicEra() or SliceAdmiral.IsCataClassic() or SliceAdmiral.IsMoPClassic() or SliceAdmiral.IsTBCClassic()
 
 local UnitAura = _G.UnitAura
 --local LibClassicDurations   -- Needed if we want to call it directly LibClassicDurations.UnitAuraWrapper
@@ -428,6 +428,11 @@ function addon:UNIT_AURA(Time, arg1)
     addon:UpdateTarget()
     addon:SetComboPoints();
   end
+
+  if SliceAdmiral.IsTBCClassic() then
+    addon:UpdateTarget()
+  end
+  
 end
 
 function addon:UNIT_ATTACK_POWER(...)
@@ -717,7 +722,7 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED(event, timestamp, type, hideCaster, s
   if spellId == 0 and SA_Classic then
     local name, rank, icon, castTime, minRange, maxRange, spId, originalIcon = C_Spell.GetSpellInfo(extraArg2)
     if isMySpell then
-      --DebugPrint(string.format("Classic and Spellname = %s (%d)", extraArg2, spId))
+      DebugPrint(string.format("Classic and Spellname = %s (%d)", extraArg2, spId))
     end
     spellId = spId
   end
